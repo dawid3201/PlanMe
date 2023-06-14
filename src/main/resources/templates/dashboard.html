@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h2>Welcome to the Dashboard!</h2>
+
+<div th:if="${user}">
+    <p>
+        Welcome back, <span th:text="${user.firstName}">User</span> <span th:text="${user.lastName}">User</span>!
+    </p>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Logout">
+    </form>
+</div>
+
+</body>
+</html>
+
