@@ -1,7 +1,10 @@
-package COMP390.PlanMe;
+package COMP390.PlanMe.Controllers;
 
+import COMP390.PlanMe.dao.HomepageDAO;
 import COMP390.PlanMe.dao.UserDAO;
+import COMP390.PlanMe.entity.Homepage;
 import COMP390.PlanMe.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class SigninController {
     private UserDAO userDAO;
+
+    @Autowired
+    private HomepageDAO homepageDAO;
 
     public SigninController(UserDAO userDAO){
         this.userDAO = userDAO;
@@ -45,7 +51,11 @@ public class SigninController {
         }
 
         userDAO.save(user);
-        return "redirect:/dashboard";
+
+        Homepage homepage = new Homepage();
+        homepage.setUser(user);
+        homepageDAO.save(homepage);
+        return "redirect:/homepage";
     }
     private boolean isValidEmail(String email) {
         // Implement your email validation logic here

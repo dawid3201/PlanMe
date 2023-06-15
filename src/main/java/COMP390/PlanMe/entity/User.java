@@ -2,6 +2,8 @@ package COMP390.PlanMe.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="users")
 public class User {
@@ -18,6 +20,10 @@ public class User {
     @Column(name="email_address")
     private String email;
 
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    private List<Project> projects;
+
+
     //constructors
     public User() {}
 
@@ -29,7 +35,6 @@ public class User {
     }
 
     //Getters and Setters
-
     public String getFirstName() {
         return firstName;
     }
@@ -61,6 +66,7 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
 
     @Override
     public String toString() {

@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Dashboard</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
 <body>
 <h2>Welcome to the Dashboard!</h2>
 
@@ -11,11 +5,21 @@
     <p>
         Welcome back, <span th:text="${user.firstName}">User</span> <span th:text="${user.lastName}">User</span>!
     </p>
+
+    <p th:if="${projects}">
+        Your projects:
+    <ul>
+        <li th:each="project : ${projects}" th:text="${project.name}">Project Name</li>
+    </ul>
+    </p>
+
+    <a th:href="@{/project/new}">Create a new project</a>
     <form th:action="@{/logout}" method="post">
         <input type="submit" value="Logout">
     </form>
 </div>
-
 </body>
-</html>
+
+
+
 
