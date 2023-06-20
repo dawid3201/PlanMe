@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Homepage</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<html>
 <body>
 <h2>Welcome to the Dashboard!</h2>
 
@@ -9,7 +16,9 @@
     <p th:if="${projects}">
         Your projects:
     <ul>
-        <li th:each="project : ${projects}" th:text="${project.name}">Project Name</li>
+        <li th:each="project : ${projects}">
+            <a th:href="@{/projects/{id}(id=${project.id})}" th:text="${project.name}">Project Name</a>
+        </li>
     </ul>
     </p>
 
@@ -19,6 +28,8 @@
     </form>
 </div>
 </body>
+</html>
+
 
 
 

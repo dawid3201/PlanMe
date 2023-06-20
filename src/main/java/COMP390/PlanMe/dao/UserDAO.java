@@ -6,6 +6,8 @@ import COMP390.PlanMe.entity.User;
 public interface UserDAO {
     //save user to database method
     void save(User user);
+    //check if emial is already on database
     boolean checkEmailExists(String email);
-    User getUserByEmail(String email); // get user details
+    // get user details
+    User getUserByEmail(String email);
 }

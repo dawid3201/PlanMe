@@ -19,12 +19,17 @@ public class Project {
     @JoinColumn(name = "creator_id")
     private User creator;
 
+    //TODO: update this later so you can add members to a project
     @ManyToMany
     @JoinTable(
             name = "project_members",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> members = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<Task> tasks = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -56,6 +61,14 @@ public class Project {
 
     public void setMembers(List<User> members) {
         this.members = members;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 }
 

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+@Repository //provide CRUD (Create, Read, Update, Delete) for database operations
 public class UserDAOLmpl implements UserDAO {
     private EntityManager entityManager;
 
@@ -17,7 +17,7 @@ public class UserDAOLmpl implements UserDAO {
         this.entityManager = entityManager;
     }
 
-    @Transactional
+    @Transactional //transactional behaviour of methods, ensures ACID for database operations
     @Override
     public void save(User user) {
         entityManager.persist(user);

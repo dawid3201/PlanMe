@@ -4,7 +4,6 @@ import COMP390.PlanMe.dao.HomepageDAO;
 import COMP390.PlanMe.dao.UserDAO;
 import COMP390.PlanMe.entity.Homepage;
 import COMP390.PlanMe.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,11 +11,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Controller
 public class SigninController {
     private UserDAO userDAO;
 
-    @Autowired
     private HomepageDAO homepageDAO;
 
     public SigninController(UserDAO userDAO){
@@ -33,17 +35,30 @@ public class SigninController {
         if (result.hasErrors()) {
             return "signin";
         }
-
-        if (!isValidEmail(user.getEmail())) {
-            model.addAttribute("emailError", "Invalid email format");
+        //First and last name validation
+        if (isNameOk(user.getFirstName())) {
+            model.addAttribute("nameError", "Name fields cannot contain any numbers and special characters.");
             return "signin";
         }
-
+        if (isNameOk(user.getLastName())) {
+            model.addAttribute("nameError", "Name fields cannot contain any numbers and special characters.");
+            return "signin";
+        }
+        //Password validation
         if (!isValidPassword(user.getPassword())) {
             model.addAttribute("passwordError", "Password must be between 10 and 12 characters");
             return "signin";
         }
 
+        if (!isPasswordOk(user.getPassword())) {
+            model.addAttribute("passwordError", "Password must contain at least 1 capital letter and special characters.");
+            return "signin";
+        }
+        //emial validation
+        if (!isValidEmail(user.getEmail())) {
+            model.addAttribute("emailError", "Invalid email format");
+            return "signin";
+        }
         boolean emailExists = userDAO.checkEmailExists(user.getEmail());
         if (emailExists) {
             model.addAttribute("emailError", "Email already exists");
@@ -58,18 +73,24 @@ public class SigninController {
         return "redirect:/homepage";
     }
     private boolean isValidEmail(String email) {
-        // Implement your email validation logic here
-        // Example: using regex pattern matching
         String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
         return email.matches(emailRegex);
     }
 
     private boolean isValidPassword(String password) {
-        // Implement your password length validation logic here
         int passwordLength = password.length();
         return passwordLength >= 10 && passwordLength <= 12;
     }
 
-    //TODO: check if PASSWORD contains symbols, capital letters, numbers AND check password length
-    //TODO: check if NAMES does not contain any special characters and numbers
+    private boolean isPasswordOk(String password){
+        String pattern = "^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(password);
+        return matcher.matches();
+    }
+
+    private boolean isNameOk(String name){
+        String pattern = "^[a-zA-Z]+$";
+        return name.matches(pattern);
+    }
 }

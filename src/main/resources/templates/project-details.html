@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Project Details</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+  <h2>Project Details</h2>
+
+  <form id="add-task-form">
+    <input type="text" id="new-task-name" placeholder="Enter task name here" />
+    <input type="submit" value="Add Task" />
+  </form>
+
+  <ul id="task-list">
+    <li th:each="task : ${project.tasks}" th:text="${task.description}"></li>
+  </ul>
+
+  <a th:href="@{/homepage}">Go back</a>
+
+  <script th:inline="javascript">
+    document.querySelector("#add-task-form").addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent the default form submission behavior
+
+      var projectId = /*[[${project.id}]]*/ '';
+      var newTaskName = document.querySelector("#new-task-name").value;
+
+      fetch('/project/addTask', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          'projectId': projectId,
+          'taskDescription': newTaskName
+        })
+      })
+              .then(function(response) {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.text();
+              })
+              .then(function(text) {
+                console.log('Request successful', text);
+                location.reload(); // reload the page to see the new task
+              })
+              .catch(function(error) {
+                console.log('Request failed', error);
+              });
+    });
+  </script>
+
+</body>
+</html>
+
+
+
+

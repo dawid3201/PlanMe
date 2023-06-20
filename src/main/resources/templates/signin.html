@@ -14,6 +14,7 @@
     <div>
         <label for="lastName">Last Name:</label>
         <input type="text" id="lastName" name="lastName" required>
+        <p style="color: red;" th:text="${nameError}"></p> <!-- Display name error message if present -->
     </div>
     <div>
         <label for="email">Email:</label>
