@@ -2,6 +2,9 @@ package COMP390.PlanMe.entity;
 
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "tasks")
 public class Task {
@@ -21,6 +24,12 @@ public class Task {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Column(name ="deadline")
+    private LocalDateTime deadline;
+
+    // New property for the swimlane name
+    @Column(name = "swimlane")
+    private String swimlane;
 
     //Getters and Setters
     public Long getId() {
@@ -53,5 +62,21 @@ public class Task {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDateTime localDateTime) {
+        this.deadline = localDateTime;
+    }
+
+    public String getSwimlane() {
+        return swimlane;
+    }
+
+    public void setSwimlane(String swimlane) {
+        this.swimlane = swimlane;
     }
 }

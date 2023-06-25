@@ -3,56 +3,84 @@
 <head>
   <title>Project Details</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+  <link rel="stylesheet" type="text/css" href="/css/styles.css">
+  <script src="/js/drag.js" defer></script>
 </head>
 <body>
-  <h2>Project Details</h2>
+<h2>Project Details</h2>
 
-  <form id="add-task-form">
-    <input type="text" id="new-task-name" placeholder="Enter task name here" />
-    <input type="submit" value="Add Task" />
-  </form>
+<form id="add-task-form">
+  <input type="text" id="new-task-name" placeholder="Enter task name here" />
+  <input type="datetime-local" id="new-task-deadline" placeholder="Enter deadline here" />
+  <input type="submit" value="Add Task" />
+</form>
 
-  <ul id="task-list">
-    <li th:each="task : ${project.tasks}" th:text="${task.description}"></li>
-  </ul>
+<div class="board">
 
-  <a th:href="@{/homepage}">Go back</a>
+  <div class="lanes">
+    <div class="swim-lane" id="TODO">
+      <h3 class="heading">TODO</h3>
+      <div th:each="task : ${project.tasks}" th:if="${task.state.toString() == 'TODO'}" class="task", draggable="True" th:attr="data-id=${task.id}">
+        <p th:text="${task.description + ' : ' + #temporals.format(task.deadline, 'yyyy/MM/dd HH:mm')}"></p>
+      </div>
+    </div>
 
-  <script th:inline="javascript">
-    document.querySelector("#add-task-form").addEventListener("submit", function(event) {
-      event.preventDefault(); // Prevent the default form submission behavior
+    <div class="swim-lane" id="IN_PROGRESS">
+      <h3 class="heading">Doing</h3>
+      <div th:each="task : ${project.tasks}" th:if="${task.state.toString() == 'IN_PROGRESS'}" class="task" draggable="True" th:attr="data-id=${task.id}">
+        <p th:text="${task.description + ' : ' + #temporals.format(task.deadline, 'yyyy/MM/dd HH:mm')}"></p>
+      </div>
+    </div>
 
-      var projectId = /*[[${project.id}]]*/ '';
-      var newTaskName = document.querySelector("#new-task-name").value;
+    <div class="swim-lane" id="DONE">
+      <h3 class="heading">Done</h3>
+      <div th:each="task : ${project.tasks}" th:if="${task.state.toString() == 'DONE'}" class="task", draggable="True" th:attr="data-id=${task.id}">
+        <p th:text="${task.description + ' : ' + #temporals.format(task.deadline, 'yyyy/MM/dd HH:mm')}"></p>
+      </div>
+    </div>
+  </div>
+</div>
 
-      fetch('/project/addTask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-          'projectId': projectId,
-          'taskDescription': newTaskName
-        })
+<a th:href="@{/homepage}">Go back</a>
+
+<script th:inline="javascript">
+  document.querySelector("#add-task-form").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    var projectId = /*[[${project.id}]]*/ '';
+    var newTaskName = document.querySelector("#new-task-name").value;
+    var newTaskDeadline = document.querySelector("#new-task-deadline").value;
+
+    fetch('/project/addTask', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        'projectId': projectId,
+        'taskDescription': newTaskName,
+        'taskDeadline': newTaskDeadline
       })
-              .then(function(response) {
-                if (!response.ok) {
-                  throw new Error('Network response was not ok');
-                }
-                return response.text();
-              })
-              .then(function(text) {
-                console.log('Request successful', text);
-                location.reload(); // reload the page to see the new task
-              })
-              .catch(function(error) {
-                console.log('Request failed', error);
-              });
-    });
-  </script>
-
+    })
+            .then(function(response) {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.text();
+            })
+            .then(function(text) {
+              console.log('Request successful', text);
+              location.reload(); // reload the page to see the new task
+            })
+            .catch(function(error) {
+              console.log('Request failed', error);
+            });
+  });
+</script>
 </body>
 </html>
+
 
 
 

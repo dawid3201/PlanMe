@@ -8,13 +8,18 @@ import COMP390.PlanMe.entity.User;
 import COMP390.PlanMe.entity.Task;
 import COMP390.PlanMe.entity.TaskState;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 @Controller
 public class ProjectController {
     private ProjectDAO projectDAO;
@@ -109,12 +114,14 @@ public class ProjectController {
     }
     //method to save a task to database
     @PostMapping("/project/addTask")
-    public ResponseEntity<Void> addTask(@RequestParam("projectId") Long projectId, @RequestParam("taskDescription") String taskDescription) {
+    public ResponseEntity<Void> addTask(@RequestParam("projectId") Long projectId, @RequestParam("taskDescription") String taskDescription, @RequestParam("taskDeadline") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime taskDeadline) {
         Project project = projectDAO.getProjectById(projectId);
         if (project != null) {
             Task newTask = new Task();
             newTask.setDescription(taskDescription);
+            newTask.setDeadline(taskDeadline);
             newTask.setState(TaskState.TODO);
+            newTask.setSwimlane("TODO");
             newTask.setProject(project);  // set the project in the task
             project.getTasks().add(newTask);  // add the task to the project
 
@@ -128,7 +135,46 @@ public class ProjectController {
 
         return ResponseEntity.notFound().build();
     }
+    @GetMapping("/project/getTasks")
+    public ResponseEntity<List<Task>> getTasks(@RequestParam("projectId") Long projectId) {
+        Project project = projectDAO.getProjectById(projectId);
+        if (project != null) {
+            List<Task> tasks = project.getTasks();  // Fetches the tasks for the project
+            return ResponseEntity.ok(tasks);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
+    @PatchMapping("/project/updateTaskSwimlane")
+    public ResponseEntity<Void> updateTaskSwimlane(@RequestParam("taskId") Long taskId, @RequestParam("newSwimlane") String newSwimlane) {
+        Optional<Task> optionalTask = taskDAO.findById(taskId);
+        if (optionalTask.isPresent()) {
+            Task task = optionalTask.get();
+            task.setSwimlane(newSwimlane);
+
+            // Update the state as well based on the new swimlane
+            switch(newSwimlane) {
+                case "TODO":
+                    task.setState(TaskState.TODO);
+                    break;
+                case "IN_PROGRESS":
+                    task.setState(TaskState.IN_PROGRESS);
+                    break;
+                case "DONE":
+                    task.setState(TaskState.DONE);
+                    break;
+                default:
+                    // Return an error response if the swimlane is not recognized
+                    return ResponseEntity.badRequest().build();
+            }
+
+            taskDAO.save(task);  // save the task to the database
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.notFound().build();
+    }
 
     //Methods
     private boolean isNameEmpty(String name){
