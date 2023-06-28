@@ -27,9 +27,11 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> members = new ArrayList<>();
 
-
+    //List of tasks related to project
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
+    //list of bars related to project
+
 
     public Long getId() {
         return id;
@@ -70,5 +72,7 @@ public class Project {
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
+
+
 }
 

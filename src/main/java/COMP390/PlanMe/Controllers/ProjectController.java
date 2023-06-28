@@ -7,6 +7,7 @@ import COMP390.PlanMe.entity.Project;
 import COMP390.PlanMe.entity.User;
 import COMP390.PlanMe.entity.Task;
 import COMP390.PlanMe.entity.TaskState;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class ProjectController {
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
     }
-
+    //-----------------------------------------------------PROJECT METHODS-----------------------------------------
     @GetMapping("/project/new")
     public String showNewProjectForm(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -87,18 +88,6 @@ public class ProjectController {
         model.addAttribute("projects", projects);
         return "projects";
     }
-    //TODO: update this method to add members to a project
-//    @PostMapping("/project/addMember")
-//    public String addMemberToProject(@RequestParam("projectId") Long projectId, @RequestParam("memberEmail") String memberEmail) {
-//        User newMember = userDAO.getUserByEmail(memberEmail);
-//        Project project = projectDAO.getProjectById(projectId);
-//        if (newMember != null && project != null) {
-//            project.getMembers().add(newMember);
-//            projectDAO.save(project);
-//        }
-//        return "redirect:/homepage";
-//    }
-
     @GetMapping("/projects/{projectId}")
     public String viewProject(@PathVariable("projectId") Long projectId, Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -112,17 +101,30 @@ public class ProjectController {
         model.addAttribute("project", project);
         return "project-details";
     }
-    //method to save a task to database
+    //---------------------------------------------------MEMBERS METHODS-----------------------------------------
+    //TODO: update this method to add members to a project
+//    @PostMapping("/project/addMember")
+//    public String addMemberToProject(@RequestParam("projectId") Long projectId, @RequestParam("memberEmail") String memberEmail) {
+//        User newMember = userDAO.getUserByEmail(memberEmail);
+//        Project project = projectDAO.getProjectById(projectId);
+//        if (newMember != null && project != null) {
+//            project.getMembers().add(newMember);
+//            projectDAO.save(project);
+//        }
+//        return "redirect:/homepage";
+//    }
+
+    //----------------------------------------------TASK METHODS----------------------------------------------
     @PostMapping("/project/addTask")
-    public ResponseEntity<Void> addTask(@RequestParam("projectId") Long projectId, @RequestParam("taskDescription") String taskDescription, @RequestParam("taskDeadline") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime taskDeadline) {
+    public ResponseEntity<Void> addTask(@RequestParam("projectId") Long projectId, @RequestParam("taskDescription") String taskDescription, @RequestParam("taskPriority") int priority) {
         Project project = projectDAO.getProjectById(projectId);
         if (project != null) {
             Task newTask = new Task();
             newTask.setDescription(taskDescription);
-            newTask.setDeadline(taskDeadline);
             newTask.setState(TaskState.TODO);
             newTask.setSwimlane("TODO");
-            newTask.setProject(project);  // set the project in the task
+            newTask.setProject(project);
+            newTask.setPriority(priority);
             project.getTasks().add(newTask);  // add the task to the project
 
             taskDAO.save(newTask);  // save the task to the database
@@ -134,6 +136,19 @@ public class ProjectController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+    @PatchMapping("/project/updateTaskName")
+    public ResponseEntity<Void> updateTaskName(@RequestParam("taskId") Long taskId, @RequestParam("taskDescription") String taskDescription){
+        try {
+            Task task = taskDAO.getOne(taskId);
+            task.setDescription(taskDescription);
+            taskDAO.save(task); // Save changes to the database
+            return ResponseEntity.ok().build(); // Return a 200 OK response
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build(); // Return a 404 Not Found response if the task doesn't exist
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Return a 500 Internal Server Error response for any other exceptions
+        }
     }
     @GetMapping("/project/getTasks")
     public ResponseEntity<List<Task>> getTasks(@RequestParam("projectId") Long projectId) {
@@ -151,22 +166,15 @@ public class ProjectController {
         Optional<Task> optionalTask = taskDAO.findById(taskId);
         if (optionalTask.isPresent()) {
             Task task = optionalTask.get();
-            task.setSwimlane(newSwimlane);
 
-            // Update the state as well based on the new swimlane
-            switch(newSwimlane) {
-                case "TODO":
-                    task.setState(TaskState.TODO);
-                    break;
-                case "IN_PROGRESS":
-                    task.setState(TaskState.IN_PROGRESS);
-                    break;
-                case "DONE":
-                    task.setState(TaskState.DONE);
-                    break;
-                default:
-                    // Return an error response if the swimlane is not recognized
+            switch (newSwimlane) {
+                case "TODO" -> task.setState(TaskState.TODO);
+                case "IN_PROGRESS" -> task.setState(TaskState.IN_PROGRESS);
+                case "DONE" -> task.setState(TaskState.DONE);
+                case "UNRESOLVED" -> task.setState(TaskState.UNRESOLVED);
+                default -> {
                     return ResponseEntity.badRequest().build();
+                }
             }
 
             taskDAO.save(task);  // save the task to the database
@@ -175,7 +183,16 @@ public class ProjectController {
 
         return ResponseEntity.notFound().build();
     }
-
+    @DeleteMapping("/project/removeTask")
+    public ResponseEntity<Void> removeTask(@RequestParam("taskId") Long taskId) {
+        Optional<Task> task = taskDAO.findById(taskId);
+        if (task.isPresent()) {
+            taskDAO.delete(task.get());
+            return ResponseEntity.ok().build(); // Return a 200 OK response
+        } else {
+            return ResponseEntity.notFound().build(); // Return a 404 Not Found response if the task doesn't exist
+        }
+    }
     //Methods
     private boolean isNameEmpty(String name){
         return name == null || name.trim().isEmpty();

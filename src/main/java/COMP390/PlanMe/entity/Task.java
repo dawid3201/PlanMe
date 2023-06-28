@@ -24,12 +24,14 @@ public class Task {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(name ="deadline")
-    private LocalDateTime deadline;
-
-    // New property for the swimlane name
     @Column(name = "swimlane")
     private String swimlane;
+
+    @Column(name = "priority")
+    private int priority;
+
+    @Column(name = "position")
+    private Long position;
 
     //Getters and Setters
     public Long getId() {
@@ -64,19 +66,24 @@ public class Task {
         this.project = project;
     }
 
-    public LocalDateTime getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(LocalDateTime localDateTime) {
-        this.deadline = localDateTime;
-    }
-
     public String getSwimlane() {
         return swimlane;
     }
 
     public void setSwimlane(String swimlane) {
         this.swimlane = swimlane;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    public Long getPosition() {
+        return position;
+    }
+    public void setPosition(Long position) {
+        this.position = position;
     }
 }

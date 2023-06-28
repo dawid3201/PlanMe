@@ -3,81 +3,143 @@
 <head>
   <title>Project Details</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="/css/styles.css">
   <script src="/js/drag.js" defer></script>
+  <script src="/js/tasks.js"></script>
 </head>
 <body>
 <h2>Project Details</h2>
 
-<form id="add-task-form">
-  <input type="text" id="new-task-name" placeholder="Enter task name here" />
-  <input type="datetime-local" id="new-task-deadline" placeholder="Enter deadline here" />
-  <input type="submit" value="Add Task" />
-</form>
 
 <div class="board">
-
   <div class="lanes">
     <div class="swim-lane" id="TODO">
-      <h3 class="heading">TODO</h3>
-      <div th:each="task : ${project.tasks}" th:if="${task.state.toString() == 'TODO'}" class="task", draggable="True" th:attr="data-id=${task.id}">
-        <p th:text="${task.description + ' : ' + #temporals.format(task.deadline, 'yyyy/MM/dd HH:mm')}"></p>
+      <h3 class="heading">TODO
+        <a id="open-form-btn" href="#" role="button">+</a></h3>
+      <div th:each="task : ${project.tasks}"
+           th:if="${task.state.toString() == 'TODO'}"
+           th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
+           class="task" draggable="True"
+           th:attr="data-id=${task.id}">
+        <i class="fas fa-times delete-task" th:attr="data-id=${task.id}" onclick="deleteTask(this)"></i>
+
+
+        <p th:text="${task.description}"
+           onclick="editTaskDescription(this)"
+           th:attr="data-id=${task.id}"></p>
+
       </div>
+      <div id="form-container"></div>
     </div>
 
     <div class="swim-lane" id="IN_PROGRESS">
-      <h3 class="heading">Doing</h3>
-      <div th:each="task : ${project.tasks}" th:if="${task.state.toString() == 'IN_PROGRESS'}" class="task" draggable="True" th:attr="data-id=${task.id}">
-        <p th:text="${task.description + ' : ' + #temporals.format(task.deadline, 'yyyy/MM/dd HH:mm')}"></p>
+      <h3 class="heading">In Progress</h3>
+      <div th:each="task : ${project.tasks}"
+           th:if="${task.state.toString() == 'IN_PROGRESS'}"
+           th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
+           class="task" draggable="True"
+           th:attr="data-id=${task.id}">
+        <i class="fas fa-times delete-task" th:attr="data-id=${task.id}" onclick="deleteTask(this)"></i>
+
+        <p th:text="${task.description}"
+           onclick="editTaskDescription(this)"
+           th:attr="data-id=${task.id}"></p>
       </div>
     </div>
 
     <div class="swim-lane" id="DONE">
       <h3 class="heading">Done</h3>
-      <div th:each="task : ${project.tasks}" th:if="${task.state.toString() == 'DONE'}" class="task", draggable="True" th:attr="data-id=${task.id}">
-        <p th:text="${task.description + ' : ' + #temporals.format(task.deadline, 'yyyy/MM/dd HH:mm')}"></p>
+      <div th:each="task : ${project.tasks}"
+           th:if="${task.state.toString() == 'DONE'}"
+           th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
+           class="task" draggable="True"
+           th:attr="data-id=${task.id}">
+        <i class="fas fa-times delete-task" th:attr="data-id=${task.id}" onclick="deleteTask(this)"></i>
+
+
+        <p th:text="${task.description}"
+           onclick="editTaskDescription(this)"
+           th:attr="data-id=${task.id}"></p>
+      </div>
+    </div>
+
+    <div class="swim-lane" id="UNRESOLVED">
+      <h3 class="heading">Unresolved</h3>
+      <div th:each="task : ${project.tasks}"
+           th:if="${task.state.toString() == 'UNRESOLVED'}"
+           th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
+           class="task" draggable="True"
+           th:attr="data-id=${task.id}">
+        <i class="fas fa-times delete-task" th:attr="data-id=${task.id}" onclick="deleteTask(this)"></i>
+
+        <p th:text="${task.description}"
+           onclick="editTaskDescription(this)"
+           th:attr="data-id=${task.id}"></p>
       </div>
     </div>
   </div>
 </div>
 
+
 <a th:href="@{/homepage}">Go back</a>
 
 <script th:inline="javascript">
-  document.querySelector("#add-task-form").addEventListener("submit", function(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
+  // Form HTML as string.
+  var formHTML = `
+    <form id="add-task-form">
+      <input type="text" id="new-task-name" placeholder="Enter task name here" /><br>
+      <label for="priority1">1</label>
+      <input type="radio" id="priority1" name="priority" value="1" />
+      <label for="priority2">2</label>
+      <input type="radio" id="priority2" name="priority" value="2" />
+      <label for="priority3">3</label>
+      <input type="radio" id="priority3" name="priority" value="3" />
+      <input type="submit" value="Add Task" />
+    </form>
+  `;
 
-    var projectId = /*[[${project.id}]]*/ '';
-    var newTaskName = document.querySelector("#new-task-name").value;
-    var newTaskDeadline = document.querySelector("#new-task-deadline").value;
+  // Add event listener to button.
+  document.getElementById("open-form-btn").addEventListener("click", function() {
+    // Insert form HTML into div.
+    document.getElementById("form-container").innerHTML = formHTML;
 
-    fetch('/project/addTask', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: new URLSearchParams({
-        'projectId': projectId,
-        'taskDescription': newTaskName,
-        'taskDeadline': newTaskDeadline
+    // Add event listener to form after it is added to the page.
+    document.getElementById("add-task-form").addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent the default form submission behavior
+
+      var projectId = /*[[${project.id}]]*/ '';
+      var newTaskName = document.querySelector("#new-task-name").value;
+      var newPriority = document.querySelector('input[name="priority"]:checked').value;
+
+      fetch('/project/addTask', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          'projectId': projectId,
+          'taskDescription': newTaskName,
+          'taskPriority' : newPriority
+        })
       })
-    })
-            .then(function(response) {
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              return response.text();
-            })
-            .then(function(text) {
-              console.log('Request successful', text);
-              location.reload(); // reload the page to see the new task
-            })
-            .catch(function(error) {
-              console.log('Request failed', error);
-            });
+              .then(function(response) {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.text();
+              })
+              .then(function(text) {
+                console.log('Request successful', text);
+                location.reload(); // reload the page to see the new task
+              })
+              .catch(function(error) {
+                console.log('Request failed', error);
+              });
+    });
   });
 </script>
+
 </body>
 </html>
 
