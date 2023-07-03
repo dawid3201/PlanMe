@@ -21,8 +21,9 @@ public class SigninController {
 
     private HomepageDAO homepageDAO;
 
-    public SigninController(UserDAO userDAO){
+    public SigninController(UserDAO userDAO, HomepageDAO homepageDAO){
         this.userDAO = userDAO;
+        this.homepageDAO = homepageDAO;
     }
 
     @GetMapping("/signin")
@@ -36,11 +37,11 @@ public class SigninController {
             return "signin";
         }
         //First and last name validation
-        if (isNameOk(user.getFirstName())) {
+        if (!isNameOk(user.getFirstName())) {
             model.addAttribute("nameError", "Name fields cannot contain any numbers and special characters.");
             return "signin";
         }
-        if (isNameOk(user.getLastName())) {
+        if (!isNameOk(user.getLastName())) {
             model.addAttribute("nameError", "Name fields cannot contain any numbers and special characters.");
             return "signin";
         }

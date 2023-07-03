@@ -16,9 +16,12 @@ public class Task {
     @Column(name = "description")
     private String description;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "bar_id")
+    private Bar bar;
+
     @Column(name = "state")
-    private TaskState state;
+    private String state;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
@@ -50,12 +53,12 @@ public class Task {
         this.description = description;
     }
 
-    public TaskState getState() {
-        return state;
+    public Bar getBar() {
+        return bar;
     }
 
-    public void setState(TaskState state) {
-        this.state = state;
+    public void setBar(Bar bar) {
+        this.bar = bar;
     }
 
     public Project getProject() {
@@ -85,5 +88,13 @@ public class Task {
     }
     public void setPosition(Long position) {
         this.position = position;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

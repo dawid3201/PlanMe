@@ -6,7 +6,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="/css/styles.css">
   <script src="/js/drag.js" defer></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="/js/tasks.js"></script>
+<!--  <script src="/js/bars.js"></script>-->
 </head>
 <body>
 <h2>Project Details</h2>
@@ -14,73 +16,27 @@
 
 <div class="board">
   <div class="lanes">
-    <div class="swim-lane" id="TODO">
-      <h3 class="heading">TODO
-        <a id="open-form-btn" href="#" role="button">+</a></h3>
-      <div th:each="task : ${project.tasks}"
-           th:if="${task.state.toString() == 'TODO'}"
-           th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
-           class="task" draggable="True"
-           th:attr="data-id=${task.id}">
-        <i class="fas fa-times delete-task" th:attr="data-id=${task.id}" onclick="deleteTask(this)"></i>
-
-
-        <p th:text="${task.description}"
-           onclick="editTaskDescription(this)"
-           th:attr="data-id=${task.id}"></p>
-
+    <th:block th:each="bar : ${project.bars}">
+      <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id}">
+        <h3 class="heading" th:text="${bar.name}"></h3>
+        <div th:each="task : ${bar.project.tasks}"
+             th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
+             th:if="${task.state.toString() == bar.name}"
+             class="task" draggable="True"
+             th:attr="data-task-id=${task.id}">
+          <i class="fas fa-times delete-task" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)"></i>
+          <p th:text="${task.description}"
+             onclick="editTaskDescription(this)"
+             th:attr="data-task-id=${task.id}"></p>
+        </div>
+        <div id="form-container"></div>
       </div>
-      <div id="form-container"></div>
-    </div>
-
-    <div class="swim-lane" id="IN_PROGRESS">
-      <h3 class="heading">In Progress</h3>
-      <div th:each="task : ${project.tasks}"
-           th:if="${task.state.toString() == 'IN_PROGRESS'}"
-           th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
-           class="task" draggable="True"
-           th:attr="data-id=${task.id}">
-        <i class="fas fa-times delete-task" th:attr="data-id=${task.id}" onclick="deleteTask(this)"></i>
-
-        <p th:text="${task.description}"
-           onclick="editTaskDescription(this)"
-           th:attr="data-id=${task.id}"></p>
-      </div>
-    </div>
-
-    <div class="swim-lane" id="DONE">
-      <h3 class="heading">Done</h3>
-      <div th:each="task : ${project.tasks}"
-           th:if="${task.state.toString() == 'DONE'}"
-           th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
-           class="task" draggable="True"
-           th:attr="data-id=${task.id}">
-        <i class="fas fa-times delete-task" th:attr="data-id=${task.id}" onclick="deleteTask(this)"></i>
-
-
-        <p th:text="${task.description}"
-           onclick="editTaskDescription(this)"
-           th:attr="data-id=${task.id}"></p>
-      </div>
-    </div>
-
-    <div class="swim-lane" id="UNRESOLVED">
-      <h3 class="heading">Unresolved</h3>
-      <div th:each="task : ${project.tasks}"
-           th:if="${task.state.toString() == 'UNRESOLVED'}"
-           th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
-           class="task" draggable="True"
-           th:attr="data-id=${task.id}">
-        <i class="fas fa-times delete-task" th:attr="data-id=${task.id}" onclick="deleteTask(this)"></i>
-
-        <p th:text="${task.description}"
-           onclick="editTaskDescription(this)"
-           th:attr="data-id=${task.id}"></p>
-      </div>
-    </div>
+    </th:block>
+    <button id="addBar">Add Bar</button>
+    <input type="text" id="barName" placeholder="Enter Bar Name">
   </div>
+  <a id="open-form-btn" href="#" role="button">+</a>
 </div>
-
 
 <a th:href="@{/homepage}">Go back</a>
 
@@ -98,7 +54,6 @@
       <input type="submit" value="Add Task" />
     </form>
   `;
-
   // Add event listener to button.
   document.getElementById("open-form-btn").addEventListener("click", function() {
     // Insert form HTML into div.
@@ -138,12 +93,34 @@
               });
     });
   });
-</script>
+  $(document).ready(function(){
+    $("#addBar").click(function(){
+      var projectId = /*[[${project.id}]]*/ '';
+      var barName = $("#barName").val();
 
+      $.ajax({
+        url: "/project/addBar",
+        type: "GET",
+        data: { projectId: projectId, barName: barName },
+        success: function(response) {
+          // Assuming 'response' contains the new bar
+          alert("Bar Added Successfully");
+
+          // Create new bar element. This would depend on how you want to display the bar
+          var newBarElement = '<div class="bar">' + response.name + '</div>';
+
+          // Append new bar to your bars container
+          $('#barsContainer').append(newBarElement);
+        },
+        error: function(response) {
+          alert("Failed to add bar");
+        }
+      });
+    });
+  });
+</script>
 </body>
 </html>
-
-
 
 
 

@@ -25,11 +25,13 @@ droppables.forEach((zone) => {
             zone.insertBefore(curTask, bottomTask);
         }
 
-        const taskId = curTask.getAttribute('data-id'); // assuming each task has a data-id attribute
+        const taskId = curTask.getAttribute('data-task-id'); // assuming each task has a data-id attribute
+        const barId = zone.getAttribute('data-bar-id');
         const newState = zone.id; // this function should return the new state based on the zone
 
+
         // Post the changes to the server
-        fetch('/project/updateTaskSwimlane?taskId=' + taskId + '&newSwimlane=' + newState, {
+        fetch('/project/updateTaskSwimlane?taskId=' + taskId + '&newSwimlane=' + newState + "&barId=" + barId, {
             method: 'PATCH'
         })
             .then(function(response) {

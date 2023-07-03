@@ -1,12 +1,7 @@
 package COMP390.PlanMe.Controllers;
 
-import COMP390.PlanMe.dao.ProjectDAO;
-import COMP390.PlanMe.dao.TaskDAO;
-import COMP390.PlanMe.dao.UserDAO;
-import COMP390.PlanMe.entity.Project;
-import COMP390.PlanMe.entity.User;
-import COMP390.PlanMe.entity.Task;
-import COMP390.PlanMe.entity.TaskState;
+import COMP390.PlanMe.dao.*;
+import COMP390.PlanMe.entity.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,12 +21,14 @@ public class ProjectController {
     private ProjectDAO projectDAO;
     private UserDAO userDAO;
     private TaskDAO taskDAO;
+    private barDAO barDAO;
 
     @Autowired
-    public ProjectController(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO) {
+    public ProjectController(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, barDAO barDAO) {
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
+        this.barDAO = barDAO;
     }
     //-----------------------------------------------------PROJECT METHODS-----------------------------------------
     @GetMapping("/project/new")
@@ -56,9 +53,35 @@ public class ProjectController {
             model.addAttribute("project", project);
             return "new-project";
         }
+
         project.setName(name);
+        Bar bar1 = new Bar();
+        bar1.setName("TODO");
+        bar1.setPosition(1);
+
+        Bar bar2 = new Bar();
+        bar2.setName("IN PROGRESS");
+        bar2.setPosition(2);
+
+        Bar bar3 = new Bar();
+        bar3.setName("DONE");
+        bar3.setPosition(3);
+
+        // Set the project for each bar
+        bar1.setProject(project);
+        bar2.setProject(project);
+        bar3.setProject(project);
+
+        // Save the bars
+        barDAO.save(bar1);
+        barDAO.save(bar2);
+        barDAO.save(bar3);
+
         project.setCreator(creator);
         project.getMembers().add(creator);
+        project.getBars().add(bar1);
+        project.getBars().add(bar2);
+        project.getBars().add(bar3);
         projectDAO.save(project);
 
         // Add the project to the session
@@ -99,8 +122,28 @@ public class ProjectController {
             return "redirect:/projects";
         }
         model.addAttribute("project", project);
+        model.addAttribute("bars", project.getBars());  // This will add the list of bars to the model
         return "project-details";
     }
+
+    //----------------------------------------------BAR METHODS----------------------------------------------
+    @GetMapping("/project/addBar")
+    public ResponseEntity<Void> addBar(@RequestParam("projectId") Long projectId, @RequestParam("barName") String barName) {
+        Project project = projectDAO.getProjectById(projectId);
+        if (project != null) {
+            Bar newBar = new Bar();
+
+            newBar.setName(barName);
+            newBar.setPosition(project.getBars().size() + 1);
+            newBar.setProject(project);
+            barDAO.save(newBar);
+            project.getBars().add(newBar);
+            projectDAO.save(project);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     //---------------------------------------------------MEMBERS METHODS-----------------------------------------
     //TODO: update this method to add members to a project
 //    @PostMapping("/project/addMember")
@@ -119,24 +162,28 @@ public class ProjectController {
     public ResponseEntity<Void> addTask(@RequestParam("projectId") Long projectId, @RequestParam("taskDescription") String taskDescription, @RequestParam("taskPriority") int priority) {
         Project project = projectDAO.getProjectById(projectId);
         if (project != null) {
+            Bar todoBar = project.getBars().stream().filter(bar -> "TODO".equals(bar.getName())).findFirst().orElse(null);
+            if (todoBar == null) {
+                return ResponseEntity.notFound().build();
+            }
             Task newTask = new Task();
             newTask.setDescription(taskDescription);
-            newTask.setState(TaskState.TODO);
-            newTask.setSwimlane("TODO");
-            newTask.setProject(project);
+            newTask.setBar(todoBar);
             newTask.setPriority(priority);
-            project.getTasks().add(newTask);  // add the task to the project
-
-            taskDAO.save(newTask);  // save the task to the database
-            projectDAO.save(project);  // save the project to the database
-
-            project.getTasks().size();  // Forces Hibernate to fetch the tasks
+            newTask.setState(todoBar.getName());
+            newTask.setProject(project);
+            newTask.setPosition((long) (todoBar.getTasks().size() + 1));  // set the position
+            todoBar.getTasks().add(newTask); // add the task to the bar
+            taskDAO.save(newTask); // save the task to the database
+            barDAO.save(todoBar); // save the bar to the database
 
             return ResponseEntity.ok().build();
         }
-
         return ResponseEntity.notFound().build();
     }
+
+
+
     @PatchMapping("/project/updateTaskName")
     public ResponseEntity<Void> updateTaskName(@RequestParam("taskId") Long taskId, @RequestParam("taskDescription") String taskDescription){
         try {
@@ -160,37 +207,27 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
     @PatchMapping("/project/updateTaskSwimlane")
-    public ResponseEntity<Void> updateTaskSwimlane(@RequestParam("taskId") Long taskId, @RequestParam("newSwimlane") String newSwimlane) {
-        Optional<Task> optionalTask = taskDAO.findById(taskId);
-        if (optionalTask.isPresent()) {
-            Task task = optionalTask.get();
-
-            switch (newSwimlane) {
-                case "TODO" -> task.setState(TaskState.TODO);
-                case "IN_PROGRESS" -> task.setState(TaskState.IN_PROGRESS);
-                case "DONE" -> task.setState(TaskState.DONE);
-                case "UNRESOLVED" -> task.setState(TaskState.UNRESOLVED);
-                default -> {
-                    return ResponseEntity.badRequest().build();
-                }
-            }
-
-            taskDAO.save(task);  // save the task to the database
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> updateTaskSwimlane(@RequestParam("taskId") Long taskId, @RequestParam("newSwimlane") String newSwimlane, @RequestParam("barId") Long barId) {
+        Task task = taskDAO.getOne(taskId);
+        Bar bar = barDAO.getBarById(barId);
+        task.setBar(bar);
+        task.setState(bar.getName());
+        taskDAO.save(task);
+        return ResponseEntity.ok().build();
     }
+
     @DeleteMapping("/project/removeTask")
     public ResponseEntity<Void> removeTask(@RequestParam("taskId") Long taskId) {
-        Optional<Task> task = taskDAO.findById(taskId);
-        if (task.isPresent()) {
-            taskDAO.delete(task.get());
-            return ResponseEntity.ok().build(); // Return a 200 OK response
-        } else {
-            return ResponseEntity.notFound().build(); // Return a 404 Not Found response if the task doesn't exist
+        try {
+            Task task = taskDAO.getOne(taskId);
+            Bar bar = task.getBar();
+            bar.getTasks().remove(task);
+            barDAO.save(bar);
+            taskDAO.delete(task);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
     //Methods
@@ -198,3 +235,14 @@ public class ProjectController {
         return name == null || name.trim().isEmpty();
     }
 }
+
+//-----------------------This method removes a project from the database-----------------------
+//    @DeleteMapping("/project/removeTask")
+//    public ResponseEntity<Void> removeTask(@RequestParam("taskId") Long taskId) {
+//        Task task = taskDAO.getOne(taskId);
+//        Bar bar = task.getBar();
+//        bar.getTasks().remove(task);
+//        barDAO.save(bar);
+//        taskDAO.delete(task);
+//        return ResponseEntity.ok().build();
+//    }

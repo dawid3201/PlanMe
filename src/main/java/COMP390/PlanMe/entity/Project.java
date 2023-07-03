@@ -28,9 +28,11 @@ public class Project {
     private List<User> members = new ArrayList<>();
 
     //List of tasks related to project
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private List<Task> tasks = new ArrayList<>();
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "project")
+    private List<Task> tasks;
     //list of bars related to project
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<Bar> bars = new ArrayList<>();
 
 
     public Long getId() {
@@ -73,6 +75,11 @@ public class Project {
         this.tasks = tasks;
     }
 
-
+    public List<Bar> getBars() {
+        return bars;
+    }
+    public void setBars(List<Bar> bars) {
+        this.bars = bars;
+    }
 }
 
