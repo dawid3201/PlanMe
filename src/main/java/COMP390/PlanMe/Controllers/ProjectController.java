@@ -4,6 +4,7 @@ import COMP390.PlanMe.dao.*;
 import COMP390.PlanMe.entity.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -182,8 +183,6 @@ public class ProjectController {
         return ResponseEntity.notFound().build();
     }
 
-
-
     @PatchMapping("/project/updateTaskName")
     public ResponseEntity<Void> updateTaskName(@RequestParam("taskId") Long taskId, @RequestParam("taskDescription") String taskDescription){
         try {
@@ -217,6 +216,28 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
+    //TODO: update this method to update the priority of a task
+    //@PatchMapping("/project/updateTaskPriority")
+
+    @PatchMapping("/project/updateTaskPosition")
+    public ResponseEntity<Void> updateTaskPosition(@RequestParam("taskId") Long taskId, @RequestParam("newPosition") Long newPosition) {
+        try {
+            Task task = taskDAO.getOne(taskId);
+            Bar bar = task.getBar();
+            List<Task> tasks = bar.getTasks();
+            tasks.remove(task);
+            tasks.add(newPosition.intValue() - 1, task);
+            for (int i = 0; i < tasks.size(); i++) {
+                tasks.get(i).setPosition((long) (i + 1));
+            }
+            bar.setTasks(tasks);
+            barDAO.save(bar);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @DeleteMapping("/project/removeTask")
     public ResponseEntity<Void> removeTask(@RequestParam("taskId") Long taskId) {
         try {
@@ -235,14 +256,3 @@ public class ProjectController {
         return name == null || name.trim().isEmpty();
     }
 }
-
-//-----------------------This method removes a project from the database-----------------------
-//    @DeleteMapping("/project/removeTask")
-//    public ResponseEntity<Void> removeTask(@RequestParam("taskId") Long taskId) {
-//        Task task = taskDAO.getOne(taskId);
-//        Bar bar = task.getBar();
-//        bar.getTasks().remove(task);
-//        barDAO.save(bar);
-//        taskDAO.delete(task);
-//        return ResponseEntity.ok().build();
-//    }

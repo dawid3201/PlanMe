@@ -29,6 +29,7 @@ public class Project {
 
     //List of tasks related to project
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "project")
+    @OrderBy("position ASC")
     private List<Task> tasks;
     //list of bars related to project
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)

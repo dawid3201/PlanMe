@@ -15,35 +15,50 @@ droppables.forEach((zone) => {
     zone.addEventListener("dragover", (e) => {
         e.preventDefault();
 
-        const bottomTask = insertAboveTask(zone, e.clientY);
+        const draggableTask = insertAboveTask(zone, e.clientY);
         const curTask = document.querySelector(".is-dragging");
 
-
-        if (!bottomTask) {
+        if (!draggableTask) {
             zone.appendChild(curTask);
         } else {
-            zone.insertBefore(curTask, bottomTask);
+            zone.insertBefore(curTask, draggableTask);
         }
 
-        const taskId = curTask.getAttribute('data-task-id'); // assuming each task has a data-id attribute
+        const taskId = curTask.getAttribute('data-task-id');
+        const tasks = Array.from(zone.querySelectorAll(".task"));
+        const newPosition = tasks.indexOf(curTask) + 1; // +1 because positions start from 1
         const barId = zone.getAttribute('data-bar-id');
-        const newState = zone.id; // this function should return the new state based on the zone
+        const newState = zone.id;
 
-
-        // Post the changes to the server
-        fetch('/project/updateTaskSwimlane?taskId=' + taskId + '&newSwimlane=' + newState + "&barId=" + barId, {
+        // Post the changes to the server to update the swimlane
+        fetch(`/project/updateTaskSwimlane?taskId=${taskId}&newSwimlane=${newState}&barId=${barId}`, {
             method: 'PATCH'
         })
-            .then(function(response) {
+            .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.text();
             })
-            .then(function(text) {
+            .then(text => {
                 console.log('Request successful', text);
+
+                // Post the changes to the server to update the position
+                return fetch(`/project/updateTaskPosition?taskId=${taskId}&newPosition=${newPosition}`, {
+                    method: 'PATCH'
+                });
             })
-            .catch(function(error) {
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(text => {
+                console.log('Request successful', text);
+                location.reload(); // add this line to refresh the page
+            })
+            .catch(error => {
                 console.log('Request failed', error);
             });
     });

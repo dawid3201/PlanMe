@@ -27,6 +27,7 @@ public class Bar {
     private String swimlane;
 
     @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
+    @OrderBy("position ASC")
     private List<Task> tasks = new ArrayList<>();
 
     //Getters and Setters

@@ -8,34 +8,40 @@
   <script src="/js/drag.js" defer></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="/js/tasks.js"></script>
-<!--  <script src="/js/bars.js"></script>-->
+  <!--  <script src="/js/bars.js"></script>-->
 </head>
 <body>
 <h2>Project Details</h2>
 
-
 <div class="board">
   <div class="lanes">
-    <th:block th:each="bar : ${project.bars}">
-      <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id}">
-        <h3 class="heading" th:text="${bar.name}"></h3>
-        <div th:each="task : ${bar.project.tasks}"
-             th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
-             th:if="${task.state.toString() == bar.name}"
-             class="task" draggable="True"
-             th:attr="data-task-id=${task.id}">
-          <i class="fas fa-times delete-task" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)"></i>
-          <p th:text="${task.description}"
-             onclick="editTaskDescription(this)"
-             th:attr="data-task-id=${task.id}"></p>
+    <th:block th:each="bar, iterStat : ${project.bars}">
+      <div class="bar-container">
+        <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id}">
+          <h3 class="heading" th:text="${bar.name}"></h3>
+
+          <div th:each="task : ${bar.project.tasks}"
+               th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
+               th:if="${task.state.toString() == bar.name}"
+               class="task" draggable="True"
+               th:attr="data-task-id=${task.id}">
+            <i class="fas fa-times delete-task" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)"></i>
+            <p th:text="${task.description}"
+               onclick="editTaskDescription(this)"
+               th:attr="data-task-id=${task.id}"></p>
+          </div>
+
+          <div id="form-container" style="display:none;"></div>
+          <a th:if="${iterStat.first}" id="open-form-btn" href="#" role="button" style="text-decoration: none;">
+            <i class="fas fa-plus"></i> Add task
+          </a>
+
         </div>
-        <div id="form-container"></div>
       </div>
     </th:block>
     <button id="addBar">Add Bar</button>
     <input type="text" id="barName" placeholder="Enter Bar Name">
   </div>
-  <a id="open-form-btn" href="#" role="button">+</a>
 </div>
 
 <a th:href="@{/homepage}">Go back</a>
@@ -54,14 +60,37 @@
       <input type="submit" value="Add Task" />
     </form>
   `;
-  // Add event listener to button.
-  document.getElementById("open-form-btn").addEventListener("click", function() {
+
+  var formOpen = false;
+
+  function closeForm() {
+    document.getElementById("form-container").style.display = "none";
+    document.getElementById("open-form-btn").style.display = "block";
+    formOpen = false;
+  }
+
+  function handleClickOutsideForm(event) {
+    if (formOpen && event.target.id !== "form-container" && event.target.id !== "open-form-btn") {
+      closeForm();
+    }
+  }
+
+  document.getElementById("open-form-btn").addEventListener("click", function(event) {
+    // Prevent the default link behavior
+    event.preventDefault();
+
     // Insert form HTML into div.
     document.getElementById("form-container").innerHTML = formHTML;
+    document.getElementById("form-container").style.display = "block";
+    document.getElementById("open-form-btn").style.display = "none";
+
+    formOpen = true;
+    // Add event listener for clicking outside of form
+    document.addEventListener("click", handleClickOutsideForm);
 
     // Add event listener to form after it is added to the page.
     document.getElementById("add-task-form").addEventListener("submit", function(event) {
-      event.preventDefault(); // Prevent the default form submission behavior
+      event.preventDefault();
 
       var projectId = /*[[${project.id}]]*/ '';
       var newTaskName = document.querySelector("#new-task-name").value;
