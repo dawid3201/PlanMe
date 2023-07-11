@@ -3,6 +3,8 @@
 <head>
     <title>Homepage</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/homepage.css">
 </head>
 <html>
 <body>
@@ -13,16 +15,16 @@
         Welcome back, <span th:text="${user.firstName}">User</span> <span th:text="${user.lastName}">User</span>!
     </p>
 
-    <p th:if="${projects}">
+    <p th:if="${projects}" style="color: white">
         Your projects:
     <ul>
-        <li th:each="project : ${projects}">
-            <a th:href="@{/projects/{id}(id=${project.id})}" th:text="${project.name}">Project Name</a>
+        <li th:each="project : ${projects}" >
+            <a th:href="@{/projects/{id}(id=${project.id})}" th:text="${project.name}" style="color: white">Project Name</a>
         </li>
     </ul>
     </p>
 
-    <a th:href="@{/project/new}">Create a new project</a>
+    <a th:href="@{/project/new}" style="color: white">Create a new project</a>
     <form th:action="@{/logout}" method="post">
         <input type="submit" value="Logout">
     </form>

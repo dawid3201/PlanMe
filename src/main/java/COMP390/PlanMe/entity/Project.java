@@ -1,5 +1,6 @@
 package COMP390.PlanMe.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class Project {
     @OrderBy("position ASC")
     private List<Task> tasks;
     //list of bars related to project
+    @JsonManagedReference
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Bar> bars = new ArrayList<>();
 

@@ -4,6 +4,7 @@ import COMP390.PlanMe.dao.*;
 import COMP390.PlanMe.entity.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -129,17 +130,32 @@ public class ProjectController {
 
     //----------------------------------------------BAR METHODS----------------------------------------------
     @GetMapping("/project/addBar")
-    public ResponseEntity<Void> addBar(@RequestParam("projectId") Long projectId, @RequestParam("barName") String barName) {
+    public ResponseEntity<Bar> addBar(@RequestParam("projectId") Long projectId, @RequestParam("barName") String barName) {
         Project project = projectDAO.getProjectById(projectId);
         if (project != null) {
             Bar newBar = new Bar();
-
             newBar.setName(barName);
-            newBar.setPosition(project.getBars().size() + 1);
+            Integer maxPosition = barDAO.getMaxPositionByProject(project);
+            newBar.setPosition(maxPosition != null ? maxPosition + 1 : 1);
             newBar.setProject(project);
             barDAO.save(newBar);
             project.getBars().add(newBar);
             projectDAO.save(project);
+            return ResponseEntity.ok(newBar);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping ("/project/deleteBar")
+    public ResponseEntity<Void> deleteBar(@RequestParam("barId") Long barId) {
+        Bar bar = barDAO.getBarById(barId);
+        if (bar != null) {
+            List<Bar> barsToUpdate = barDAO.getBarsByProjectAndPositionGreaterThan(bar.getProject(), bar.getPosition()); // get all bars with higher position
+            for(Bar barToUpdate : barsToUpdate){
+                barToUpdate.setPosition(barToUpdate.getPosition()-1);
+                barDAO.save(barToUpdate);
+            }
+            barDAO.delete(bar);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
@@ -163,7 +179,8 @@ public class ProjectController {
     public ResponseEntity<Void> addTask(@RequestParam("projectId") Long projectId, @RequestParam("taskDescription") String taskDescription, @RequestParam("taskPriority") int priority) {
         Project project = projectDAO.getProjectById(projectId);
         if (project != null) {
-            Bar todoBar = project.getBars().stream().filter(bar -> "TODO".equals(bar.getName())).findFirst().orElse(null);
+            //TODO-------------------------------------------------Instead of using name "TODO" use the position of the bar to put addTask form there-----------------------------------------------
+            Bar todoBar = project.getBars().stream().filter(bar -> bar.getPosition() == 1).findFirst().orElse(null);
             if (todoBar == null) {
                 return ResponseEntity.notFound().build();
             }

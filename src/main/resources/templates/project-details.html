@@ -5,149 +5,71 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="/css/styles.css">
-  <script src="/js/drag.js" defer></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="/js/tasks.js"></script>
-  <!--  <script src="/js/bars.js"></script>-->
+  <script src="/js/drag.js" defer></script>
+  <script src="/js/tasks.js" defer></script>
+  <script src="/js/bar.js" defer></script>
+  <script src="/js/projectPage.js" defer></script>
 </head>
 <body>
-<h2>Project Details</h2>
+<button id="toggle-sidebar">Toggle Sidebar</button>
 
-<div class="board">
-  <div class="lanes">
-    <th:block th:each="bar, iterStat : ${project.bars}">
-      <div class="bar-container">
-        <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id}">
-          <h3 class="heading" th:text="${bar.name}"></h3>
+<div id="sidebar">
+    <ul>
+        <li><a href="/homepage">Homepage</a></li>
+        <li><a href="/project/new">Create a new project</a></li>
 
-          <div th:each="task : ${bar.project.tasks}"
-               th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
-               th:if="${task.state.toString() == bar.name}"
-               class="task" draggable="True"
-               th:attr="data-task-id=${task.id}">
-            <i class="fas fa-times delete-task" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)"></i>
-            <p th:text="${task.description}"
-               onclick="editTaskDescription(this)"
-               th:attr="data-task-id=${task.id}"></p>
-          </div>
-
-          <div id="form-container" style="display:none;"></div>
-          <a th:if="${iterStat.first}" id="open-form-btn" href="#" role="button" style="text-decoration: none;">
-            <i class="fas fa-plus"></i> Add task
-          </a>
-
-        </div>
-      </div>
-    </th:block>
-    <button id="addBar">Add Bar</button>
-    <input type="text" id="barName" placeholder="Enter Bar Name">
-  </div>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
 </div>
 
-<a th:href="@{/homepage}">Go back</a>
+<div id="main-content">
+  <div>
+    <h2 th:text="${project.name}"></h2>
+  </div>
+  <input type="hidden" id="projectId" th:value="${project.id}"/>
 
-<script th:inline="javascript">
-  // Form HTML as string.
-  var formHTML = `
-    <form id="add-task-form">
-      <input type="text" id="new-task-name" placeholder="Enter task name here" /><br>
-      <label for="priority1">1</label>
-      <input type="radio" id="priority1" name="priority" value="1" />
-      <label for="priority2">2</label>
-      <input type="radio" id="priority2" name="priority" value="2" />
-      <label for="priority3">3</label>
-      <input type="radio" id="priority3" name="priority" value="3" />
-      <input type="submit" value="Add Task" />
-    </form>
-  `;
+  <div class="board">
+    <div class="lanes">
+      <th:block th:each="bar, iterStat : ${project.bars}">
+        <div class="bar-container">
+          <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id}">
+            <div class="bar-header">
+              <h3 class="heading" th:text="${bar.name}"></h3>
+              <i class="fas fa-times delete-bar" th:attr="data-bar-id=${bar.id}" onclick="deleteBar(this)"></i>
+            </div>
+            <div th:each="task : ${bar.project.tasks}"
+                 th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
+                 th:if="${task.state.toString() == bar.name}"
+                 class="task" draggable="True"
+                 th:attr="data-task-id=${task.id}">
+              <i class="fas fa-times delete-task" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)"></i>
+              <p th:text="${task.description}"
+                 onclick="editTaskDescription(this)"
+                 th:attr="data-task-id=${task.id}"></p>
+            </div>
 
-  var formOpen = false;
+            <div id="form-container" style="display:none;"></div>
+            <a th:if="${iterStat.first}" id="open-form-btn" href="#" role="button" style="text-decoration: none;">
+              <i class="fas fa-plus"></i> Add task
+            </a>
+          </div>
+        </div>
+      </th:block>
+      <div id="add-bar-form-container" style="display:none;">
+        <form id="add-bar-form">
+          <input type="text" id="new-bar-name" placeholder="Enter bar name here" /><br>
+          <input type="submit" value="Add Bar" />
+        </form>
+      </div>
+      <a id="open-bar-form-btn" href="#" role="button" style="text-decoration: none; color: white;">
+        <i class="fas fa-plus fa-lg"></i><span style="opacity: 0;">.</span>
+      </a>
+    </div>
+  </div>
 
-  function closeForm() {
-    document.getElementById("form-container").style.display = "none";
-    document.getElementById("open-form-btn").style.display = "block";
-    formOpen = false;
-  }
+</div>
 
-  function handleClickOutsideForm(event) {
-    if (formOpen && event.target.id !== "form-container" && event.target.id !== "open-form-btn") {
-      closeForm();
-    }
-  }
-
-  document.getElementById("open-form-btn").addEventListener("click", function(event) {
-    // Prevent the default link behavior
-    event.preventDefault();
-
-    // Insert form HTML into div.
-    document.getElementById("form-container").innerHTML = formHTML;
-    document.getElementById("form-container").style.display = "block";
-    document.getElementById("open-form-btn").style.display = "none";
-
-    formOpen = true;
-    // Add event listener for clicking outside of form
-    document.addEventListener("click", handleClickOutsideForm);
-
-    // Add event listener to form after it is added to the page.
-    document.getElementById("add-task-form").addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      var projectId = /*[[${project.id}]]*/ '';
-      var newTaskName = document.querySelector("#new-task-name").value;
-      var newPriority = document.querySelector('input[name="priority"]:checked').value;
-
-      fetch('/project/addTask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-          'projectId': projectId,
-          'taskDescription': newTaskName,
-          'taskPriority' : newPriority
-        })
-      })
-              .then(function(response) {
-                if (!response.ok) {
-                  throw new Error('Network response was not ok');
-                }
-                return response.text();
-              })
-              .then(function(text) {
-                console.log('Request successful', text);
-                location.reload(); // reload the page to see the new task
-              })
-              .catch(function(error) {
-                console.log('Request failed', error);
-              });
-    });
-  });
-  $(document).ready(function(){
-    $("#addBar").click(function(){
-      var projectId = /*[[${project.id}]]*/ '';
-      var barName = $("#barName").val();
-
-      $.ajax({
-        url: "/project/addBar",
-        type: "GET",
-        data: { projectId: projectId, barName: barName },
-        success: function(response) {
-          // Assuming 'response' contains the new bar
-          alert("Bar Added Successfully");
-
-          // Create new bar element. This would depend on how you want to display the bar
-          var newBarElement = '<div class="bar">' + response.name + '</div>';
-
-          // Append new bar to your bars container
-          $('#barsContainer').append(newBarElement);
-        },
-        error: function(response) {
-          alert("Failed to add bar");
-        }
-      });
-    });
-  });
-</script>
 </body>
 </html>
 
