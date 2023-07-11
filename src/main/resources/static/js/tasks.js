@@ -1,4 +1,94 @@
+var formHTML = `
+    <form id="add-task-form">
+      <input type="text" id="new-task-name" placeholder="Enter task name here" /><br>
+      <label for="priority1">1</label>
+      <input type="radio" id="priority1" name="priority" value="1" />
+      <label for="priority2">2</label>
+      <input type="radio" id="priority2" name="priority" value="2" />
+      <label for="priority3">3</label>
+      <input type="radio" id="priority3" name="priority" value="3" />
+      <input type="submit" value="Add Task" />
+    </form>
+  `;
 
+var formOpen = false;
+
+// Get all task elements
+var tasks = document.querySelectorAll('.task');
+
+// Add event listeners for the drag start and end events
+tasks.forEach(function(task) {
+    task.addEventListener('dragstart', function() {
+        this.classList.add('is-dragging');
+    });
+
+    task.addEventListener('dragend', function() {
+        this.classList.remove('is-dragging');
+    });
+});
+function closeForm() {
+    document.getElementById("form-container").style.display = "none";
+    document.getElementById("open-form-btn").style.display = "block";
+    formOpen = false;
+    document.removeEventListener("click", handleClickOutsideForm);
+}
+
+function handleClickOutsideForm(event) {
+    var formContainer = document.getElementById("form-container");
+    var isClickInsideForm = formContainer.contains(event.target);
+
+    if (formOpen && !isClickInsideForm && event.target.id !== "open-form-btn") {
+        closeForm();
+    }
+}
+
+document.getElementById("open-form-btn").addEventListener("click", function(event) {
+    // Prevent the default link behavior
+    event.preventDefault();
+
+    // Insert form HTML into div.
+    document.getElementById("form-container").innerHTML = formHTML;
+    document.getElementById("form-container").style.display = "block";
+    document.getElementById("open-form-btn").style.display = "none";
+
+    formOpen = true;
+    // Add event listener for clicking outside of form
+    document.addEventListener("click", handleClickOutsideForm);
+
+    // Add event listener to form after it is added to the page.
+    document.getElementById("add-task-form").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        var projectId = document.getElementById('projectId').value;
+        var newTaskName = document.querySelector("#new-task-name").value;
+        var newPriority = document.querySelector('input[name="priority"]:checked').value;
+
+        fetch('/project/addTask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                'projectId': projectId,
+                'taskDescription': newTaskName,
+                'taskPriority' : newPriority
+            })
+        })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function(text) {
+                console.log('Request successful', text);
+                location.reload(); // reload the page to see the new task
+            })
+            .catch(function(error) {
+                console.log('Request failed', error);
+            });
+    });
+});
 function editTaskDescription(element) {
     var text = element.textContent;
     var id = element.getAttribute('data-task-id');
@@ -47,3 +137,6 @@ function deleteTask(element) {
             console.log('Request failed', error);
         });
 }
+
+
+

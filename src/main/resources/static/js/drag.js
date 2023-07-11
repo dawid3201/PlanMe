@@ -1,5 +1,5 @@
-const draggables = document.querySelectorAll(".task");
-const droppables = document.querySelectorAll(".swim-lane");
+let draggables = document.querySelectorAll(".task");
+let droppables = document.querySelectorAll(".swim-lane");
 
 draggables.forEach((task) => {
     task.addEventListener("dragstart", () => {
@@ -56,7 +56,6 @@ droppables.forEach((zone) => {
             })
             .then(text => {
                 console.log('Request successful', text);
-                location.reload(); // add this line to refresh the page
             })
             .catch(error => {
                 console.log('Request failed', error);
@@ -82,6 +81,39 @@ const insertAboveTask = (zone, mouseY) => {
     });
     return closestTask;
 };
+function initializeDragAndDrop() {
+    // Select all draggable and droppable elements.
+    draggables = document.querySelectorAll(".task");
+    droppables = document.querySelectorAll(".swim-lane");
+
+    draggables.forEach((task) => {
+        // Clone the node to remove old event listeners
+        const newTaskNode = task.cloneNode(true);
+        task.parentNode.replaceChild(newTaskNode, task);
+
+        newTaskNode.addEventListener("dragstart", () => {
+            newTaskNode.classList.add("is-dragging");
+        });
+
+        newTaskNode.addEventListener("dragend", () => {
+            newTaskNode.classList.remove("is-dragging");
+        });
+    });
+
+    droppables.forEach((zone) => {
+        // Clone the node to remove old event listeners
+        const newZoneNode = zone.cloneNode(true);
+        zone.parentNode.replaceChild(newZoneNode, zone);
+
+        newZoneNode.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            /* Rest of your dragover event code */
+        });
+    });
+}
+
+
+
 
 
 

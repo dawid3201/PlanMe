@@ -4,6 +4,7 @@ import COMP390.PlanMe.dao.HomepageDAO;
 import COMP390.PlanMe.dao.UserDAO;
 import COMP390.PlanMe.entity.Homepage;
 import COMP390.PlanMe.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,7 +21,7 @@ public class SigninController {
     private UserDAO userDAO;
 
     private HomepageDAO homepageDAO;
-
+    @Autowired
     public SigninController(UserDAO userDAO, HomepageDAO homepageDAO){
         this.userDAO = userDAO;
         this.homepageDAO = homepageDAO;

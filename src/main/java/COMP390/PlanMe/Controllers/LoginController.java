@@ -20,12 +20,12 @@ import java.util.List;
 public class LoginController {
     private UserDAO userDAO;
     private HomepageDAO homepageDAO;
-    @Autowired
     private ProjectDAO projectDAO;
     @Autowired
-    public LoginController(UserDAO userDAO, HomepageDAO homepageDAO) {
+    public LoginController(UserDAO userDAO, HomepageDAO homepageDAO, ProjectDAO projectDAO) {
         this.userDAO = userDAO;
         this.homepageDAO = homepageDAO;
+        this.projectDAO = projectDAO;
     }
 
     @GetMapping("/login")
@@ -73,5 +73,4 @@ public class LoginController {
         session.invalidate();
         return "redirect:/login";
     }
-    //TODO: check if password matches
 }
