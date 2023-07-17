@@ -1,15 +1,20 @@
 var formHTML = `
     <form id="add-task-form">
-      <input type="text" id="new-task-name" placeholder="Enter task name here" /><br>
-      <label for="priority1">1</label>
-      <input type="radio" id="priority1" name="priority" value="1" />
-      <label for="priority2">2</label>
-      <input type="radio" id="priority2" name="priority" value="2" />
-      <label for="priority3">3</label>
-      <input type="radio" id="priority3" name="priority" value="3" />
-      <input type="submit" value="Add Task" />
-    </form>
+    <input type="text" id="new-task-name" placeholder="Issue name" />
+    <div id="priority-section">
+        <label for="priority"></label>
+        <select id="task-priority" name="priority">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <button type="submit" class="submit-task-btn"><i class="fas fa-check"></i></button>
+    </div>
+
+   
+</form>
   `;
+
 
 var formOpen = false;
 
@@ -61,7 +66,8 @@ document.getElementById("open-form-btn").addEventListener("click", function(even
 
         var projectId = document.getElementById('projectId').value;
         var newTaskName = document.querySelector("#new-task-name").value;
-        var newPriority = document.querySelector('input[name="priority"]:checked').value;
+        var newPriority = document.querySelector('#task-priority').value;
+
 
         fetch('/project/addTask', {
             method: 'POST',
@@ -94,9 +100,9 @@ function editTaskDescription(element) {
     var id = element.getAttribute('data-task-id');
 
     // change paragraph to an editable input field
-    element.outerHTML = `<input type="text" id="input-${id}" value="${text}" onblur="updateTaskDescription(this)" onkeydown="handleKeydown(event, this)">`;
+    element.outerHTML = `<input type="text" id="input-${id}" value="${text}" onblur="updateTaskName(this)" onkeydown="handleKeydown(event, this)">`;
 }
-function updateTaskDescription(element) {
+function updateTaskName(element) {
     var newDescription = element.value; // this is the new task name
     var id = element.id.split('-')[1];
 
@@ -119,7 +125,7 @@ function handleKeydown(event, element) {
     if (event.keyCode === 13) {
         // prevent the default action, update the task description, and blur the input field
         event.preventDefault();
-        updateTaskDescription(element);
+        updateTaskName(element);
         element.blur();
     }
 }
@@ -137,6 +143,58 @@ function deleteTask(element) {
             console.log('Request failed', error);
         });
 }
+// This function sends a PATCH request to the server to update the task's priority
+function updateTaskPriority(dropdown) {
+    var taskId = dropdown.getAttribute('data-task-id');
+    var newPriority = dropdown.value;
+
+    fetch(`/project/updateTaskPriority?taskId=${taskId}&newTaskPriority=${newPriority}`, {
+        method: 'PATCH',
+    })
+        .then((response) => {
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            // Update the task priority in the HTML and remove the dropdown
+            dropdown.previousSibling.textContent = newPriority;
+            dropdown.remove();
+        })
+        .catch((error) => {
+            console.log('Request failed', error);
+        });
+}
+// Event listener to remove the popup when clicked anywhere outside it
+document.addEventListener('click', function(e) {
+    let popup = document.querySelector('.priority-selector');
+    if (popup) {
+        popup.remove();
+    }
+});
+// This function creates the priority selector popup
+function createPriorityDropdown(element) {
+    // Check if a dropdown already exists
+    if (document.getElementById('priority-dropdown')) return;
+
+    var taskId = element.getAttribute('data-task-id');
 
 
+    // Create a dropdown
+    var dropdown = document.createElement('select');
+    dropdown.id = 'priority-dropdown';
+    dropdown.setAttribute('data-task-id', taskId);
 
+    // Create options for the dropdown
+    for (var i = 0; i <= 3; i++) {
+        var option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        dropdown.appendChild(option);
+    }
+
+    // Add an event listener to the dropdown
+    dropdown.addEventListener('change', function() {
+        updateTaskPriority(this);
+    });
+
+    // Add the dropdown to the DOM
+    element.parentNode.insertBefore(dropdown, element.nextSibling);
+}

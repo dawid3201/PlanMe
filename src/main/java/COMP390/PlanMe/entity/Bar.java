@@ -1,6 +1,9 @@
 package COMP390.PlanMe.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -8,6 +11,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "Bars")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Bar {
 
     @Id
@@ -28,6 +34,7 @@ public class Bar {
     @Column(name = "swimlane")
     private String swimlane;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
     @OrderBy("position ASC")
     private List<Task> tasks = new ArrayList<>();

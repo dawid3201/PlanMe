@@ -1,7 +1,7 @@
 var barFormHTML = `
     <form id="add-bar-form">
-      <input type="text" id="new-bar-name" placeholder="Enter bar name here" /><br>
-      <input type="submit" value="Add Bar" />
+      <input type="text" id="new-bar-name" placeholder="Add Card" /><br>
+      <button type="submit" class="tick-button"><i class="fas fa-check"></i></button>
     </form>
   `;
 
@@ -73,3 +73,42 @@ document.getElementById("open-bar-form-btn").addEventListener("click", function(
         });
     });
 });
+function editBarDescription(element) {
+    var text = element.firstElementChild.textContent;
+    var id = element.getAttribute('data-bar-id');
+
+    // change h3 to an editable input field
+    element.innerHTML = `<input type="text" id="input-${id}" value="${text}" onblur="updateBarName(this)" onkeydown="handleKeydownBar(event, this)" onclick="event.stopPropagation()">`;
+
+    // Immediately focus the input field to prevent needing another click
+    document.getElementById(`input-${id}`).focus();
+}
+
+
+function updateBarName(element) {
+    var newDescription = element.value;
+    var id = element.id.split('-')[1];
+
+    fetch('/project/updateBarName', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            'barId': id,
+            'barName': newDescription,
+        })
+    })
+
+    // change back to a h3
+    var parentElement = element.parentElement;
+    parentElement.innerHTML = `<h3 onclick="editBarDescription(this.parentElement)" data-bar-id="${id}">${newDescription}</h3>`;
+}
+
+function handleKeydownBar(event, element) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        updateBarName(element);
+        element.blur();
+    }
+}
