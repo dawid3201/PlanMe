@@ -1,3 +1,4 @@
+/* ---- RESET/BASIC STYLING ---- */
 * {
     padding: 0;
     margin: 0;
@@ -6,174 +7,33 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
+
 *::-webkit-scrollbar {
     display: none;
 }
 
-html, body {
+body {
     font-family: 'Poppins', sans-serif;
-    height: 100%;
-}
-/***************************************************LEFT DIV IS HERE***************************************************/
-#left-sidebar {
-    width: 200px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #f4f4f4;
-    overflow-y: auto;
-    border-radius: 0 10px 10px 0;
-}
-#user-name {
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: center;
+    min-height: 100vh;
+    /*background: linear-gradient(to right, #35339a, #ff00cc);*/
 }
 
-#member_list_container {
-    margin-top: 20px;
-    border: 1px black;
-}
-
-#toggleMembers {
-    cursor: pointer;
-    color: #007bff;
-    font-weight: bold;
-}
-
-#toggleMembers:hover {
-    text-decoration: underline;
-}
-
-#membersList {
-    margin-top: 10px;
-    padding: 10px;
-}
-#members_list_p {
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-#add-member-form {
-    margin-top: 20px;
-    text-align: center;
-}
-
-#add-member-form input[type="text"] {
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 10px;
-}
-
-#add-member-form button[type="submit"] {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    justify-content: center;
-}
-
-#add-member-form button[type="submit"]:hover {
-    background-color: #0056b3;
-}
-.hidden {
-    display: none;
-}
-#delete-project-button {
-    font-size: 20px;
-    padding: 17px 25px; /* Increase padding for a bigger button */
-    background-color: #ff0000; /* Change the background color */
-    color: white;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    display: flex;
-    gap: 100px;
-    box-sizing: border-box;
-    margin-top: auto;
-}
-#delete-project-button:hover {
-    background-color: #cc0000; /* Hover color */
-}
-
-#myTasksContainer{
-    margin-top: 10px;
-    padding: 10px;
-}
-#seeAssignTasks{
-    cursor: pointer;
-    color: #007bff;
-    font-weight: bold;
-}
-#seeAssignTasks:hover{
-    text-decoration: underline;
-}
-#new-member-email {
-    /* Remove default border */
-    border: none;
-    /* Remove background and outline */
-    background: none;
-    outline: none;
-}
-
-#new-member-email:focus {
-    /* Change the border color when input is focused */
-    border-bottom: 2px solid #2f2ee9; /* You can change the color to your preferred focus color */
-}
-
-/**********************************PROJECT HEADER AND BOARD************************************************************/
-#header,
-.board {
-    margin-left: 210px;  /* Moves Header and board to the right so left bar is separated */
-}
-#search-form-container{
-    margin-left: 210px;
-}
-#user-name{
-    font-size: 29px;
-}
-/****************MAIN CONTENT IS HERE*****************/
-#main-content {
-    background-color: #191970;
-    display: flex;
-    flex-direction: column;
-    /*overflow: hidden;*/
-    margin-left: 0;
-    height: 100%;
-}
-.board {
-    flex-grow: 1;
-    overflow: auto;  /* To allow scrolling if content inside gets too big */
-}
 /* ---- HEADER ---- */
+#main-content {
+    background-color: indigo;
+    transition: margin-left 0.3s; /* Choose the duration you prefer */
+    margin-left: 0; /* Hide the sidebar by default */
+}
+
 #header {
-    background-color: black; /* color i used before #35339a*/
-    flex-shrink: 0; /* Prevents shrinking */
-    border-radius: 10px 0 10px 0;
+    background-color: #35339a;
 }
-.delete-project{
-    cursor: pointer;
-}
-.delete-project:hover{
-    color: red;
-}
-#header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 32px;
-    height: 50px;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-}
+
 /* ---- FORM ---- */
 #todo-form {
     padding: 32px 32px 0;
 }
+
 #todo-form input {
     padding: 12px;
     margin-right: 12px;
@@ -185,17 +45,19 @@ html, body {
     font-size: 14px;
     outline: none;
 }
+
 #todo-form button {
     padding: 12px 32px;
     border-radius: 4px;
     border: none;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-    background: white;
+    background: #ffffff;
     color: black;
     font-weight: bold;
     font-size: 14px;
     cursor: pointer;
 }
+
 /***************** BOARD *****************/
 .lanes {
     display: flex;
@@ -206,12 +68,24 @@ html, body {
     overflow: scroll;
     height: 100%;
 }
+
 .heading {
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
+}
+#header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
 }
 
 .swim-lane {
@@ -227,7 +101,8 @@ html, body {
     min-height: 150px;
     flex-shrink: 0;
 }
-/*********************** TASK CONTENT ***********************/
+
+/***************** HERE IS TASK CONTENT *****************/
 .task {
     background: white;
     color: black;
@@ -237,42 +112,8 @@ html, body {
     border-radius: 4px;
     font-size: 16px;
     cursor: grab;
-    min-height: 100px;
-    word-wrap: break-word;
-    justify-content: space-between;
-    align-items: start;
+    height: 60px;
 }
-.task-placeholder {
-    border: 2px dashed #ccc;
-    height: 50px;  /* or adjust based on your task height */
-    margin: 5px;
-}
-/* Styles for the input when editing task description */
-input[id^="input-"] {
-    background-color: #f6f6f6;
-    border: 1px solid #dcdcdc;
-    border-radius: 3px;
-    padding: 5px;
-    box-sizing: border-box;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    /* By setting a max-width, you prevent it from growing too large. Adjust as needed. */
-    max-width: 90%;
-    /* This makes it grow with content */
-    width: auto !important;
-    /* Minimum width */
-    min-width: 50px;
-}
-.task:active {
-    cursor: grabbing;
-}
-
-.task p {
-    flex-shrink: 1; /* Allow the element to shrink if necessary */
-    word-wrap: break-word; /* Wrap the words as they reach the edge of the container */
-    margin-right: 10px; /* Add a margin to the right of the text */
-}
-
 #add-task-form {
     width: 95%;
     display: flex;
@@ -308,20 +149,22 @@ input[id^="input-"] {
     padding: 5px;
     font-size: 14px; /* adjust this as needed */
 }
+
 #task-priority {
     width: 60px;
     font-size: 10px;
 }
 
 .tick-button {
-    align-self: end;
+    align-self: end; /* to align the button to the right */
     padding: 5px 10px;
-    font-size: 14px;
+    font-size: 14px; /* adjust this as needed */
 }
+
 #task-priority {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    -webkit-appearance: none; /* to remove the default styling of select in WebKit browsers */
+    -moz-appearance: none; /* to remove the default styling of select in Firefox */
+    appearance: none; /* modern way to remove the default styling of select */
     padding: 0;
     margin: 0;
     border: none;
@@ -332,45 +175,53 @@ input[id^="input-"] {
     cursor: pointer;
 }
 
-#task-priority::-ms-expand {
+#task-priority::-ms-expand { /* to remove the default arrow of select in IE */
     display: none;
 }
+
 /* Add custom arrow */
 #task-priority::after {
     content: "▼";
     position: absolute;
     top: 0;
     right: 0;
-    pointer-events: none;
+    pointer-events: none; /* to prevent the arrow element from interfering with the click event on select */
 }
-.priority-label {
-    border: none;
-    border-radius: 5px;
-    padding: 2px 5px;
-    display: inline-block;
+
+
+.is-dragging {
+    scale: 1.05;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+    background: rgb(50, 50, 50);
+    color: white;
+    cursor: grabbing;
 }
-.priority-label.priority-one {
-    color: snow;
+
+.priority-one {
+    border: 1px solid white;
+    background-color: white;
+}
+
+.priority-two {
+    border: 1px solid green;
     background-color: green;
 }
-.priority-label.priority-two {
-    color: snow;
-    background-color: darkorange;
-}
-.priority-label.priority-three {
-    color: snow;
+
+.priority-three {
+    border: 1px solid red;
     background-color: red;
 }
+
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 .modal-content {
@@ -381,29 +232,18 @@ input[id^="input-"] {
     width: 30%; /* Could be more or less, depending on screen size */
 }
 
-.open-form-btn {
+#open-form-btn {
     position: absolute;
     bottom: 0;
     margin-bottom: 10px;
-    color: black;
-    text-decoration: none;
+    color: #333333;
     font-weight: bold;
 }
-.form-container {
-    background: white;
-    color: black;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
-    padding: 12px;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    min-height: 100px;
-    z-index: 10;
-    word-wrap: break-word;
-    justify-content: space-between;
-    align-items: start;
-    width: 90%;
-    margin: 10px auto;
+
+#form-container {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 10px;
 }
 
 .fas.fa-plus {
@@ -413,7 +253,7 @@ input[id^="input-"] {
 .task-priority {
     position: absolute;
     top: 33px;
-    right: 1px;
+    right: 10px;
     cursor: pointer;
     color: #333; /* Change color according to your design */
 }
@@ -443,151 +283,26 @@ input[id^="input-"] {
 .dropdown p:hover {
     background-color: #f0f0f0;
 }
-/*----Tasks description window-----*/
-#taskDescriptionOverlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.8);
-    z-index: 999;
-}
 
-#taskDescriptionBox {
-    position: absolute;
-    top: 15%;
-    left: 15%;
-    width: 70%;
-    max-height: 70%;  /* Set a maximum height */
-    background-color: #FFF;
-    padding: 30px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;  /* Hide any content that exceeds the boundaries */
-    margin: 20px;
-    box-sizing: border-box;
-    border-radius: 5px;
-}
-
-#taskDescriptionBox textarea {
-    width: 100%;
-    max-height: 80%;  /* Set a maximum height */
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    resize: vertical;
-    overflow: auto;
-}
-
-.additional-content {
-    min-height: 50px;  /* or whatever height you deem appropriate */
-    cursor: pointer;  /* Indicates clickable area */
-}
-.saveDescBtn {
-    background: #339DFF;
-    color: #fff;
-    text-decoration: none;
-    font-size: 12px;
-    width: 100px;
-    text-align: center;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 5px;
-    border: none;
-    transition: all 0.3s;
-}
-.saveDescBtn:hover{
-    cursor: pointer;
-    color: black;
-}
-.closeDescBtn{
-    text-decoration: none;
-    border-radius: 5px;
-    padding: 10px;
-    text-align: center;
-    width: 100px;
-    font-size: 12px;
-    background: white;
-    transition: all 0.3s;
-    border: none;
-}
-.closeDescBtn:hover{
-    background: lightgrey;
-    cursor: pointer;
-}
-.user-dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.user-dropdown-content {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #f9f9f9;
-    min-width: 150px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    border: 1px solid #ccc;
-    z-index: 2 !important;
-}
-.user-dropdown-content a {
-    color: black;
-    padding: 8px 12px;
-    text-decoration: none;
-    display: block;
-}
-
-.user-dropdown-content a:hover {
-    background-color: #f1f1f1;
-}
-.fa-user{
-    cursor: pointer;
-}
-.task-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Align items to the right */
-    justify-content: flex-start;
-    z-index: 4;
-}
-
-.right-side-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Align items to the right */
-}
-/******************************************* TOOLTIP CSS **************************************************************/
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-}
-
-/* Tooltip text */
-.tooltip .tooltip-text {
-    visibility: hidden;
-    width: 120px;
+/****************EXTENDED DIV IS HERE*****************/
+#main-content {
     background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-    top: 100%;
-    left: 50%;
-    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
-
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    transform: translateX(0); /* Hide the sidebar by default */
+    margin-left: 0;
+    transition: margin-left 0.5s; /* For a smooth transition */
 }
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltip-text {
-    visibility: visible;
+/***************** HERE IS BAR CONTENT*****************/
+#add-bar-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: start;
+    gap: 16px;
 }
-/*********************** BAR CONTENT ***********************/
 
 #new-bar-name {
     padding: 12px;
@@ -602,125 +317,29 @@ input[id^="input-"] {
 }
 
 #add-bar-form {
-    position: absolute;
-    width: 225px;
+    position: relative;
+    width: 225px; /* assuming this is the desired width */
 }
 
 .tick-button {
     position: absolute;
     left: 0;
-    bottom: -35px;
+    bottom: -35px; /* adjust based on button size */
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1.5em;
-    color: #4CAF50;
-}
-.bar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: grab;
-    position: relative;
+    font-size: 1.5em; /* adjust as needed */
+    color: #4CAF50; /* change as per your needs */
 }
 
-.bar-header:active {
-     cursor: grabbing !important;
- }
+.bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
 .delete-bar {
     cursor: pointer;
-    color: #333;
-}
-.bar-container {
-    margin: 0;
-}
-/*********************** SEARCH TASK FEATURE ***********************/
-/* Copied from uiverse.io, made by @satyamchaudharydev */
-/* removing default style of button */
-
-.form button {
-    border: none;
-    background: none;
-    color: #8b8ba7;
-}
-/* styling of whole input container */
-.form {
-    margin-top: 10px;
-    margin-left: 240px;
-    --timing: 0.3s;
-    --width-of-input: 200px;
-    --height-of-input: 40px;
-    --border-height: 2px;
-    --input-bg: #fff;
-    --border-color: #2f2ee9;
-    --border-radius: 30px;
-    --after-border-radius: 1px;
-    position: relative;
-    width: var(--width-of-input);
-    height: var(--height-of-input);
-    display: flex;
-    align-items: center;
-    padding-inline: 0.8em;
-    border-radius: var(--border-radius);
-    transition: border-radius 0.5s ease;
-    background: var(--input-bg,#fff);
-}
-/* styling of Input */
-.input {
-    font-size: 0.9rem;
-    background-color: transparent;
-    width: 100%;
-    height: 100%;
-    padding-inline: 0.5em;
-    padding-block: 0.7em;
-    border: none;
-}
-/* styling of animated border */
-.form:before {
-    content: "";
-    position: absolute;
-    background: var(--border-color);
-    transform: scaleX(0);
-    transform-origin: center;
-    width: 100%;
-    height: var(--border-height);
-    left: 0;
-    bottom: 0;
-    border-radius: 1px;
-    transition: transform var(--timing) ease;
-}
-/* Hover on Input */
-.form:focus-within {
-    border-radius: var(--after-border-radius);
+    color: #333; /* Change color according to your design */
 }
 
-input:focus {
-    outline: none;
-}
-/* here is code of animated border */
-.form:focus-within:before {
-    transform: scale(1);
-}
-/* styling of close button */
-/* == you can click the close button to remove text == */
-.reset {
-    border: none;
-    background: none;
-    opacity: 0;
-    visibility: hidden;
-}
-/* close button shown when typing */
-input:not(:placeholder-shown) ~ .reset {
-    opacity: 1;
-    visibility: visible;
-}
-/* sizing svg icons */
-.form svg {
-    width: 17px;
-    margin-top: 3px;
-}
-#searchAndClearButtons{
-    border: none;
-    background: none;
-}

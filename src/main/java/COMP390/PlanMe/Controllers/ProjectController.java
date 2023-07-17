@@ -15,10 +15,10 @@ import java.util.List;
 
 @Controller
 public class ProjectController {
-    private final ProjectDAO projectDAO;
-    private final UserDAO userDAO;
-    private final TaskDAO taskDAO;
-    private final barDAO barDAO;
+    private ProjectDAO projectDAO;
+    private UserDAO userDAO;
+    private TaskDAO taskDAO;
+    private barDAO barDAO;
 
     @Autowired
     public ProjectController(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, barDAO barDAO) {
@@ -84,15 +84,17 @@ public class ProjectController {
 
         return "redirect:/homepage";
     }
-    @DeleteMapping("/project/deleteProject")
-    public ResponseEntity<Void> deleteBar(@RequestParam("projectId") Long projectId){
-        Project project = projectDAO.getProjectById(projectId);
-        if(project != null){
-            projectDAO.delete(project);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
+
+//    @PostMapping("/project/save")
+//    public String saveProject(@ModelAttribute Project project, HttpSession session) {
+//        User user = (User) session.getAttribute("user");
+//        if (user == null) {
+//            return "redirect:/login";
+//        }
+//        project.setCreator(user);
+//        projectDAO.save(project);
+//        return "redirect:/";
+//    }
 
     @GetMapping("/projects")
     public String viewProjects(Model model, HttpSession session) {
@@ -114,21 +116,15 @@ public class ProjectController {
         if (project == null) {
             return "redirect:/projects";
         }
-
-        // Retrieve the user details and add them to the model
-        User userDetail = userDAO.getUserByEmail(user.getEmail());
-        model.addAttribute("user", userDetail);
-
         model.addAttribute("project", project);
         model.addAttribute("bars", project.getBars());  // This will add the list of bars to the model
         return "project-details";
     }
+    //TODO: Add a method to delete a project
+    //-----------------------------------------------------Chat METHODS-----------------------------------------
 
     //Methods
     private boolean isNameEmpty(String name){
         return name == null || name.trim().isEmpty();
     }
-    //-----------------------------------------------------Chat METHODS-----------------------------------------
-
-
 }

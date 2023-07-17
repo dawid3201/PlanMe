@@ -15,8 +15,8 @@ function closeBarForm() {
 }
 
 function handleClickOutsideBarForm(event) {
-    const formContainer = document.getElementById("add-bar-form-container");
-    const isClickInsideForm = formContainer.contains(event.target);
+    var formContainer = document.getElementById("add-bar-form-container");
+    var isClickInsideForm = formContainer.contains(event.target);
 
     if (barFormOpen && !isClickInsideForm && event.target.id !== "open-bar-form-btn") {
         closeBarForm();
@@ -29,8 +29,8 @@ function deleteBar(element) {
     })
         .then((response) => {
             if (!response.ok) throw new Error('Network response was not ok');
+            // Successfully deleted from database, now remove from HTML
             element.parentElement.parentElement.remove();
-            location.reload();  //<---------------------------- RELOADING PAGE HERE
         })
         .catch((error) => {
             console.log('Request failed', error);
@@ -55,25 +55,21 @@ document.getElementById("open-bar-form-btn").addEventListener("click", function(
 
         $.ajax({
             url: "/project/addBar",
-            type: "POST",
+            type: "GET",
             data: { projectId: projectId, barName: newBarName },
             success: function(response) {
                 // Create new bar element.
                 const newBarElement = '<div class="bar-container"><div class="swim-lane" data-bar-id="' + response.id + '"><h3 class="heading">' + response.name + '</h3></div></div>';
 
-                // // Append new bar to your bars container
-                $(newBarElement).insertBefore("#add-bar-form-container");
-                location.reload(); //<---------------------------- RELOADING PAGE HERE
+                // Append new bar to your bars container
+                $('.lanes').append(newBarElement);
+
+                // Re-initialize drag and drop AFTER the new bar is added
+                initializeDragAndDrop();
+                location.reload();
+
                 closeBarForm();
             },
-            error: function(xhr, status, error) {
-                if (xhr.status === 409) { // HTTP status code for Conflict
-                    alert("There already is a bar with name: " + newBarName);
-                } else {
-                    // Handle other error cases
-                    console.error("An error occurred:", status, error);
-                }
-            }
         });
     });
 });
@@ -81,37 +77,34 @@ function editBarDescription(element) {
     var text = element.firstElementChild.textContent;
     var id = element.getAttribute('data-bar-id');
 
-    element.setAttribute('data-original-text', text);
-
     // change h3 to an editable input field
     element.innerHTML = `<input type="text" id="input-${id}" value="${text}" onblur="updateBarName(this)" onkeydown="handleKeydownBar(event, this)" onclick="event.stopPropagation()">`;
 
     // Immediately focus the input field to prevent needing another click
     document.getElementById(`input-${id}`).focus();
 }
+
+
 function updateBarName(element) {
     var newDescription = element.value;
     var id = element.id.split('-')[1];
-    var parentElement = element.parentElement;
-    var originalText = parentElement.getAttribute('data-original-text');
 
-
-    if (newDescription !== originalText) {
-        fetch('/project/updateBarName', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                'barId': id,
-                'barName': newDescription,
-            })
+    fetch('/project/updateBarName', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            'barId': id,
+            'barName': newDescription,
         })
-    }else{
-        newDescription = originalText;
-    }
-    parentElement.innerHTML = `<h3 onclick="editBarDescription(this)" data-bar-id="${id}">${newDescription}</h3>`;
+    })
+
+    // change back to a h3
+    var parentElement = element.parentElement;
+    parentElement.innerHTML = `<h3 onclick="editBarDescription(this.parentElement)" data-bar-id="${id}">${newDescription}</h3>`;
 }
+
 function handleKeydownBar(event, element) {
     if (event.keyCode === 13) {
         event.preventDefault();

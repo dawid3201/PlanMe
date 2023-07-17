@@ -1,29 +1,26 @@
 package COMP390.PlanMe.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.util.Collection;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
 @Table(name = "tasks")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
 public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "description")
+    private String description;
 
     @JsonBackReference
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -37,17 +34,74 @@ public class Task {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Column(name = "swimlane")
+    private String swimlane;
+
     @Column(name = "priority")
     private int priority;
 
     @Column(name = "position")
     private Long position;
 
-    @Column(name = "description")
-    private String description;
+    //Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_user_email")
-    private User assignedUser;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Bar getBar() {
+        return bar;
+    }
+
+    public void setBar(Bar bar) {
+        this.bar = bar;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public String getSwimlane() {
+        return swimlane;
+    }
+
+    public void setSwimlane(String swimlane) {
+        this.swimlane = swimlane;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    public Long getPosition() {
+        return position;
+    }
+    public void setPosition(Long position) {
+        this.position = position;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 }
