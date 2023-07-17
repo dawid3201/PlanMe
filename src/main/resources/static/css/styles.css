@@ -4,7 +4,6 @@
     margin: 0;
     box-sizing: border-box;
     font-family: sans-serif;
-
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
@@ -17,10 +16,18 @@ body {
     font-family: 'Poppins', sans-serif;
     min-height: 100vh;
     /*background: linear-gradient(to right, #35339a, #ff00cc);*/
-    background: #35339a;
-
 }
 
+/* ---- HEADER ---- */
+#main-content {
+    background-color: indigo;
+    transition: margin-left 0.3s; /* Choose the duration you prefer */
+    margin-left: 0; /* Hide the sidebar by default */
+}
+
+#header {
+    background-color: #35339a;
+}
 
 /* ---- FORM ---- */
 #todo-form {
@@ -31,41 +38,33 @@ body {
     padding: 12px;
     margin-right: 12px;
     width: 225px;
-
     border-radius: 4px;
     border: none;
-
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
     background: white;
-
     font-size: 14px;
     outline: none;
 }
 
 #todo-form button {
     padding: 12px 32px;
-
     border-radius: 4px;
     border: none;
-
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
     background: #ffffff;
     color: black;
-
     font-weight: bold;
     font-size: 14px;
     cursor: pointer;
 }
 
-/* ---- BOARD ---- */
+/***************** BOARD *****************/
 .lanes {
     display: flex;
     align-items: flex-start;
     justify-content: start;
     gap: 16px;
-
     padding: 24px 32px;
-
     overflow: scroll;
     height: 100%;
 }
@@ -74,9 +73,19 @@ body {
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 8px;
-
     display: flex;
     justify-content: space-between;
+}
+#header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
 }
 
 .swim-lane {
@@ -85,17 +94,15 @@ body {
     flex-direction: column;
     gap: 12px;
     padding: 12px 12px 60px 12px;
-
     background: #f4f4f4;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-
     border-radius: 4px;
     width: 250px;
     min-height: 150px;
-
     flex-shrink: 0;
 }
 
+/***************** HERE IS TASK CONTENT *****************/
 .task {
     background: white;
     color: black;
@@ -103,10 +110,84 @@ body {
     position: relative;
     padding: 12px;
     border-radius: 4px;
-
     font-size: 16px;
     cursor: grab;
+    height: 60px;
 }
+#add-task-form {
+    width: 95%;
+    display: flex;
+
+    align-items: start;
+    gap: 10px;
+    box-sizing: border-box;
+    margin: 10px;
+}
+.submit-task-btn{
+    width: 5px; /* adjust as needed */
+    height: 20px; /* adjust as needed */
+    padding: 10px;
+    margin: 0;
+    border: none;
+    cursor: pointer;
+    background-color: #4CAF50; /* change as per your needs */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.submit-task-btn i {
+    font-size: 10px; /* adjust as needed */
+}
+
+#add-task-form input, #add-task-form select, #add-task-form button {
+    width: 95%; /* to take full width of the form */
+    box-sizing: border-box; /* to include padding and border in element's total width and height */
+}
+
+#new-task-name {
+    padding: 5px;
+    font-size: 14px; /* adjust this as needed */
+}
+
+#task-priority {
+    width: 60px;
+    font-size: 10px;
+}
+
+.tick-button {
+    align-self: end; /* to align the button to the right */
+    padding: 5px 10px;
+    font-size: 14px; /* adjust this as needed */
+}
+
+#task-priority {
+    -webkit-appearance: none; /* to remove the default styling of select in WebKit browsers */
+    -moz-appearance: none; /* to remove the default styling of select in Firefox */
+    appearance: none; /* modern way to remove the default styling of select */
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    width: 1.5em;
+    font-size: 0.8em;
+    outline: none;
+    cursor: pointer;
+}
+
+#task-priority::-ms-expand { /* to remove the default arrow of select in IE */
+    display: none;
+}
+
+/* Add custom arrow */
+#task-priority::after {
+    content: "▼";
+    position: absolute;
+    top: 0;
+    right: 0;
+    pointer-events: none; /* to prevent the arrow element from interfering with the click event on select */
+}
+
 
 .is-dragging {
     scale: 1.05;
@@ -115,31 +196,22 @@ body {
     color: white;
     cursor: grabbing;
 }
+
 .priority-one {
-    border: 1px solid green;
-    background-color: green;
+    border: 1px solid white;
+    background-color: white;
 }
 
 .priority-two {
-    border: 1px solid yellow;
-    background-color: yellow;
+    border: 1px solid green;
+    background-color: green;
 }
 
 .priority-three {
     border: 1px solid red;
     background-color: red;
 }
-.delete-task {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    color: #333; /* Change color according to your design */
-}
-.delete-bar {
-    cursor: pointer;
-    color: #333; /* Change color according to your design */
-}
+
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -149,7 +221,7 @@ body {
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 .modal-content {
@@ -159,35 +231,115 @@ body {
     border: 1px solid #888;
     width: 30%; /* Could be more or less, depending on screen size */
 }
-#open-form-btn{
+
+#open-form-btn {
     position: absolute;
     bottom: 0;
     margin-bottom: 10px;
     color: #333333;
     font-weight: bold;
 }
+
 #form-container {
     position: absolute;
     bottom: 0;
     margin-bottom: 10px;
 }
+
 .fas.fa-plus {
     pointer-events: none;
 }
+
+.task-priority {
+    position: absolute;
+    top: 33px;
+    right: 10px;
+    cursor: pointer;
+    color: #333; /* Change color according to your design */
+}
+
+.delete-task {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #333;
+}
+
+.dropdown {
+    background-color: white;
+    border: 1px solid #333;
+    border-radius: 4px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+}
+
+.dropdown p {
+    margin: 0;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.dropdown p:hover {
+    background-color: #f0f0f0;
+}
+
+/****************EXTENDED DIV IS HERE*****************/
+#main-content {
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    transform: translateX(0); /* Hide the sidebar by default */
+    margin-left: 0;
+    transition: margin-left 0.5s; /* For a smooth transition */
+}
+/***************** HERE IS BAR CONTENT*****************/
+#add-bar-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: start;
+    gap: 16px;
+}
+
+#new-bar-name {
+    padding: 12px;
+    margin-right: 12px;
+    width: 225px;
+    border-radius: 4px;
+    border: none;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+    background: white;
+    font-size: 14px;
+    outline: none;
+}
+
+#add-bar-form {
+    position: relative;
+    width: 225px; /* assuming this is the desired width */
+}
+
+.tick-button {
+    position: absolute;
+    left: 0;
+    bottom: -35px; /* adjust based on button size */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em; /* adjust as needed */
+    color: #4CAF50; /* change as per your needs */
+}
+
 .bar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-#main-content {
-    transition: margin-left .3s; /* Choose the duration you prefer */
+
+.delete-bar {
+    cursor: pointer;
+    color: #333; /* Change color according to your design */
 }
-#sidebar {
-    position: fixed;
-    left: 0;
-    width: 0; /* The sidebar starts off with no width */
-    height: 100%;
-    background: grey;
-    transition: 0.3s; /* The transition effect */
-    overflow-x: hidden
-}
+

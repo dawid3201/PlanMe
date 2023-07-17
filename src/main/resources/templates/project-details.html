@@ -9,23 +9,18 @@
   <script src="/js/drag.js" defer></script>
   <script src="/js/tasks.js" defer></script>
   <script src="/js/bar.js" defer></script>
-  <script src="/js/projectPage.js" defer></script>
+  <script src="/js/project.js" defer></script>
 </head>
 <body>
-<button id="toggle-sidebar">Toggle Sidebar</button>
-
-<div id="sidebar">
-    <ul>
-        <li><a href="/homepage">Homepage</a></li>
-        <li><a href="/project/new">Create a new project</a></li>
-
-        <li><a href="/logout">Logout</a></li>
-    </ul>
-</div>
 
 <div id="main-content">
-  <div>
+  <div id="header">
     <h2 th:text="${project.name}"></h2>
+    <form id="add-member-form">
+      <input type="text" id="new-member-email" placeholder="New Member Email">
+      <button type="submit">Add Member</button>
+    </form>
+    <a th:href="@{/homepage}" style="color: white">Go Back</a>
   </div>
   <input type="hidden" id="projectId" th:value="${project.id}"/>
 
@@ -35,7 +30,9 @@
         <div class="bar-container">
           <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id}">
             <div class="bar-header">
-              <h3 class="heading" th:text="${bar.name}"></h3>
+              <div class="bar-name-wrapper" th:attr="data-bar-id=${bar.id}" onclick="editBarDescription(this)">
+                <h3 class="heading" th:text="${bar.name}"></h3>
+              </div>
               <i class="fas fa-times delete-bar" th:attr="data-bar-id=${bar.id}" onclick="deleteBar(this)"></i>
             </div>
             <div th:each="task : ${bar.project.tasks}"
@@ -43,7 +40,10 @@
                  th:if="${task.state.toString() == bar.name}"
                  class="task" draggable="True"
                  th:attr="data-task-id=${task.id}">
+
               <i class="fas fa-times delete-task" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)"></i>
+              <p class="task-priority" th:text="${task.priority}" onclick="createPriorityDropdown(this)" th:attr="data-task-id=${task.id}"></p>
+
               <p th:text="${task.description}"
                  onclick="editTaskDescription(this)"
                  th:attr="data-task-id=${task.id}"></p>
@@ -51,27 +51,28 @@
 
             <div id="form-container" style="display:none;"></div>
             <a th:if="${iterStat.first}" id="open-form-btn" href="#" role="button" style="text-decoration: none;">
-              <i class="fas fa-plus"></i> Add task
+              <i class="fas fa-plus"></i> Add Issue
             </a>
           </div>
         </div>
       </th:block>
       <div id="add-bar-form-container" style="display:none;">
         <form id="add-bar-form">
-          <input type="text" id="new-bar-name" placeholder="Enter bar name here" /><br>
-          <input type="submit" value="Add Bar" />
+          <input type="text" id="new-bar-name" placeholder="Add Card" />
+          <button type="submit" class="tick-button"><i class="fas fa-check"></i></button>
         </form>
       </div>
+
       <a id="open-bar-form-btn" href="#" role="button" style="text-decoration: none; color: white;">
         <i class="fas fa-plus fa-lg"></i><span style="opacity: 0;">.</span>
       </a>
+
+
+
+
     </div>
   </div>
-
 </div>
 
 </body>
 </html>
-
-
-
