@@ -28,26 +28,11 @@ droppables.forEach((zone) => {
         const tasks = Array.from(zone.querySelectorAll(".task"));
         const newPosition = tasks.indexOf(curTask) + 1; // +1 because positions start from 1
         const barId = zone.getAttribute('data-bar-id');
-        const newState = zone.id;
 
-        // Post the changes to the server to update the swimlane
-        fetch(`/project/updateTaskSwimlane?taskId=${taskId}&newSwimlane=${newState}&barId=${barId}`, {
+        // Post the changes to the server to update the position
+        fetch(`/project/updateTaskPosition?taskId=${taskId}&newPosition=${newPosition}&barId=${barId}`, {
             method: 'PATCH'
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(text => {
-                console.log('Request successful', text);
-
-                // Post the changes to the server to update the position
-                return fetch(`/project/updateTaskPosition?taskId=${taskId}&newPosition=${newPosition}`, {
-                    method: 'PATCH'
-                });
-            })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

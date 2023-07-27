@@ -18,15 +18,26 @@ body {
     /*background: linear-gradient(to right, #35339a, #ff00cc);*/
 }
 
-/* ---- HEADER ---- */
+/****************EXTENDED DIV IS HERE*****************/
 #main-content {
-    background-color: indigo;
-    transition: margin-left 0.3s; /* Choose the duration you prefer */
-    margin-left: 0; /* Hide the sidebar by default */
+    background-color: mintcream;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    transform: translateX(0); /* Hide the sidebar by default */
+    margin-left: 0;
+    transition: margin-left 0.5s; /* For a smooth transition */
 }
-
+/* ---- HEADER ---- */
 #header {
     background-color: #35339a;
+}
+.delete-project{
+    cursor: pointer;
+}
+.delete-project:hover{
+    color: red;
 }
 
 /* ---- FORM ---- */
@@ -51,7 +62,7 @@ body {
     border-radius: 4px;
     border: none;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-    background: #ffffff;
+    background: white;
     color: black;
     font-weight: bold;
     font-size: 14px;
@@ -113,6 +124,8 @@ body {
     font-size: 16px;
     cursor: grab;
     height: 60px;
+    transition: all 0.2s ease-in-out; /* Add a smooth transition effect */
+    z-index: 1; /* Ensure the task being dragged is on top */
 }
 #add-task-form {
     width: 95%;
@@ -195,6 +208,8 @@ body {
     background: rgb(50, 50, 50);
     color: white;
     cursor: grabbing;
+    z-index: 2; /* Make sure the dragged task is above other tasks */
+
 }
 
 .priority-one {
@@ -284,17 +299,6 @@ body {
     background-color: #f0f0f0;
 }
 
-/****************EXTENDED DIV IS HERE*****************/
-#main-content {
-    background-color: black;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-    transform: translateX(0); /* Hide the sidebar by default */
-    margin-left: 0;
-    transition: margin-left 0.5s; /* For a smooth transition */
-}
 /***************** HERE IS BAR CONTENT*****************/
 #add-bar-form-container {
     display: flex;
@@ -318,18 +322,18 @@ body {
 
 #add-bar-form {
     position: relative;
-    width: 225px; /* assuming this is the desired width */
+    width: 225px;
 }
 
 .tick-button {
     position: absolute;
     left: 0;
-    bottom: -35px; /* adjust based on button size */
+    bottom: -35px;
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1.5em; /* adjust as needed */
-    color: #4CAF50; /* change as per your needs */
+    font-size: 1.5em;
+    color: #4CAF50;
 }
 
 .bar-header {
@@ -340,6 +344,6 @@ body {
 
 .delete-bar {
     cursor: pointer;
-    color: #333; /* Change color according to your design */
+    color: #333;
 }
 
