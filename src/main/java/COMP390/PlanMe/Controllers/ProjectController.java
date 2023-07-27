@@ -84,6 +84,15 @@ public class ProjectController {
 
         return "redirect:/homepage";
     }
+    @DeleteMapping("/project/deleteProject")
+    public ResponseEntity<Void> deleteBar(@RequestParam("projectId") Long projectId){
+        Project project = projectDAO.getProjectById(projectId);
+        if(project != null){
+            projectDAO.delete(project);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
 
 //    @PostMapping("/project/save")
 //    public String saveProject(@ModelAttribute Project project, HttpSession session) {

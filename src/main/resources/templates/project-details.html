@@ -20,6 +20,7 @@
       <input type="text" id="new-member-email" placeholder="New Member Email">
       <button type="submit">Add Member</button>
     </form>
+    <i class="delete-project" th:attr="data-project-id=${project.id}" onclick="deleteProject(this)">Delete Project</i>
     <a th:href="@{/homepage}" style="color: white">Go Back</a>
   </div>
   <input type="hidden" id="projectId" th:value="${project.id}"/>
@@ -63,13 +64,9 @@
         </form>
       </div>
 
-      <a id="open-bar-form-btn" href="#" role="button" style="text-decoration: none; color: white;">
+      <a id="open-bar-form-btn" href="#" role="button" style="text-decoration: none; color: black;">
         <i class="fas fa-plus fa-lg"></i><span style="opacity: 0;">.</span>
       </a>
-
-
-
-
     </div>
   </div>
 </div>
