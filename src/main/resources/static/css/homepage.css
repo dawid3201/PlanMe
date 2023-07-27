@@ -2,5 +2,25 @@ body {
     font-family: 'Poppins', sans-serif;
     min-height: 100vh;
     background: linear-gradient(to right, #333399, #ff00cc);
-
 }
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none; /* Removes the bullet points */
+}
+
+.project-box {
+    text-decoration: none;
+    width: 200px;
+    height: 100px;
+    margin: 10px;
+    color: black; /* This is where the color of the text is set */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000;
+    border-radius: 7px;
+    font-size: 20px;
+    background-color: white;
+}
+

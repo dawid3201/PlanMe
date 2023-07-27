@@ -11,6 +11,7 @@ import COMP390.PlanMe.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -81,7 +82,6 @@ public class RestControllerProject {
         }
         return ResponseEntity.notFound().build();
     }
-
     //---------------------------------------------------MEMBERS METHODS-----------------------------------------
     @PostMapping("/project/addMember")
     public ResponseEntity<Void> addMember(@RequestParam("projectId") Long projectId, @RequestParam("memberEmail") String memberEmail) {
@@ -96,7 +96,6 @@ public class RestControllerProject {
         }
         return ResponseEntity.notFound().build();
     }
-
 
     //----------------------------------------------TASK METHODS----------------------------------------------
     @PostMapping("/project/addTask")
@@ -145,14 +144,31 @@ public class RestControllerProject {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-    @PatchMapping("/project/updateTaskSwimlane")
-    public ResponseEntity<Void> updateTaskSwimlane(@RequestParam("taskId") Long taskId, @RequestParam("newSwimlane") String newSwimlane, @RequestParam("barId") Long barId) {
-        Task task = taskDAO.getOne(taskId);
-        Bar bar = barDAO.getBarById(barId);
-        task.setBar(bar);
-        task.setState(bar.getName());
-        taskDAO.save(task);
-        return ResponseEntity.ok().build();
+
+    @Transactional
+    @PatchMapping("/project/updateTaskPosition")
+    public ResponseEntity<Void> updateTaskPosition(@RequestParam("taskId") Long taskId,
+                                                   @RequestParam("newPosition") Long newPosition,
+                                                   @RequestParam("barId") Long barId) {
+        try {
+            Task task = taskDAO.getOne(taskId);
+            Bar bar = barDAO.getBarById(barId);
+            List<Task> tasks = bar.getTasks();
+            tasks.remove(task);
+            tasks.add(newPosition.intValue() - 1, task);
+            for (int i = 0; i < tasks.size(); i++) {
+                tasks.get(i).setPosition((long) (i + 1));
+            }
+            bar.setTasks(tasks);
+            task.setBar(bar);
+            task.setState(bar.getName());
+            taskDAO.save(task);
+            barDAO.save(bar);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.out.println("Error while updating task position: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PatchMapping("/project/updateTaskPriority")
@@ -161,25 +177,6 @@ public class RestControllerProject {
             Task task = taskDAO.getOne(taskId);
             task.setPriority(newPriority);
             taskDAO.save(task);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PatchMapping("/project/updateTaskPosition")
-    public ResponseEntity<Void> updateTaskPosition(@RequestParam("taskId") Long taskId, @RequestParam("newPosition") Long newPosition) {
-        try {
-            Task task = taskDAO.getOne(taskId);
-            Bar bar = task.getBar();
-            List<Task> tasks = bar.getTasks();
-            tasks.remove(task);
-            tasks.add(newPosition.intValue() - 1, task);
-            for (int i = 0; i < tasks.size(); i++) {
-                tasks.get(i).setPosition((long) (i + 1));
-            }
-            bar.setTasks(tasks);
-            barDAO.save(bar);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
