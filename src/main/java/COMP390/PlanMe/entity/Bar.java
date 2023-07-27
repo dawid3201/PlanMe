@@ -31,8 +31,6 @@ public class Bar {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(name = "swimlane")
-    private String swimlane;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
@@ -70,14 +68,6 @@ public class Bar {
 
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public String getSwimlane() {
-        return swimlane;
-    }
-
-    public void setSwimlane(String swimlane) {
-        this.swimlane = swimlane;
     }
 
     public List<Task> getTasks() {

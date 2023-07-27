@@ -34,9 +34,6 @@ public class Task {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(name = "swimlane")
-    private String swimlane;
-
     @Column(name = "priority")
     private int priority;
 
@@ -74,14 +71,6 @@ public class Task {
 
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public String getSwimlane() {
-        return swimlane;
-    }
-
-    public void setSwimlane(String swimlane) {
-        this.swimlane = swimlane;
     }
 
     public int getPriority() {

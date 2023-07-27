@@ -13,4 +13,8 @@ public interface ProjectDAO extends JpaRepository<Project, Long> {
     Project getProjectById(Long id);
     @Query("SELECT p FROM Project p WHERE :user MEMBER OF p.members")
     List<Project> getProjectsByUser(User user);
+
+
 }
+
+//

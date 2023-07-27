@@ -16,3 +16,18 @@ document.getElementById("add-member-form").addEventListener("submit", function(e
         }
     });
 });
+function deleteProject(element) {
+    const projectId = element.getAttribute('data-project-id');
+    fetch("/project/deleteProject?projectId=" + projectId, {
+        method: 'DELETE',
+    })
+        .then((response) => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            // Successfully deleted from database, now remove from HTML
+            element.parentElement.parentElement.remove();
+            window.location.href = '/homepage';
+        })
+        .catch((error) => {
+            console.log('Request failed', error);
+        });
+}
