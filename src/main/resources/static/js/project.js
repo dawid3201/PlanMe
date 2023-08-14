@@ -31,3 +31,18 @@ function deleteProject(element) {
             console.log('Request failed', error);
         });
 }
+
+
+// -----------------------------------------Websocket connection-----------------------------------------
+// const socket = new WebSocket('ws://localhost:8080/broadcast');
+//
+// // Connection opened
+// socket.addEventListener('open', (event) => {
+//     socket.send('Hello Server!');
+// });
+//
+// // Listen for messages
+// socket.addEventListener('message', (event) => {
+//     console.log('Message from server: ', event.data);
+//     location.reload(); // Refresh the page when a message is received
+// });

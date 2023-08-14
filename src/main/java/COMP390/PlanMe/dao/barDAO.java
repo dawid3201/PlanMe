@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface barDAO extends JpaRepository<Bar, Long> {
 
-    Bar getBarByName(String newSwimlane);
 
     Bar getBarById(Long Id);
 
@@ -18,4 +17,6 @@ public interface barDAO extends JpaRepository<Bar, Long> {
 
     @Query("SELECT max(b.position) FROM Bar b WHERE b.project = :project")
     Integer getMaxPositionByProject(Project project);
+
+    List<Bar> findByProjectId(Long id);
 }
