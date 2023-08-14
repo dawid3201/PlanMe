@@ -94,17 +94,6 @@ public class ProjectController {
         return ResponseEntity.notFound().build();
     }
 
-//    @PostMapping("/project/save")
-//    public String saveProject(@ModelAttribute Project project, HttpSession session) {
-//        User user = (User) session.getAttribute("user");
-//        if (user == null) {
-//            return "redirect:/login";
-//        }
-//        project.setCreator(user);
-//        projectDAO.save(project);
-//        return "redirect:/";
-//    }
-
     @GetMapping("/projects")
     public String viewProjects(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");

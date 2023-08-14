@@ -12,26 +12,29 @@
     display: none;
 }
 
-body {
+html, body {
     font-family: 'Poppins', sans-serif;
-    min-height: 100vh;
+    height: 100%;
     /*background: linear-gradient(to right, #35339a, #ff00cc);*/
 }
 
 /****************EXTENDED DIV IS HERE*****************/
 #main-content {
-    background-color: mintcream;
+    background-color: #483d8b;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-    transform: translateX(0); /* Hide the sidebar by default */
+    /*overflow: hidden;*/
     margin-left: 0;
-    transition: margin-left 0.5s; /* For a smooth transition */
+    height: 100%;
+}
+.board {
+    flex-grow: 1;
+    overflow: auto;  /* To allow scrolling if content inside gets too big */
 }
 /* ---- HEADER ---- */
 #header {
     background-color: #35339a;
+    flex-shrink: 0; /* Prevents shrinking */
 }
 .delete-project{
     cursor: pointer;
@@ -123,9 +126,54 @@ body {
     border-radius: 4px;
     font-size: 16px;
     cursor: grab;
-    height: 60px;
-    transition: all 0.2s ease-in-out; /* Add a smooth transition effect */
+    min-height: 100px;
     z-index: 1; /* Ensure the task being dragged is on top */
+    word-wrap: break-word;
+    justify-content: space-between;
+    align-items: start;
+}
+.task-placeholder {
+    border: 2px dashed #ccc;
+    height: 50px;  /* or adjust based on your task height */
+    margin: 5px;
+}
+
+/* Styles for the input when editing task description */
+input[id^="input-"] {
+    background-color: #f6f6f6;
+    border: 1px solid #dcdcdc;
+    border-radius: 3px;
+    padding: 5px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    /* By setting a max-width, you prevent it from growing too large. Adjust as needed. */
+    max-width: 90%;
+    /* This makes it grow with content */
+    width: auto !important;
+    /* Minimum width */
+    min-width: 50px;
+}
+
+
+.task p {
+    flex-shrink: 1; /* Allow the element to shrink if necessary */
+    word-wrap: break-word; /* Wrap the words as they reach the edge of the container */
+    margin-right: 10px; /* Add a margin to the right of the text */
+}
+
+
+.task-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the right */
+    justify-content: flex-start;
+}
+
+.right-side-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the right */
 }
 #add-task-form {
     width: 95%;
@@ -162,7 +210,6 @@ body {
     padding: 5px;
     font-size: 14px; /* adjust this as needed */
 }
-
 #task-priority {
     width: 60px;
     font-size: 10px;
@@ -173,7 +220,6 @@ body {
     padding: 5px 10px;
     font-size: 14px; /* adjust this as needed */
 }
-
 #task-priority {
     -webkit-appearance: none; /* to remove the default styling of select in WebKit browsers */
     -moz-appearance: none; /* to remove the default styling of select in Firefox */
@@ -188,6 +234,7 @@ body {
     cursor: pointer;
 }
 
+
 #task-priority::-ms-expand { /* to remove the default arrow of select in IE */
     display: none;
 }
@@ -200,8 +247,6 @@ body {
     right: 0;
     pointer-events: none; /* to prevent the arrow element from interfering with the click event on select */
 }
-
-
 .is-dragging {
     scale: 1.05;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
@@ -251,7 +296,8 @@ body {
     position: absolute;
     bottom: 0;
     margin-bottom: 10px;
-    color: #333333;
+    color: black;
+    text-decoration: none;
     font-weight: bold;
 }
 
@@ -268,7 +314,7 @@ body {
 .task-priority {
     position: absolute;
     top: 33px;
-    right: 10px;
+    right: 1px;
     cursor: pointer;
     color: #333; /* Change color according to your design */
 }
@@ -321,7 +367,7 @@ body {
 }
 
 #add-bar-form {
-    position: relative;
+    position: absolute;
     width: 225px;
 }
 

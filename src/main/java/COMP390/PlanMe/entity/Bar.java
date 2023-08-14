@@ -31,7 +31,6 @@ public class Bar {
     @JoinColumn(name = "project_id")
     private Project project;
 
-
     @JsonManagedReference
     @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
     @OrderBy("position ASC")
