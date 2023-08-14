@@ -4,12 +4,17 @@
   <title>Project Details</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <link rel="stylesheet" type="text/css" href="/css/styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="/js/drag.js" defer></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="/css/styles.css">
+
   <script src="/js/tasks.js" defer></script>
   <script src="/js/bar.js" defer></script>
   <script src="/js/project.js" defer></script>
+  <script src="/js/updateTask.js" defer></script>
+  <script src="/js/dragBar.js" defer></script>
+
 </head>
 <body>
 
@@ -39,19 +44,23 @@
             <div th:each="task : ${bar.project.tasks}"
                  th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
                  th:if="${task.state.toString() == bar.name}"
-                 class="task" draggable="True"
+                 class="task"
                  th:attr="data-task-id=${task.id}">
-
-              <i class="fas fa-times delete-task" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)"></i>
-              <p class="task-priority" th:text="${task.priority}" onclick="createPriorityDropdown(this)" th:attr="data-task-id=${task.id}"></p>
 
               <p th:text="${task.description}"
                  onclick="editTaskDescription(this)"
                  th:attr="data-task-id=${task.id}"></p>
+              <div class="additional-content">
+              </div>
+              <div class="task-actions">
+                <div class="right-side-actions">
+                  <i class="fas fa-times delete-task" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)"></i>
+                  <p class="task-priority" th:text="${task.priority}" onclick="createPriorityDropdown(this)" th:attr="data-task-id=${task.id}"></p>
+                </div>
+              </div>
             </div>
-
             <div id="form-container" style="display:none;"></div>
-            <a th:if="${iterStat.first}" id="open-form-btn" href="#" role="button" style="text-decoration: none;">
+            <a th:if="${iterStat.first}" id="open-form-btn" href="#" role="button">
               <i class="fas fa-plus"></i> Add Issue
             </a>
           </div>
