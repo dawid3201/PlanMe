@@ -1,4 +1,3 @@
-/* ---- RESET/BASIC STYLING ---- */
 * {
     padding: 0;
     margin: 0;
@@ -7,7 +6,6 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
-
 *::-webkit-scrollbar {
     display: none;
 }
@@ -15,9 +13,7 @@
 html, body {
     font-family: 'Poppins', sans-serif;
     height: 100%;
-    /*background: linear-gradient(to right, #35339a, #ff00cc);*/
 }
-
 /****************EXTENDED DIV IS HERE*****************/
 #main-content {
     background-color: #483d8b;
@@ -42,12 +38,10 @@ html, body {
 .delete-project:hover{
     color: red;
 }
-
 /* ---- FORM ---- */
 #todo-form {
     padding: 32px 32px 0;
 }
-
 #todo-form input {
     padding: 12px;
     margin-right: 12px;
@@ -59,7 +53,6 @@ html, body {
     font-size: 14px;
     outline: none;
 }
-
 #todo-form button {
     padding: 12px 32px;
     border-radius: 4px;
@@ -71,7 +64,6 @@ html, body {
     font-size: 14px;
     cursor: pointer;
 }
-
 /***************** BOARD *****************/
 .lanes {
     display: flex;
@@ -82,7 +74,6 @@ html, body {
     overflow: scroll;
     height: 100%;
 }
-
 .heading {
     font-size: 22px;
     font-weight: bold;
@@ -115,8 +106,7 @@ html, body {
     min-height: 150px;
     flex-shrink: 0;
 }
-
-/***************** HERE IS TASK CONTENT *****************/
+/*********************** TASK CONTENT ***********************/
 .task {
     background: white;
     color: black;
@@ -137,7 +127,6 @@ html, body {
     height: 50px;  /* or adjust based on your task height */
     margin: 5px;
 }
-
 /* Styles for the input when editing task description */
 input[id^="input-"] {
     background-color: #f6f6f6;
@@ -154,14 +143,15 @@ input[id^="input-"] {
     /* Minimum width */
     min-width: 50px;
 }
-
+.task:active {
+    cursor: grabbing;
+}
 
 .task p {
     flex-shrink: 1; /* Allow the element to shrink if necessary */
     word-wrap: break-word; /* Wrap the words as they reach the edge of the container */
     margin-right: 10px; /* Add a margin to the right of the text */
 }
-
 
 .task-actions {
     display: flex;
@@ -234,7 +224,6 @@ input[id^="input-"] {
     cursor: pointer;
 }
 
-
 #task-priority::-ms-expand { /* to remove the default arrow of select in IE */
     display: none;
 }
@@ -246,15 +235,6 @@ input[id^="input-"] {
     top: 0;
     right: 0;
     pointer-events: none; /* to prevent the arrow element from interfering with the click event on select */
-}
-.is-dragging {
-    scale: 1.05;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-    background: rgb(50, 50, 50);
-    color: white;
-    cursor: grabbing;
-    z-index: 2; /* Make sure the dragged task is above other tasks */
-
 }
 
 .priority-one {
@@ -292,7 +272,7 @@ input[id^="input-"] {
     width: 30%; /* Could be more or less, depending on screen size */
 }
 
-#open-form-btn {
+.open-form-btn {
     position: absolute;
     bottom: 0;
     margin-bottom: 10px;
@@ -345,14 +325,7 @@ input[id^="input-"] {
     background-color: #f0f0f0;
 }
 
-/***************** HERE IS BAR CONTENT*****************/
-#add-bar-form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: start;
-    gap: 16px;
-}
+/*********************** BAR CONTENT ***********************/
 
 #new-bar-name {
     padding: 12px;
@@ -386,10 +359,16 @@ input[id^="input-"] {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: grab;
 }
+.bar-header:active {
+     cursor: grabbing !important;
+ }
 
 .delete-bar {
     cursor: pointer;
     color: #333;
 }
-
+.bar-container {
+    margin: 0;
+}

@@ -20,7 +20,6 @@ public class Project {
     @JoinColumn(name = "creator_id")
     private User creator;
 
-    //TODO: update this later so you can add members to a project
     @ManyToMany
     @JoinTable(
             name = "project_members",
@@ -35,6 +34,7 @@ public class Project {
     //list of bars related to project
     @JsonManagedReference
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OrderBy("position")
     private List<Bar> bars = new ArrayList<>();
 
 
