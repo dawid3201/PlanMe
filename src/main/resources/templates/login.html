@@ -35,10 +35,9 @@
       </div>
       <div class="form-item-other">
         <div class="checkbox">
-          <input type="checkbox" id="rememberMeCheckbox" checked>
-          <label for="rememberMeCheckbox">Remember me</label>
+          <input type="checkbox" id="showPasswordBox" onclick="myFunction()">
+          <label for="showPasswordBox">Show Password</label>
         </div>
-        <a href="#">I forgot my password!</a>
       </div>
       <button class="login-button" type="submit">Log in</button>
     </form>
@@ -49,5 +48,14 @@
 </div>
 
 </body>
-
+<script>
+  function myFunction() {
+    const x = document.getElementById("passwordForm");
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }
+  }
+</script>
 </html>
