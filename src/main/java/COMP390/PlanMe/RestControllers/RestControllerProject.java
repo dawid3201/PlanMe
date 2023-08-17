@@ -11,12 +11,15 @@ import COMP390.PlanMe.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+
 @RestController
 public class RestControllerProject {
 
@@ -25,7 +28,7 @@ public class RestControllerProject {
     private final TaskDAO taskDAO;
     private final barDAO barDAO;
 
-
+    @Autowired
     public RestControllerProject(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, COMP390.PlanMe.dao.barDAO barDAO) {
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
@@ -33,19 +36,16 @@ public class RestControllerProject {
         this.barDAO = barDAO;
     }
 
-
     //-----------------------------------------------------------------BAR METHODS--------------------------------------
     @Transactional
     @PatchMapping("/project/updateBarPosition")
-    public ResponseEntity<Void> updateBarPosition(@RequestParam("barId") Long barId,
-                                                  @RequestParam("newPosition") Long newPosition) {
+    public ResponseEntity<Map<String, Long>> updateBarPosition(@RequestParam("barId") Long barId,
+                                                               @RequestParam("newPosition") Long newPosition) {
         try {
             Bar bar = barDAO.getBarById(barId);
             Project project = bar.getProject();
+            System.out.println("Before: Bar = : " + bar.getName() + " is at position " + bar.getPosition());
             List<Bar> bars = barDAO.findByProjectId(project.getId());
-
-            System.out.println("About to change the position of" + bar.getName() + " at positoin " + bar.getPosition());
-
             bars.sort(Comparator.comparing(Bar::getPosition));
             bars.remove(bar);
             bars.add(newPosition.intValue() - 1, bar);
@@ -53,13 +53,13 @@ public class RestControllerProject {
 
             barDAO.saveAll(bars);
             projectDAO.save(project);
-
-            System.out.println("New positions of " + bar.getName() + " is " + newPosition);
-            return ResponseEntity.ok().build();
+            System.out.println("After: Bar = : " + bar.getName() + " is at position " + bar.getPosition());
+            // Return the updated barId and newPosition in the response.
+            return ResponseEntity.ok(Map.of("barId", barId, "newPosition", newPosition));
 
         } catch (Exception e) {
             System.out.println("Error while updating bar position: " + e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
     private void reorderBarPositions(List<Bar> bars) {
@@ -89,9 +89,7 @@ public class RestControllerProject {
         Bar bar = barDAO.getBarById(barId);
         if (bar != null) {
             String oldBarName = bar.getName();
-
             bar.setName(barName);
-            //Update all tasks with new state name
             List<Task> tasks = taskDAO.findAllByState(oldBarName);
             for (Task task : tasks) {
                 task.setState(barName);
@@ -133,29 +131,34 @@ public class RestControllerProject {
     }
     //----------------------------------------------TASK METHODS--------------------------------------------------------
     @PostMapping("/project/addTask")
-    public ResponseEntity<Void> addTask(@RequestParam("projectId") Long projectId, @RequestParam("taskDescription") String taskDescription, @RequestParam("taskPriority") int priority) {
+    public ResponseEntity<Void> addTask(
+            @RequestParam("projectId") Long projectId,
+            @RequestParam("taskDescription") String taskDescription,
+            @RequestParam("taskPriority") int priority,
+            @RequestParam("barId") Long barId) {
+        //Adding task to the bar with specific position
         Project project = projectDAO.getProjectById(projectId);
         if (project != null) {
-            Bar todoBar = project.getBars().stream().filter(bar -> bar.getPosition() == 1).findFirst().orElse(null);
-            if (todoBar == null) {
+            Bar targetBar = project.getBars().stream()
+                    .filter(bar -> bar.getId().equals(barId)).findFirst().orElse(null);
+            if (targetBar == null) {
                 return ResponseEntity.notFound().build();
             }
             Task newTask = new Task();
             newTask.setDescription(taskDescription);
-            newTask.setBar(todoBar);
+            newTask.setBar(targetBar);
             newTask.setPriority(priority);
-            newTask.setState(todoBar.getName());
+            newTask.setState(targetBar.getName());
             newTask.setProject(project);
-            newTask.setPosition((long) (todoBar.getTasks().size() + 1));
-            todoBar.getTasks().add(newTask);
+            newTask.setPosition((long) (targetBar.getTasks().size() + 1));
+            targetBar.getTasks().add(newTask);
             taskDAO.save(newTask);
-            barDAO.save(todoBar);
+            barDAO.save(targetBar);
 
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
     }
-
     @PatchMapping("/project/updateTaskName")
     public ResponseEntity<Void> updateTaskName(@RequestParam("taskId") Long taskId, @RequestParam("taskDescription") String taskDescription){
         try {
@@ -175,9 +178,9 @@ public class RestControllerProject {
                                                    @RequestParam("newPosition") Long newPosition,
                                                    @RequestParam("barId") Long barId) {
         try {
-            Task task = taskDAO.getOne(taskId);
+            Task task = taskDAO.getTaskById(taskId);
             Bar originalBar = task.getBar();
-            System.out.println("attempting to move tasks with name " + task.getDescription() + " with position " + task.getPosition());
+            System.out.println("task: " + task.getDescription() + " from position: " + task.getPosition());
             if(originalBar != null) {
                 List<Task> originalBarTasks = originalBar.getTasks();
                 originalBarTasks.remove(task);
@@ -187,18 +190,22 @@ public class RestControllerProject {
             }
             Bar newBar = barDAO.getBarById(barId);
             List<Task> newBarTasks = newBar.getTasks();
+
             if (newBarTasks.size() <= newPosition.intValue() - 1) {
                 newBarTasks.add(task);
             } else {
                 newBarTasks.add(newPosition.intValue() - 1, task);
             }
+
             reorderTaskPositions(newBarTasks);
             newBar.setTasks(newBarTasks);
             task.setBar(newBar);
             task.setState(newBar.getName());
             taskDAO.save(task);
             barDAO.save(newBar);
-            System.out.println("Moved task " + task.getDescription() + " to new position: " + task.getPosition());
+
+            //solution to the bad position was to get all tasks from specific bar instead of all tasks
+
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             System.out.println("Error while updating task position: " + e.getMessage());

@@ -8,7 +8,6 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
   <link rel="stylesheet" type="text/css" href="/css/styles.css">
-
   <script src="/js/tasks.js" defer></script>
   <script src="/js/bar.js" defer></script>
   <script src="/js/project.js" defer></script>
@@ -17,7 +16,6 @@
 
 </head>
 <body>
-
 <div id="main-content">
   <div id="header">
     <h2 th:text="${project.name}"></h2>
@@ -34,8 +32,8 @@
     <div class="lanes">
       <th:block th:each="bar, iterStat : ${project.bars}">
         <div class="bar-container">
-          <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id}">
-            <div class="bar-header">
+          <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id},data-bar-position=${iterStat.index} + 1">
+          <div class="bar-header">
               <div class="bar-name-wrapper" th:attr="data-bar-id=${bar.id}" onclick="editBarDescription(this)">
                 <h3 class="heading" th:text="${bar.name}"></h3>
               </div>
@@ -60,9 +58,10 @@
               </div>
             </div>
             <div id="form-container" style="display:none;"></div>
-            <a th:if="${iterStat.first}" id="open-form-btn" href="#" role="button">
+            <a class="open-form-btn" href="#" role="button" onclick="openTaskForm(this)">
               <i class="fas fa-plus"></i> Add Issue
             </a>
+
           </div>
         </div>
       </th:block>
