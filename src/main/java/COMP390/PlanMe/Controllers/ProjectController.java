@@ -15,10 +15,10 @@ import java.util.List;
 
 @Controller
 public class ProjectController {
-    private ProjectDAO projectDAO;
-    private UserDAO userDAO;
-    private TaskDAO taskDAO;
-    private barDAO barDAO;
+    private final ProjectDAO projectDAO;
+    private final UserDAO userDAO;
+    private final TaskDAO taskDAO;
+    private final barDAO barDAO;
 
     @Autowired
     public ProjectController(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, barDAO barDAO) {
