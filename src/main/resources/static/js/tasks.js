@@ -56,7 +56,7 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
         event.preventDefault();
 
         var targetFormContainer = this.previousElementSibling;
-        var barId = this.closest('.swim-lane').getAttribute("data-bar-id"); // Get the bar ID
+        var barId = this.closest('.swim-lane').getAttribute("data-bar-id");
 
         targetFormContainer.innerHTML = formHTML;
         targetFormContainer.style.display = "block";
@@ -111,12 +111,9 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
 function editTaskDescription(element) {
     var text = element.textContent;
     var id = element.getAttribute('data-task-id');
-
-    // Change paragraph to an editable input field
+    //edit paragraph
     element.outerHTML = `<input type="text" id="input-${id}" value="${text}" maxlength="50" onblur="updateTaskName(this)" onkeydown="handleKeydown(event, this)">`;
 
-
-    // Focus on the newly created input field
     const inputElem = document.getElementById(`input-${id}`);
     inputElem.focus();
 
