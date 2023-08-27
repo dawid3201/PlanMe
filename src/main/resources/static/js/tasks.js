@@ -1,66 +1,65 @@
 var formHTML = `
     <form id="add-task-form">
-        <input type="text" id="new-task-name" placeholder="Issue name" />
-        <div id="priority-section">
-            <label for="priority"></label>
-            <select id="task-priority" name="priority">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select>
-            <button type="submit" class="submit-task-btn"><i class="fas fa-check"></i></button>
-        </div>
-    </form>
-`;
+    <input type="text" id="new-task-name" placeholder="Issue name" />
+    <div id="priority-section">
+        <label for="priority"></label>
+        <select id="task-priority" name="priority">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <button type="submit" class="submit-task-btn"><i class="fas fa-check"></i></button>
+    </div>
 
-function openTaskForm(element) {
-    let barId = $(element).closest('.swim-lane').data("bar-id");
-    // Now, store this barId somewhere where your form can access it,
-    // e.g., in a hidden input field inside your form
+   
+</form>
+  `;
+var formOpen = false; //check if form is open
+let currentFormContainer = null;
 
-    // Assuming you have an input field like:
-    // <input type="hidden" id="selectedBarId" name="barId">
-    $('#selectedBarId').val(barId);
-
-    // You can now show the form for the user to fill in the task details
-    $('#form-container').show();
-}
-
-
-
-function closeForm(targetFormContainer) {
-    targetFormContainer.style.display = "none";
-    targetFormContainer.nextElementSibling.style.display = "block";
-    formOpen = false;
-    document.removeEventListener("click", handleClickOutsideForm);
+function closeForm() {
+    if (currentFormContainer) {
+        const openButton = currentFormContainer.nextElementSibling;
+        if (openButton && openButton.classList.contains("open-form-btn")) {
+            currentFormContainer.style.display = "none";
+            openButton.style.display = "block";
+        }
+        formOpen = false;
+        document.removeEventListener("click", handleClickOutsideForm);
+        currentFormContainer = null;
+    }
 }
 
 function handleClickOutsideForm(event) {
-    var formContainers = document.querySelectorAll(".form-container");
-    formContainers.forEach(formContainer => {
-        var isClickInsideForm = formContainer.contains(event.target);
-        var associatedBtn = formContainer.nextElementSibling;
-
-        if (formOpen && !isClickInsideForm && event.target !== associatedBtn) {
-            closeForm(formContainer);
+    if (currentFormContainer) {
+        const isClickInsideForm = currentFormContainer.contains(event.target);
+        if (currentFormContainer && formOpen && !currentFormContainer.contains(event.target) && event.target.className !== "open-form-btn") {
+            closeForm();
         }
-    });
+    }
 }
+
 function adjustInputWidth(inputElement) {
     // Adjust the input size based on its content length
     inputElement.style.width = `${inputElement.scrollWidth}px`;
 }
 
+
 document.querySelectorAll(".open-form-btn").forEach(btn => {
     btn.addEventListener("click", function(event) {
         event.preventDefault();
-
         var targetFormContainer = this.previousElementSibling;
         var barId = this.closest('.swim-lane').getAttribute("data-bar-id");
 
         targetFormContainer.innerHTML = formHTML;
         targetFormContainer.style.display = "block";
         this.style.display = "none";
+
+        if (formOpen) {
+            closeForm();
+        }
+
+        currentFormContainer = this.previousElementSibling;
 
         formOpen = true;
         document.addEventListener("click", handleClickOutsideForm);
@@ -76,7 +75,6 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
             const barElement = event.target.closest('.swim-lane');
             const barPosition = barElement.getAttribute('data-bar-position');
 
-
             fetch('/project/addTask', {
                 method: 'POST',
                 headers: {
@@ -84,9 +82,9 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
                 },
                 body: new URLSearchParams({
                     'projectId': projectId,
-                    'taskDescription': newTaskName,
+                    'taskName': newTaskName,
                     'taskPriority' : newPriority,
-                    'barId': barId // Pass the bar ID to the server
+                    'barId': barId
                 })
             })
                 .then(function(response) {
@@ -98,7 +96,7 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
                 .then(function(text) {
                     console.log('Request successful', text);
                     console.log('Bar Position:', barPosition);
-                    location.reload(); // reload the page to see the new task
+                    location.reload();
                 })
                 .catch(function(error) {
                     console.log('Request failed', error);
@@ -107,8 +105,7 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
         });
     });
 });
-
-function editTaskDescription(element) {
+function editTaskName(element) {
     var text = element.textContent;
     var id = element.getAttribute('data-task-id');
     //edit paragraph
@@ -122,12 +119,12 @@ function editTaskDescription(element) {
 }
 
 function updateTaskName(element) {
-    var newDescription = element.value;
+    var newTaskName = element.value;
     var id = element.id.split('-')[1];
 
     // Check the length of the new description
-    if (newDescription.length > 50) {
-        newDescription = newDescription.substring(0, 50);
+    if (newTaskName.length > 50) {
+        newTaskName = newTaskName.substring(0, 50);
     }
 
     fetch('/project/updateTaskName', {
@@ -137,12 +134,12 @@ function updateTaskName(element) {
         },
         body: new URLSearchParams({
             'taskId': id,
-            'taskDescription': newDescription,
+            'taskName': newTaskName,
         })
     })
 
     // change back to a paragraph
-    element.outerHTML = `<p onclick="editTaskDescription(this)" data-task-id="${id}">${newDescription}</p>`;
+    element.outerHTML = `<p onclick="editTaskName(this)" data-task-id="${id}">${newTaskName}</p>`;
 }
 
 function handleKeydown(event, element) {
@@ -168,7 +165,35 @@ function deleteTask(element) {
             console.log('Request failed', error);
         });
 }
-// This function sends a PATCH request to the server to update the task's priority
+//----------------------------------------------------------------TASK PRIORITY CONTENT---------------------------------
+
+function updatePriorityVisuals(element, newPriority) {
+    let taskElement = element.closest('.task');
+    let priorityLabel = taskElement.querySelector('.priority-label');
+
+    let labelClass;
+    let labelText;
+    switch(newPriority) {
+        case '1':
+            labelClass = 'priority-one';
+            labelText = 'LOW';
+            break;
+        case '2':
+            labelClass = 'priority-two';
+            labelText = 'MEDIUM';
+            break;
+        case '3':
+            labelClass = 'priority-three';
+            labelText = 'HIGH';
+            break;
+    }
+
+    ['priority-one', 'priority-two', 'priority-three'].forEach(cls => priorityLabel.classList.remove(cls));
+    priorityLabel.classList.add(labelClass);
+    priorityLabel.textContent = labelText;
+}
+
+
 function updateTaskPriority(dropdown) {
     var taskId = dropdown.getAttribute('data-task-id');
     var newPriority = dropdown.value;
@@ -179,21 +204,29 @@ function updateTaskPriority(dropdown) {
         .then((response) => {
             if (!response.ok) throw new Error('Network response was not ok');
 
-            // Update the task priority in the HTML and remove the dropdown
-            dropdown.previousSibling.textContent = newPriority;
-            dropdown.remove();
+            let associatedPriorityElement = dropdown.previousSibling;
+            if (associatedPriorityElement) {
+                associatedPriorityElement.textContent = newPriority;
+                updatePriorityVisuals(associatedPriorityElement, newPriority);
+            }
+
+            if (dropdown && dropdown.parentNode) {
+                dropdown.remove();
+            }
         })
         .catch((error) => {
             console.log('Request failed', error);
         });
 }
+
 // Event listener to remove the popup when clicked anywhere outside it
 document.addEventListener('click', function(e) {
-    let popup = document.querySelector('.priority-selector');
-    if (popup) {
+    let popup = document.querySelector('#priority-dropdown');
+    if (popup && !popup.contains(e.target) && !e.target.hasAttribute('data-task-id')) {
         popup.remove();
     }
 });
+
 // This function creates the priority selector popup
 function createPriorityDropdown(element) {
     if (document.getElementById('priority-dropdown')) return;
@@ -244,5 +277,81 @@ function createPriorityDropdown(element) {
     dropdown.focus();
 }
 
+//----------------------------------------------------------TASK DESCRIPTION CONTENT------------------------------------
+let currentTaskId = null; //Store current TaskID in variable
+function openDescriptionBox(element) {
+    const taskId = element.getAttribute('data-task-id');
+    currentTaskId = taskId; // Assuming you've defined currentTaskId globally
 
+    const taskDescription = document.querySelector(`[data-task-id="${taskId}"] .task-description-hidden`).textContent;
 
+    quill.root.innerHTML = taskDescription; // set the Quill editor content
+    document.getElementById("taskDescriptionOverlay").style.display = "block";
+}
+
+let quill;
+document.addEventListener('DOMContentLoaded', (event) => {
+    const toolbarOptions = [
+        ['bold', 'italic', 'underline'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'font': [] }],
+    ];
+
+    quill = new Quill('#editor', {
+        modules: {
+            toolbar: toolbarOptions
+        },
+        theme: 'snow'
+    });
+});
+
+function saveDescription() {
+    if (!currentTaskId || currentTaskId === "undefined") {
+        console.log("Task ID is not defined or invalid");
+        return;
+    }
+
+    const description = quill.root.innerHTML; // get the HTML content of the editor
+    saveTaskDescription(currentTaskId, description);
+}
+//save text on database
+function saveTaskDescription(taskId, description) {
+    const endpoint = '/project/addDescription';
+    const data = {
+        taskId: taskId,
+        description: description
+    };
+
+    fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(data).toString()
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log('Description saved successfully.');
+                //Update task Description imminently after Save button is pressed
+                let taskElement = document.querySelector(`[data-task-id="${taskId}"] .task-description-hidden`);
+                if (taskElement) {
+                    taskElement.textContent = description;
+                }
+            } else {
+                console.error('Failed to save description. Server responded with', response.status);
+            }
+        })
+        .catch(error => {
+            console.error('Error occurred while saving the description:', error);
+        });
+}
+
+function closeDescriptionBox() {
+    document.getElementById("taskDescriptionOverlay").style.display = "none";
+    currentTaskId = null;
+}
+//Print name on Task textarea
+function displayTaskName(taskName) {
+    document.getElementById('taskNameShow').innerText = taskName;
+}

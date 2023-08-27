@@ -206,14 +206,14 @@ input[id^="input-"] {
 }
 
 .tick-button {
-    align-self: end; /* to align the button to the right */
+    align-self: end;
     padding: 5px 10px;
-    font-size: 14px; /* adjust this as needed */
+    font-size: 14px;
 }
 #task-priority {
-    -webkit-appearance: none; /* to remove the default styling of select in WebKit browsers */
-    -moz-appearance: none; /* to remove the default styling of select in Firefox */
-    appearance: none; /* modern way to remove the default styling of select */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     padding: 0;
     margin: 0;
     border: none;
@@ -224,44 +224,45 @@ input[id^="input-"] {
     cursor: pointer;
 }
 
-#task-priority::-ms-expand { /* to remove the default arrow of select in IE */
+#task-priority::-ms-expand {
     display: none;
 }
-
 /* Add custom arrow */
 #task-priority::after {
     content: "▼";
     position: absolute;
     top: 0;
     right: 0;
-    pointer-events: none; /* to prevent the arrow element from interfering with the click event on select */
+    pointer-events: none;
 }
-
-.priority-one {
-    border: 1px solid white;
-    background-color: white;
+.priority-label {
+    border: none;
+    border-radius: 5px;
+    padding: 2px 5px;
+    display: inline-block;
 }
-
-.priority-two {
-    border: 1px solid green;
+.priority-label.priority-one {
+    color: snow;
     background-color: green;
 }
-
-.priority-three {
-    border: 1px solid red;
+.priority-label.priority-two {
+    color: snow;
+    background-color: darkorange;
+}
+.priority-label.priority-three {
+    color: snow;
     background-color: red;
 }
-
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none;
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
@@ -280,12 +281,23 @@ input[id^="input-"] {
     text-decoration: none;
     font-weight: bold;
 }
-
-#form-container {
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 10px;
+.form-container {
+    background: white;
+    color: black;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    min-height: 100px;
+    z-index: 10;
+    word-wrap: break-word;
+    justify-content: space-between;
+    align-items: start;
+    width: 90%;
+    margin: 10px auto;
 }
+
 
 .fas.fa-plus {
     pointer-events: none;
@@ -324,6 +336,80 @@ input[id^="input-"] {
 .dropdown p:hover {
     background-color: #f0f0f0;
 }
+/*----Tasks description window-----*/
+#taskDescriptionOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    z-index: 999;
+}
+
+#taskDescriptionBox {
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    width: 70%;
+    max-height: 70%;  /* Set a maximum height */
+    background-color: #FFF;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;  /* Hide any content that exceeds the boundaries */
+    margin: 20px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+#taskDescriptionBox textarea {
+    width: 100%;
+    max-height: 80%;  /* Set a maximum height */
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+    overflow: auto;
+}
+
+.additional-content {
+    min-height: 50px;  /* or whatever height you deem appropriate */
+    cursor: pointer;  /* Indicates clickable area */
+}
+.saveDescBtn {
+    background: #339DFF;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    width: 100px;
+    text-align: center;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: none;
+    transition: all 0.3s;
+}
+.saveDescBtn:hover{
+    cursor: pointer;
+    color: black;
+}
+.closeDescBtn{
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    width: 100px;
+    font-size: 12px;
+    background: white;
+    transition: all 0.3s;
+    border: none;
+}
+.closeDescBtn:hover{
+    background: lightgrey;
+    cursor: pointer;
+}
 
 /*********************** BAR CONTENT ***********************/
 
@@ -354,13 +440,14 @@ input[id^="input-"] {
     font-size: 1.5em;
     color: #4CAF50;
 }
-
 .bar-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     cursor: grab;
+    position: relative;
 }
+
 .bar-header:active {
      cursor: grabbing !important;
  }
@@ -372,3 +459,4 @@ input[id^="input-"] {
 .bar-container {
     margin: 0;
 }
+/*********************** NOTIFICATIONS ***********************/
