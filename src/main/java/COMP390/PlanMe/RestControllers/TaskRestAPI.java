@@ -1,5 +1,7 @@
 package COMP390.PlanMe.RestControllers;
 
+import COMP390.PlanMe.Exceptions.BadArgumentException;
+import COMP390.PlanMe.Services.NotificationService;
 import COMP390.PlanMe.dao.ProjectDAO;
 import COMP390.PlanMe.dao.TaskDAO;
 import COMP390.PlanMe.dao.UserDAO;
@@ -9,127 +11,34 @@ import COMP390.PlanMe.entity.Project;
 import COMP390.PlanMe.entity.Task;
 import COMP390.PlanMe.entity.User;
 import jakarta.persistence.EntityNotFoundException;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 @RestController
-public class RestControllerProject {
-
+public class TaskRestAPI {
     private final ProjectDAO projectDAO;
     private final UserDAO userDAO;
     private final TaskDAO taskDAO;
     private final barDAO barDAO;
+    private final NotificationService notificationService;
+
 
     @Autowired
-    public RestControllerProject(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, COMP390.PlanMe.dao.barDAO barDAO) {
+    public TaskRestAPI(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, barDAO barDAO, NotificationService notificationService) {
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
         this.barDAO = barDAO;
+        this.notificationService = notificationService; // Initialize notificationService here
     }
 
-    //-----------------------------------------------------------------BAR METHODS--------------------------------------
-    @Transactional
-    @PatchMapping("/project/updateBarPosition")
-    public ResponseEntity<Map<String, Long>> updateBarPosition(@RequestParam("barId") Long barId,
-                                                               @RequestParam("newPosition") Long newPosition) {
-        try {
-            Bar bar = barDAO.getBarById(barId);
-            Project project = bar.getProject();
-            List<Bar> bars = barDAO.findByProjectId(project.getId());
-            bars.sort(Comparator.comparing(Bar::getPosition));
-            bars.remove(bar);
-            bars.add(newPosition.intValue() - 1, bar);
-            reorderBarPositions(bars);
-
-            barDAO.saveAll(bars);
-            projectDAO.save(project);
-            return ResponseEntity.ok(Map.of("barId", barId, "newPosition", newPosition));
-
-        } catch (Exception e) {
-            System.out.println("Error while updating bar position: " + e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-    private void reorderBarPositions(List<Bar> bars) {
-        for (int i = 0; i < bars.size(); i++) {
-            bars.get(i).setPosition(i + 1);
-        }
-    }
-    @GetMapping("/project/addBar")
-    public ResponseEntity<Bar> addBar(@RequestParam("projectId") Long projectId, @RequestParam("barName") String barName) {
-        Project project = projectDAO.getProjectById(projectId);
-        if (project != null) {
-            Bar newBar = new Bar();
-            newBar.setName(barName);
-            Integer maxPosition = barDAO.getMaxPositionByProject(project);
-            newBar.setPosition(maxPosition != null ? maxPosition + 1 : 1);
-            newBar.setProject(project);
-            barDAO.save(newBar);
-            project.getBars().add(newBar);
-            projectDAO.save(project);
-
-            return ResponseEntity.ok(newBar);
-        }
-        return ResponseEntity.notFound().build();
-    }
-    @PatchMapping("/project/updateBarName")
-    public ResponseEntity<Bar> updateBarName(@RequestParam("barId") Long barId, @RequestParam("barName") String barName) {
-        Bar bar = barDAO.getBarById(barId);
-        if (bar != null) {
-            String oldBarName = bar.getName();
-            bar.setName(barName);
-            List<Task> tasks = taskDAO.findAllByState(oldBarName);
-            for (Task task : tasks) {
-                task.setState(barName);
-                taskDAO.save(task);
-            }
-            barDAO.save(bar);
-            return ResponseEntity.ok(bar);
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-    @DeleteMapping("/project/deleteBar")
-    public ResponseEntity<Void> deleteBar(@RequestParam("barId") Long barId) {
-        Bar bar = barDAO.getBarById(barId);
-        if (bar != null) {
-            List<Bar> barsToUpdate = barDAO.getBarsByProjectAndPositionGreaterThan(bar.getProject(), bar.getPosition());
-            for(Bar barToUpdate : barsToUpdate){
-                barToUpdate.setPosition(barToUpdate.getPosition()-1);
-                barDAO.save(barToUpdate);
-            }
-            barDAO.delete(bar);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
-    //---------------------------------------------------MEMBERS METHODS------------------------------------------------
-    @PostMapping("/project/addMember")
-    public ResponseEntity<Void> addMember(@RequestParam("projectId") Long projectId, @RequestParam("memberEmail") String memberEmail) {
-        Project project = projectDAO.getProjectById(projectId);
-        if (project != null) {
-            User member = userDAO.getUserByEmail(memberEmail);
-            if (member != null) {
-                project.getMembers().add(member);
-                projectDAO.save(project);
-                return ResponseEntity.ok().build();
-            }
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-    //----------------------------------------------TASK METHODS--------------------------------------------------------
     @PostMapping("/project/addTask")
-    public ResponseEntity<Void> addTask(
+    public ResponseEntity<String> addTask(
             @RequestParam("projectId") Long projectId,
             @RequestParam("taskName") String taskName,
             @RequestParam("taskPriority") int priority,
@@ -140,9 +49,12 @@ public class RestControllerProject {
             Bar targetBar = project.getBars().stream()
                     .filter(bar -> bar.getId().equals(barId)).findFirst().orElse(null);
             if (targetBar == null) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bar does not exist");
             }
             Task newTask = new Task();
+            if(taskName.equals("")){
+                throw new BadArgumentException("Task name cannot be empty.");
+            }
             newTask.setName(taskName);
             newTask.setBar(targetBar);
             newTask.setPriority(priority);
@@ -152,23 +64,18 @@ public class RestControllerProject {
             targetBar.getTasks().add(newTask);
             taskDAO.save(newTask);
             barDAO.save(targetBar);
-
+            notificationService.notifyUsersOfUpdate();
             return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project does not exist");
+    }
+    @GetMapping("/project/newName/{taskId}")
+    public ResponseEntity<String> newName(@PathVariable("taskId") Long taskId){
+        Task task = taskDAO.getTaskById(taskId);
+        if(task != null){
+            return ResponseEntity.ok(task.getName());
         }
         return ResponseEntity.notFound().build();
-    }
-    @PatchMapping("/project/updateTaskName")
-    public ResponseEntity<Void> updateTaskName(@RequestParam("taskId") Long taskId, @RequestParam("taskName") String taskName){
-        try {
-            Task task = taskDAO.getOne(taskId);
-            task.setName(taskName);
-            taskDAO.save(task);
-            return ResponseEntity.ok().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
     @Transactional
     @PatchMapping("/project/updateTaskPosition")
@@ -200,6 +107,8 @@ public class RestControllerProject {
             taskDAO.save(task);
             barDAO.save(newBar);
 
+            notificationService.taskUpdate();
+
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             System.out.println("Error while updating task position: " + e.getMessage());
@@ -211,12 +120,40 @@ public class RestControllerProject {
             tasks.get(i).setPosition((long) (i + 1));
         }
     }
+    @PatchMapping("/project/updateTaskName")
+    public ResponseEntity<Void> updateTaskName(@RequestParam("taskId") Long taskId, @RequestParam("taskName") String taskName){
+        try {
+            Task task = taskDAO.getOne(taskId);
+            task.setName(taskName);
+            taskDAO.save(task);
+            return ResponseEntity.ok().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping("/project/getUpdatedBars/{projectId}")
+    public ResponseEntity<List<Bar>> updatedTaskList(@PathVariable("projectId") Long projectId){
+        try {
+            Project project = projectDAO.getProjectById(projectId);
+            if (project != null) {
+                return ResponseEntity.ok(project.getBars());
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.out.println("Error while fetching tasks: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PatchMapping("/project/updateTaskPriority")
     public ResponseEntity<Void> updateTaskPrio(@RequestParam ("taskId") Long taskId, @RequestParam ("newTaskPriority") int newPriority) {
         try{
             Task task = taskDAO.getOne(taskId);
             task.setPriority(newPriority);
             taskDAO.save(task);
+            notificationService.notifyUsersOfUpdate();
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -230,6 +167,7 @@ public class RestControllerProject {
             bar.getTasks().remove(task);
             barDAO.save(bar);
             taskDAO.delete(task);
+            notificationService.notifyUsersOfUpdate();
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -242,9 +180,47 @@ public class RestControllerProject {
             Task task = taskDAO.getTaskById(taskId);
             task.setDescription(description);
             taskDAO.save(task);
+            notificationService.notifyUsersOfUpdate();
             return ResponseEntity.ok().build();
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    @GetMapping("/project/findTask")
+    public ResponseEntity<Map<Long, String>> searchTask(@RequestParam("projectId") Long projectId, @RequestParam("taskName") String taskName){
+        Project project = projectDAO.getProjectById(projectId);
+        HashMap<Long, String> map = new HashMap<>();
+        if(project != null){
+            List<Task> tasks = project.getTasks();
+            for(Task task : tasks){
+                System.out.println("Retrieved task with name: " + task.getName());
+                if(task.getName().toLowerCase().contains(taskName.toLowerCase())){
+//                    System.out.println("Looking for tasks containing: " + taskName);
+                    map.put(task.getId(), "Task found");
+                }
+            }
+        }
+        return ResponseEntity.ok(map);
+    }
+    @GetMapping("/getTaskName/{taskId}")
+    public ResponseEntity<String> getTaskName(@PathVariable Long taskId) {
+        Optional<Task> task = taskDAO.findById(taskId);
+        return task.map(value -> ResponseEntity.ok(value.getName())).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    //print a list of task assigned to specific user, only the names of tasks
+    @GetMapping("/project/ListOfTasks")
+    public ResponseEntity<String> getAssignedTasks(@RequestParam("userEmail") String userEmail){
+        User user = userDAO.getUserByEmail(userEmail);
+        if(user != null){
+            int i = 1;
+            List<String> assignedTasksNames = new ArrayList<>();
+            for(Task task : user.getTasksAssigned()){
+                assignedTasksNames.add(i + " " +task.getName());
+                i++;
+            }
+            String joinStrings = String.join("\n", assignedTasksNames);
+            return ResponseEntity.ok(joinStrings);
+        }
+        return ResponseEntity.notFound().build();
     }
 }

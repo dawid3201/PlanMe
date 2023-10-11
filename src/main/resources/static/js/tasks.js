@@ -1,8 +1,9 @@
+// CHECK how to update FROM with AJAX call <----------------------------------------------------------------------------
 var formHTML = `
     <form id="add-task-form">
     <input type="text" id="new-task-name" placeholder="Issue name" />
     <div id="priority-section">
-        <label for="priority"></label>
+        <label for="task-priority"></label>
         <select id="task-priority" name="priority">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -11,7 +12,6 @@ var formHTML = `
         <button type="submit" class="submit-task-btn"><i class="fas fa-check"></i></button>
     </div>
 
-   
 </form>
   `;
 var formOpen = false; //check if form is open
@@ -38,13 +38,10 @@ function handleClickOutsideForm(event) {
         }
     }
 }
-
 function adjustInputWidth(inputElement) {
     // Adjust the input size based on its content length
     inputElement.style.width = `${inputElement.scrollWidth}px`;
 }
-
-
 document.querySelectorAll(".open-form-btn").forEach(btn => {
     btn.addEventListener("click", function(event) {
         event.preventDefault();
@@ -83,7 +80,7 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
                 body: new URLSearchParams({
                     'projectId': projectId,
                     'taskName': newTaskName,
-                    'taskPriority' : newPriority,
+                    'taskPriority': newPriority,
                     'barId': barId
                 })
             })
@@ -94,23 +91,39 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
                     return response.text();
                 })
                 .then(function(text) {
-                    console.log('Request successful', text);
-                    console.log('Bar Position:', barPosition);
-                    location.reload();
+                    if (text === "Bar does not exist") {
+                        // Display a message on the user's screen for bar not existing
+                        alert("Bar does not exist");
+                    } else if (text === "Project does not exist") {
+                        // Display a message on the user's screen for project not existing
+                        alert("Project does not exist");
+                    } else {
+                        console.log('Request successful', text);
+                        console.log('Bar Position:', barPosition);
+                        location.reload();
+                    }
                 })
-                .catch(function(error) {
-                    console.log('Request failed', error);
-                    console.log('Bar Position:', barPosition);
+                .catch(function(xhr, status, error) {
+                    if (xhr.status === 500) { // HTTP status code for Conflict
+                        alert("Task name cannot be empty.");
+                    } else {
+                        // Handle other error cases
+                        console.error("An error occurred:", status, error);
+                    }
                 });
         });
     });
 });
+
 function editTaskName(element) {
     var text = element.textContent;
     var id = element.getAttribute('data-task-id');
-    //edit paragraph
+
+    // Change paragraph to an editable input field
     element.outerHTML = `<input type="text" id="input-${id}" value="${text}" maxlength="50" onblur="updateTaskName(this)" onkeydown="handleKeydown(event, this)">`;
 
+
+    // Focus on the newly created input field
     const inputElem = document.getElementById(`input-${id}`);
     inputElem.focus();
 
@@ -119,12 +132,12 @@ function editTaskName(element) {
 }
 
 function updateTaskName(element) {
-    var newTaskName = element.value;
+    var taskName = element.value;
     var id = element.id.split('-')[1];
 
     // Check the length of the new description
-    if (newTaskName.length > 50) {
-        newTaskName = newTaskName.substring(0, 50);
+    if (taskName.length > 50) {
+        taskName = taskName.substring(0, 50);
     }
 
     fetch('/project/updateTaskName', {
@@ -134,14 +147,19 @@ function updateTaskName(element) {
         },
         body: new URLSearchParams({
             'taskId': id,
-            'taskName': newTaskName,
+            'taskName': taskName,
         })
+    }).then((response) => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        // Successfully deleted from database, now remove from HTML
+        element.outerHTML = `<p onclick="editTaskName(this)" data-task-id="${id}">${taskName}</p>`;
     })
+        .catch((error) => {
+            console.log('Request failed', error);
+        });
 
     // change back to a paragraph
-    element.outerHTML = `<p onclick="editTaskName(this)" data-task-id="${id}">${newTaskName}</p>`;
 }
-
 function handleKeydown(event, element) {
     // 13 is the key code for the Enter key
     if (event.keyCode === 13) {
@@ -166,7 +184,6 @@ function deleteTask(element) {
         });
 }
 //----------------------------------------------------------------TASK PRIORITY CONTENT---------------------------------
-
 function updatePriorityVisuals(element, newPriority) {
     let taskElement = element.closest('.task');
     let priorityLabel = taskElement.querySelector('.priority-label');
@@ -197,6 +214,8 @@ function updatePriorityVisuals(element, newPriority) {
 function updateTaskPriority(dropdown) {
     var taskId = dropdown.getAttribute('data-task-id');
     var newPriority = dropdown.value;
+    var taskElement = document.querySelector(`div[data-task-id="${taskId}"]`);
+    var taskPosition = taskElement ? taskElement.getAttribute('data-task-position') : null;
 
     fetch(`/project/updateTaskPriority?taskId=${taskId}&newTaskPriority=${newPriority}`, {
         method: 'PATCH',
@@ -276,17 +295,41 @@ function createPriorityDropdown(element) {
     // Focus on the newly created dropdown
     dropdown.focus();
 }
-
 //----------------------------------------------------------TASK DESCRIPTION CONTENT------------------------------------
 let currentTaskId = null; //Store current TaskID in variable
 function openDescriptionBox(element) {
-    const taskId = element.getAttribute('data-task-id');
-    currentTaskId = taskId; // Assuming you've defined currentTaskId globally
+    let taskId = element.getAttribute('data-task-id');
+    console.log("Task ID in openDescriptionBox:", taskId);  // Log here
+    currentTaskId = taskId;
 
-    const taskDescription = document.querySelector(`[data-task-id="${taskId}"] .task-description-hidden`).textContent;
+    const taskDescription = document.querySelector(`[data-task-id="${taskId}"] .task-description-hidden`);
 
-    quill.root.innerHTML = taskDescription; // set the Quill editor content
+    if (taskDescription) {
+        quill.root.innerHTML = taskDescription.textContent; // set the Quill editor content
+    } else {
+        console.error("Failed to find the task description element for task ID:", taskId);
+    }
+    document.getElementById("taskNameShow").setAttribute('data-task-id', taskId);
+    displayTaskName(taskId);
+
     document.getElementById("taskDescriptionOverlay").style.display = "block";
+}
+function displayTaskName(taskId) {
+    console.log("Task ID:", taskId);
+    fetch(`/getTaskName/${taskId}`)
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error('Failed to fetch task name');
+            }
+        })
+        .then(taskName => {
+            document.getElementById("taskNameShow").textContent = taskName;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 let quill;
@@ -352,6 +395,203 @@ function closeDescriptionBox() {
     currentTaskId = null;
 }
 //Print name on Task textarea
-function displayTaskName(taskName) {
-    document.getElementById('taskNameShow').innerText = taskName;
+
+//---------------------------------------------ASSIGN-USER-TO-TASK------------------------------------------------------
+function toggleUserDropdown(element) {
+    const dropdown = element.nextElementSibling;
+    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
 }
+function assignUserToTask(userElement, taskId) {
+    const userEmail = encodeURIComponent(userElement.textContent.trim());
+
+
+    fetch(`/project/assignUserToTask?userEmail=${userEmail}&taskId=${taskId}`, {
+        method: 'PATCH',
+    })
+        .then((response) => {
+            if(!response.ok) throw new Error('Network response was not ok');
+            console.log('Task assigned successfully to: ');
+
+        })
+        .catch((error) => {
+            console.log('Request failed', error);
+        });
+}
+//------------------------------------------------------DISPLAY-ASSIGN-TASKS--------------------------------------------
+function getAssignedTasks() {
+    const userEmail = document.getElementById('userEmail').value;
+    fetch(`/project/ListOfTasks?userEmail=${userEmail}`)
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error('Failed to fetch task name');
+            }
+        })
+        .then(assignTasks => {
+            document.getElementById("assignedTasks").textContent = assignTasks;
+            document.getElementById("assignedTasks").style.whiteSpace = "pre-line"; // Set white-space property
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+// Function to toggle the list of members
+function toggleAssignTasks() {
+    const membersList = document.getElementById("listOfAssignedTasks");
+    const toggleMembers = document.getElementById("seeAssignTasks");
+
+    if (membersList.classList.contains("hidden")) {
+        membersList.classList.remove("hidden");
+        toggleMembers.classList.add("closed");
+        getAssignedTasks(); // Fetch and display the list of members
+    } else {
+        membersList.classList.add("hidden");
+        toggleMembers.classList.remove("closed");
+    }
+}
+
+// Add event listener to toggle the list
+document.getElementById("seeAssignTasks").addEventListener("click", toggleAssignTasks);
+
+// Initialize the initial state as hidden
+document.addEventListener("DOMContentLoaded", function () {
+    const membersList = document.getElementById("listOfAssignedTasks");
+    const toggleMembers = document.getElementById("seeAssignTasks");
+
+    membersList.classList.add("hidden");
+    toggleMembers.classList.remove("closed");
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//---------------------------------------------SEARCH-FOR-A-TASK--------------------------------------------------------
+function searchTask() {
+    const projectId = document.getElementById("projectId").value;
+    const taskName = document.getElementById("search-task-name").value.toLowerCase(); // Convert to lowercase
+
+    fetch(`/project/findTask?projectId=${projectId}&taskName=${taskName}`, {
+        method: 'GET',
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Data received from server: ", data);
+            hideNotFoundTask(data); // Pass the entire data
+        })
+        .catch((error) => {
+            console.log('Request failed', error);
+        });
+}
+function hideNotFoundTask(taskData) {
+    const tasks = $('.task');
+    tasks.each(function() {
+        const currentTaskId = $(this).data('task-id');
+        if (taskData[currentTaskId]) {
+            console.log('Task ID found in response data', currentTaskId);
+            $(this).show();
+        } else {
+            console.log('Task ID NOT found in response data', currentTaskId);
+            $(this).hide();
+        }
+    });
+}
+function clearAndSearch() {
+    document.getElementById("search-task-name").value = "";
+    searchTask();
+}
+//--------------------------------------------------------WEB-SOCKET-SCRIPT---------------------------------------------
+// bar.js
+
+// Function to fetch bars from the server
+function fetchBarsFromServer() {
+    const projectId = document.getElementById('projectId').value; // Get the project ID from the hidden input field
+
+    // Make an AJAX GET request to your server's endpoint
+    fetch(`/project/getUpdatedBars/${projectId}`)
+        .then((response) => response.json())
+        .then((data) => {
+            // Process the data and update the DOM elements
+            updateDOMWithData(data);
+        })
+        .catch((error) => {
+            console.error('Error fetching bars:', error);
+        });
+}
+//---------------------------PROBLEM
+//The only thing that is updated is name
+function updateDOMWithData(data) {
+    // Assuming you have a div with the class 'swim-lane' for each bar
+    const barList = document.getElementsByClassName('swim-lane');
+
+    // Loop through each swim-lane and update its content
+    for (let i = 0; i <= barList.length; i++) {
+        const barElement = document.createElement('div');
+        barElement.textContent = data[i].name; // Assuming data structure matches the order
+
+        // Clear the existing content
+        barList[i].innerHTML = '';
+
+        // Append the bar element to the container
+        barList[i].appendChild(barElement);
+    }
+}
+
+
+
+
+//setInterval(initializeSortableSwimLanes, 60000); // Update every minute (adjust as needed)
+
+
+
+
+
+
