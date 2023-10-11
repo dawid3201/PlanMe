@@ -1,10 +1,16 @@
 package COMP390.PlanMe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name="users")
 public class User {
     @Column(name="first_name")
@@ -20,11 +26,14 @@ public class User {
     @Column(name="email_address")
     private String email;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     private List<Project> projects;
 
+    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Task> tasksAssigned;
 
-    //constructors
     public User() {}
 
     public User(String firstName, String lastName, String password, String email) {
@@ -34,47 +43,13 @@ public class User {
         this.email = email;
     }
 
-    //Getters and Setters
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public String getLetters(){
+        String fullName = firstName + " " + lastName;
+        String[] nameParts = fullName.split("\\s");
+        StringBuilder initials  = new StringBuilder();
+        for(String namePart : nameParts){
+            initials.append(namePart.charAt(0));
+        }
+        return initials.toString().toUpperCase();
     }
 }

@@ -114,11 +114,15 @@ public class ProjectController {
         if (project == null) {
             return "redirect:/projects";
         }
+
+        // Retrieve the user details and add them to the model
+        User userDetail = userDAO.getUserByEmail(user.getEmail());
+        model.addAttribute("user", userDetail);
+
         model.addAttribute("project", project);
         model.addAttribute("bars", project.getBars());  // This will add the list of bars to the model
         return "project-details";
     }
-    //TODO: Add a method to delete a project
     //-----------------------------------------------------Chat METHODS-----------------------------------------
 
     //Methods

@@ -55,7 +55,7 @@ document.getElementById("open-bar-form-btn").addEventListener("click", function(
 
         $.ajax({
             url: "/project/addBar",
-            type: "GET",
+            type: "POST",
             data: { projectId: projectId, barName: newBarName },
             success: function(response) {
                 // Create new bar element.
@@ -66,6 +66,14 @@ document.getElementById("open-bar-form-btn").addEventListener("click", function(
                 location.reload(); //<---------------------------- RELOADING PAGE HERE
                 closeBarForm();
             },
+            error: function(xhr, status, error) {
+                if (xhr.status === 409) { // HTTP status code for Conflict
+                    alert("There already is a bar with name: " + newBarName);
+                } else {
+                    // Handle other error cases
+                    console.error("An error occurred:", status, error);
+                }
+            }
         });
     });
 });
