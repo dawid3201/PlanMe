@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface barDAO extends JpaRepository<Bar, Long> {
 
-
     Bar getBarById(Long Id);
 
     @Query("SELECT b FROM Bar b WHERE b.project = :project AND b.position > :position")

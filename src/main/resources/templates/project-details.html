@@ -10,26 +10,63 @@
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
+  <script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
+  <script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+
   <link rel="stylesheet" type="text/css" href="/css/styles.css">
   <script src="/js/tasks.js" defer></script>
   <script src="/js/bar.js" defer></script>
   <script src="/js/project.js" defer></script>
   <script src="/js/updateTask.js" defer></script>
   <script src="/js/dragBar.js" defer></script>
-
+  <script src="/js/WebSocket.js" defer></script>
 </head>
 <body>
 <div id="main-content">
   <div id="header">
     <h2 th:text="${project.name}"></h2>
-    <form id="add-member-form">
-      <input type="text" id="new-member-email" placeholder="New Member Email">
-      <button type="submit">Add Member</button>
-    </form>
-    <i class="delete-project" th:attr="data-project-id=${project.id}" onclick="deleteProject(this)">Delete Project</i>
+    TODO: DEADLINE
     <a th:href="@{/homepage}" style="color: white">Go Back</a>
   </div>
+
   <input type="hidden" id="projectId" th:value="${project.id}"/>
+  <input type="hidden" id="userEmail" th:value="${user.email}"/>
+
+  <div id="left-sidebar">
+    <p id="user-name"th:text="${user.firstName + ' ' + user.lastName}"></p>
+    <i id="delete-project-button" th:attr="data-project-id=${project.id}" onclick="deleteProject(this)">Delete Project</i>
+
+    <div id="member_list_container">
+      <p id="toggleMembers" class="closed">See all project members:</p>
+      <div id="membersList" class="hidden">
+        <p id="members_list_p"></p>
+      </div>
+      <form id="add-member-form">
+        <input type="text" id="new-member-email" placeholder="New Member Email">
+        <button type="submit">Add Member</button>
+      </form>
+    </div>
+    <div>
+      <p id="seeAssignTasks" class="closed">See all tasks assign to me:</p>
+      <div id="listOfAssignedTasks" class="hidden">
+        <p id="assignedTasks"></p>
+      </div>
+    </div>
+  </div>
+
+  <form class="form">
+    <button type="button" onclick="searchTask()">
+      <svg width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
+        <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+    <input class="input" placeholder="Find task by name" required="" type="text" id="search-task-name">
+    <button class="reset" type="button" onclick="clearAndSearch()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </form>
 
   <div class="board">
     <div class="lanes">
@@ -38,7 +75,7 @@
           <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id},data-bar-position=${iterStat.index} + 1">
           <div class="bar-header">
               <div class="bar-name-wrapper" th:attr="data-bar-id=${bar.id}" onclick="editBarDescription(this)">
-                <h3 class="heading" th:text="${bar.name}"></h3>
+                <h3 class="heading" th:text="${#strings.toUpperCase(bar.name)}"></h3>
               </div>
               <i class="fas fa-times delete-bar" th:attr="data-bar-id=${bar.id}" onclick="deleteBar(this)"></i>
             </div>
@@ -46,24 +83,31 @@
                  th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
                  th:if="${task.state.toString() == bar.name}"
                  class="task"
-                 th:attr="data-task-id=${task.id}">
+                 th:attr="data-task-id=${task.id}, data-task-position=${task.position}, data-task-name=${task.name}">
 
-               <span class="priority-label"
+              <span class="priority-label"
                      th:classappend="${task.priority == 1} ? 'priority-one' : (${task.priority == 2} ? 'priority-two' : 'priority-three')"
                      th:text="${task.priority == 1} ? 'LOW' : (${task.priority == 2} ? 'MEDIUM' : 'HIGH')">
               </span>
 
-              <p th:text="${task.name}"
-                 onclick="editTaskName(this); displayTaskName('${task.name}')"
+              <p class="task-name" th:text="${task.name}"
+                 onclick="editTaskName(this)"
                  th:attr="data-task-id=${task.id}">
               </p>
-
+              </p>
               <div class="additional-content" th:attr="data-task-id=${task.id}" onclick="openDescriptionBox(this)">
                 <p class="task-description-hidden" th:text="${task.description}" style="display:none;"></p>
               </div>
-
               <div class="task-actions">
                 <div class="right-side-actions">
+                  <div class="user-dropdown">
+                      <i class="fas fa-user" onclick="toggleUserDropdown(this)"></i>
+                    <div class="user-dropdown-content" style="display: none;">
+                      <th:block th:each="user : ${project.members}">
+                          <a id="emailSpan" href="#" th:text="${user.email}" th:onclick="'assignUserToTask(this,' + ${task.id} + ')'"></a>
+                      </th:block>
+                    </div>
+                  </div>
                   <i class="fas fa-times delete-task" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)"></i>
                   <p class="task-priority" th:text="${task.priority}" onclick="createPriorityDropdown(this)" th:attr="data-task-id=${task.id}"></p>
                 </div>
@@ -73,7 +117,6 @@
             <a class ="open-form-btn" href="#" role="button">
               <i class="fas fa-plus"></i> Add Issue
             </a>
-
           </div>
         </div>
       </th:block>
@@ -92,7 +135,7 @@
 
 <div id="taskDescriptionOverlay">
   <div id="taskDescriptionBox">
-    <h3 id="taskNameShow">ADD TITLE HERE - TODO</h3>
+    <h3 id="taskNameShow" ></h3>
     <div id="editor-toolbar"></div>
     <div id="editor" style="height: 80%; margin-top: 10px;"></div>
 
@@ -103,3 +146,5 @@
 
 </body>
 </html>
+
+

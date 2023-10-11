@@ -14,7 +14,100 @@ html, body {
     font-family: 'Poppins', sans-serif;
     height: 100%;
 }
-/****************EXTENDED DIV IS HERE*****************/
+/***************************************************LEFT DIV IS HERE***************************************************/
+#left-sidebar {
+    width: 200px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: white;
+    overflow-y: auto;
+    border-radius: 10px;
+}
+#user-name {
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#member_list_container {
+    margin-top: 20px;
+}
+
+#toggleMembers {
+    cursor: pointer;
+    color: #007bff;
+    font-weight: bold;
+}
+
+#toggleMembers:hover {
+    text-decoration: underline;
+}
+
+#membersList {
+    margin-top: 10px;
+    padding: 10px;
+}
+#members_list_p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#add-member-form {
+    margin-top: 20px;
+}
+
+#add-member-form input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+#add-member-form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#add-member-form button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+.hidden {
+    display: none;
+}
+#delete-project-button {
+    font-size: 20px;
+    padding: 17px 25px; /* Increase padding for a bigger button */
+    background-color: #ff0000; /* Change the background color */
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+
+    gap: 100px;
+    box-sizing: border-box;
+    margin-top: auto;
+}
+
+#delete-project-button:hover {
+    background-color: #cc0000; /* Hover color */
+}
+/**********************************PROJECT HEADER AND BOARD************************************************************/
+#header,
+.board {
+    margin-left: 210px;  /* Moves Header and board to the right so left bar is separated */
+}
+#search-form-container{
+    margin-left: 210px;
+}
+#user-name{
+    font-size: 29px;
+}
+/****************MAIN CONTENT IS HERE*****************/
 #main-content {
     background-color: #483d8b;
     display: flex;
@@ -37,6 +130,17 @@ html, body {
 }
 .delete-project:hover{
     color: red;
+}
+#header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
 }
 /* ---- FORM ---- */
 #todo-form {
@@ -81,17 +185,6 @@ html, body {
     display: flex;
     justify-content: space-between;
 }
-#header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 32px;
-    height: 50px;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-}
 
 .swim-lane {
     position: relative;
@@ -117,7 +210,6 @@ html, body {
     font-size: 16px;
     cursor: grab;
     min-height: 100px;
-    z-index: 1; /* Ensure the task being dragged is on top */
     word-wrap: break-word;
     justify-content: space-between;
     align-items: start;
@@ -153,18 +245,6 @@ input[id^="input-"] {
     margin-right: 10px; /* Add a margin to the right of the text */
 }
 
-.task-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Align items to the right */
-    justify-content: flex-start;
-}
-
-.right-side-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Align items to the right */
-}
 #add-task-form {
     width: 95%;
     display: flex;
@@ -298,7 +378,6 @@ input[id^="input-"] {
     margin: 10px auto;
 }
 
-
 .fas.fa-plus {
     pointer-events: none;
 }
@@ -410,7 +489,76 @@ input[id^="input-"] {
     background: lightgrey;
     cursor: pointer;
 }
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
 
+.user-dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f9f9f9;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    border: 1px solid #ccc;
+    z-index: 2 !important;
+}
+.user-dropdown-content a {
+    color: black;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+}
+
+.user-dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+.fa-user{
+    cursor: pointer;
+}
+.task-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the right */
+    justify-content: flex-start;
+    z-index: 4;
+}
+
+.right-side-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the right */
+}
+/******************************************* TOOLTIP CSS **************************************************************/
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+}
 /*********************** BAR CONTENT ***********************/
 
 #new-bar-name {
@@ -459,4 +607,92 @@ input[id^="input-"] {
 .bar-container {
     margin: 0;
 }
-/*********************** NOTIFICATIONS ***********************/
+/*********************** SEARCH TASK FEATURE ***********************/
+/* Copied from uiverse.io, made by @satyamchaudharydev */
+/* removing default style of button */
+
+.form button {
+    border: none;
+    background: none;
+    color: #8b8ba7;
+}
+/* styling of whole input container */
+.form {
+    margin-top: 10px;
+    margin-left: 240px;
+    --timing: 0.3s;
+    --width-of-input: 200px;
+    --height-of-input: 40px;
+    --border-height: 2px;
+    --input-bg: #fff;
+    --border-color: #2f2ee9;
+    --border-radius: 30px;
+    --after-border-radius: 1px;
+    position: relative;
+    width: var(--width-of-input);
+    height: var(--height-of-input);
+    display: flex;
+    align-items: center;
+    padding-inline: 0.8em;
+    border-radius: var(--border-radius);
+    transition: border-radius 0.5s ease;
+    background: var(--input-bg,#fff);
+}
+/* styling of Input */
+.input {
+    font-size: 0.9rem;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    padding-inline: 0.5em;
+    padding-block: 0.7em;
+    border: none;
+}
+/* styling of animated border */
+.form:before {
+    content: "";
+    position: absolute;
+    background: var(--border-color);
+    transform: scaleX(0);
+    transform-origin: center;
+    width: 100%;
+    height: var(--border-height);
+    left: 0;
+    bottom: 0;
+    border-radius: 1px;
+    transition: transform var(--timing) ease;
+}
+/* Hover on Input */
+.form:focus-within {
+    border-radius: var(--after-border-radius);
+}
+
+input:focus {
+    outline: none;
+}
+/* here is code of animated border */
+.form:focus-within:before {
+    transform: scale(1);
+}
+/* styling of close button */
+/* == you can click the close button to remove text == */
+.reset {
+    border: none;
+    background: none;
+    opacity: 0;
+    visibility: hidden;
+}
+/* close button shown when typing */
+input:not(:placeholder-shown) ~ .reset {
+    opacity: 1;
+    visibility: visible;
+}
+/* sizing svg icons */
+.form svg {
+    width: 17px;
+    margin-top: 3px;
+}
+#searchAndClearButtons{
+    border: none;
+    background: none;
+}

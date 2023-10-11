@@ -207,25 +207,20 @@ public class TaskRestAPI {
         Optional<Task> task = taskDAO.findById(taskId);
         return task.map(value -> ResponseEntity.ok(value.getName())).orElseGet(() -> ResponseEntity.notFound().build());
     }
+    //print a list of task assigned to specific user, only the names of tasks
     @GetMapping("/project/ListOfTasks")
-    public ResponseEntity<String> getAssignedTasks(@RequestParam("userEmail") String userEmail, @RequestParam("projectId") Long projectId) {
-        Project project = projectDAO.getProjectById(projectId);
-
-        if (project != null) {
-            List<Task> tasksForProject = project.getTasks();
+    public ResponseEntity<String> getAssignedTasks(@RequestParam("userEmail") String userEmail){
+        User user = userDAO.getUserByEmail(userEmail);
+        if(user != null){
             int i = 1;
             List<String> assignedTasksNames = new ArrayList<>();
-            for (Task task : tasksForProject) {
-                User assignedUser = task.getAssignedUser();
-                if (assignedUser != null && task.getAssignedUser().getEmail().contains(userEmail)) {
-                    assignedTasksNames.add(i + " : " + task.getName() + "\n");
-                    i++;
-                }
+            for(Task task : user.getTasksAssigned()){
+                assignedTasksNames.add(i + " " +task.getName());
+                i++;
             }
             String joinStrings = String.join("\n", assignedTasksNames);
             return ResponseEntity.ok(joinStrings);
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
     }
 }

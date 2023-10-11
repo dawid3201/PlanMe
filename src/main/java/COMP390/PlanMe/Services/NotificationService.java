@@ -1,6 +1,5 @@
 package COMP390.PlanMe.Services;
 
-import COMP390.PlanMe.entity.UpdatedEntities.TaskUpdateMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,7 @@ public class NotificationService {
         messagingTemplate.convertAndSend("/topic/updates", "An update has occurred!");
     }
     public void taskUpdate() { //methopd for udpating any Task changes
-        messagingTemplate.convertAndSend("/topic/updates", "THERE WAS AN UPDATE FOR A TASK ELEMENT");
+        messagingTemplate.convertAndSend("/topic/taskUpdates", "THERE WAS AN UPDATE FOR A TASK ELEMENT");
     }
-
-
 
 }

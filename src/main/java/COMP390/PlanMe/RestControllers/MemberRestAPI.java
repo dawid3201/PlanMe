@@ -41,19 +41,17 @@ public class MemberRestAPI {
     }
     @PatchMapping("/project/assignUserToTask")
     public ResponseEntity<String> assignUser(@RequestParam("userEmail") String userEmail, @RequestParam("taskId") Long taskId) {
-        Task task = taskDAO.getTaskById(taskId);
-        if ("Undefined".equalsIgnoreCase(userEmail)) {
-            task.setAssignedUser(null); // Assigning the task to no one
-        } else {
-            User user = userDAO.getUserByEmail(userEmail);
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
-            }
-            task.setAssignedUser(user);
+        User user = userDAO.getUserByEmail(userEmail);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         }
-
+        Task task = taskDAO.getTaskById(taskId);
+        if (task == null) {
+            return ResponseEntity.notFound().build();
+        }
+        task.setAssignedUser(user);
         taskDAO.save(task);
-        System.out.println("Task with ID " + taskId + " assigned to user with email " + userEmail);
+        System.out.println("Task with ID" + taskId + " assigned to user with email " + userEmail);
         return ResponseEntity.ok().build();
     }
     @GetMapping("/getMembers/{projectId}") //Used in PROJECT.JS
