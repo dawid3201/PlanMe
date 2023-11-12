@@ -21,9 +21,9 @@ html, body {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: white;
+    background-color: #f4f4f4;
     overflow-y: auto;
-    border-radius: 10px;
+    border-radius: 0 10px 10px 0;
 }
 #user-name {
     font-weight: bold;
@@ -33,6 +33,7 @@ html, body {
 
 #member_list_container {
     margin-top: 20px;
+    border: 1px black;
 }
 
 #toggleMembers {
@@ -56,6 +57,7 @@ html, body {
 
 #add-member-form {
     margin-top: 20px;
+    text-align: center;
 }
 
 #add-member-form input[type="text"] {
@@ -70,6 +72,7 @@ html, body {
     border: none;
     padding: 5px 10px;
     cursor: pointer;
+    justify-content: center;
 }
 
 #add-member-form button[type="submit"]:hover {
@@ -87,15 +90,39 @@ html, body {
     cursor: pointer;
     width: 100%;
     display: flex;
-
     gap: 100px;
     box-sizing: border-box;
     margin-top: auto;
 }
-
 #delete-project-button:hover {
     background-color: #cc0000; /* Hover color */
 }
+
+#myTasksContainer{
+    margin-top: 10px;
+    padding: 10px;
+}
+#seeAssignTasks{
+    cursor: pointer;
+    color: #007bff;
+    font-weight: bold;
+}
+#seeAssignTasks:hover{
+    text-decoration: underline;
+}
+#new-member-email {
+    /* Remove default border */
+    border: none;
+    /* Remove background and outline */
+    background: none;
+    outline: none;
+}
+
+#new-member-email:focus {
+    /* Change the border color when input is focused */
+    border-bottom: 2px solid #2f2ee9; /* You can change the color to your preferred focus color */
+}
+
 /**********************************PROJECT HEADER AND BOARD************************************************************/
 #header,
 .board {
@@ -109,7 +136,7 @@ html, body {
 }
 /****************MAIN CONTENT IS HERE*****************/
 #main-content {
-    background-color: #483d8b;
+    background-color: #191970;
     display: flex;
     flex-direction: column;
     /*overflow: hidden;*/
@@ -122,8 +149,9 @@ html, body {
 }
 /* ---- HEADER ---- */
 #header {
-    background-color: #35339a;
+    background-color: black; /* color i used before #35339a*/
     flex-shrink: 0; /* Prevents shrinking */
+    border-radius: 10px 0 10px 0;
 }
 .delete-project{
     cursor: pointer;

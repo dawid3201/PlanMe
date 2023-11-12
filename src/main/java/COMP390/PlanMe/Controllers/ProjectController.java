@@ -123,10 +123,12 @@ public class ProjectController {
         model.addAttribute("bars", project.getBars());  // This will add the list of bars to the model
         return "project-details";
     }
-    //-----------------------------------------------------Chat METHODS-----------------------------------------
 
     //Methods
     private boolean isNameEmpty(String name){
         return name == null || name.trim().isEmpty();
     }
+    //-----------------------------------------------------Chat METHODS-----------------------------------------
+
+
 }

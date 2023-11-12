@@ -1,5 +1,5 @@
-//Sortable function, does not update DOM
-function initializeSortableSwimLanes() {
+//JQuare library and sortable
+function moveTask() {
     $(".swim-lane").sortable({
         items: ".task",
         placeholder: "task-placeholder",
@@ -21,6 +21,7 @@ function initializeSortableSwimLanes() {
                 },
                 success: function() {
                     console.log('Task position updated successfully.');
+                    ui.item.attr("data-bar-id", barId);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.error('Error updating task position:', textStatus, errorThrown);
@@ -30,9 +31,21 @@ function initializeSortableSwimLanes() {
     });
 }
 
-$(document).ready(initializeSortableSwimLanes);
+$(document).ready(moveTask);
 
 //solution to the bad position was to get all tasks from specific bar instead of all tasks
 //Before: there were 4 tasks and 3 bars: A, B and C. A = 1 task, B = 2 tasks and C = 1 task.
 //When I added new task to the C its position was 5 instead of 2
 //After: I added new task to C and its positoin is 2 not 5
+function updateTaskElement(notification) {
+    const taskUpdateMessage = JSON.parse(notification.body);
+
+    // Find the task element by taskId and update data attributes
+    const taskElement = $(`.task[data-task-id='${taskUpdateMessage.taskId}']`);
+    taskElement.attr("data-bar-id", taskUpdateMessage.barId);
+    taskElement.attr("data-task-position", taskUpdateMessage.newPosition);
+
+    // Update any other DOM elements related to the task if needed
+
+    // You can also update the visual representation of the task element here if necessary
+}
