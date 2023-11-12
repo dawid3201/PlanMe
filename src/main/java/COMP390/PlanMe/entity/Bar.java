@@ -41,4 +41,3 @@ public class Bar {
     private List<Task> tasks = new ArrayList<>();
 
 }
-

@@ -75,5 +75,3 @@ document.addEventListener("DOMContentLoaded", function () {
     membersList.classList.add("hidden");
     toggleMembers.classList.remove("closed");
 });
-
-

@@ -12,6 +12,7 @@
 
   <script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
   <script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
   <link rel="stylesheet" type="text/css" href="/css/styles.css">
   <script src="/js/tasks.js" defer></script>
@@ -46,8 +47,8 @@
         <button type="submit">Add Member</button>
       </form>
     </div>
-    <div>
-      <p id="seeAssignTasks" class="closed">See all tasks assign to me:</p>
+    <div id="myTasksContainer">
+      <p id="seeAssignTasks" class="closed">Show my tasks:</p>
       <div id="listOfAssignedTasks" class="hidden">
         <p id="assignedTasks"></p>
       </div>
@@ -72,7 +73,7 @@
     <div class="lanes">
       <th:block th:each="bar, iterStat : ${project.bars}">
         <div class="bar-container">
-          <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id},data-bar-position=${iterStat.index} + 1">
+          <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id},data-bar-position=${(iterStat.index + 1)}">
           <div class="bar-header">
               <div class="bar-name-wrapper" th:attr="data-bar-id=${bar.id}" onclick="editBarDescription(this)">
                 <h3 class="heading" th:text="${#strings.toUpperCase(bar.name)}"></h3>
@@ -103,8 +104,9 @@
                   <div class="user-dropdown">
                       <i class="fas fa-user" onclick="toggleUserDropdown(this)"></i>
                     <div class="user-dropdown-content" style="display: none;">
+                      <a  href="#" th:text="'Undefined'" th:onclick="'assignUserToTask(this,' + ${task.id} + ')'"></a>
                       <th:block th:each="user : ${project.members}">
-                          <a id="emailSpan" href="#" th:text="${user.email}" th:onclick="'assignUserToTask(this,' + ${task.id} + ')'"></a>
+                        <a  href="#" th:text="${user.email}" th:onclick="'assignUserToTask(this,' + ${task.id} + ')'"></a>
                       </th:block>
                     </div>
                   </div>
@@ -146,5 +148,3 @@
 
 </body>
 </html>
-
-
