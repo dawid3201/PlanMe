@@ -1,11 +1,8 @@
-$(document).ready(function() {
-
-    $(document).ready(function() {
+function moveCards(){
         $(".lanes").sortable({
             items: ".bar-container",
             handle: ".bar-header",
             cursor: "move",
-            helper: "clone",
             tolerance: "pointer",
             update: function(event, ui) {
                 let newPosition = ui.item.index() + 1;
@@ -27,7 +24,7 @@ $(document).ready(function() {
                 });
             }
         });
-    });
-});
+}
+$(document).ready(moveCards);
 
 //Bar positoin is updating wrong

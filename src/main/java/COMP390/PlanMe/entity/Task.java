@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -48,4 +49,5 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "assigned_user_email")
     private User assignedUser;
+
 }

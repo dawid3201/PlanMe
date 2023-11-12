@@ -32,7 +32,7 @@ function closeForm() {
 
 function handleClickOutsideForm(event) {
     if (currentFormContainer) {
-        const isClickInsideForm = currentFormContainer.contains(event.target);
+        // const isClickInsideForm = currentFormContainer.contains(event.target);
         if (currentFormContainer && formOpen && !currentFormContainer.contains(event.target) && event.target.className !== "open-form-btn") {
             closeForm();
         }
@@ -209,8 +209,6 @@ function updatePriorityVisuals(element, newPriority) {
     priorityLabel.classList.add(labelClass);
     priorityLabel.textContent = labelText;
 }
-
-
 function updateTaskPriority(dropdown) {
     var taskId = dropdown.getAttribute('data-task-id');
     var newPriority = dropdown.value;
@@ -239,9 +237,9 @@ function updateTaskPriority(dropdown) {
 }
 
 // Event listener to remove the popup when clicked anywhere outside it
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function(event) {
     let popup = document.querySelector('#priority-dropdown');
-    if (popup && !popup.contains(e.target) && !e.target.hasAttribute('data-task-id')) {
+    if (popup && !popup.contains(event.target) && !event.target.hasAttribute('data-task-id')) {
         popup.remove();
     }
 });
@@ -401,9 +399,18 @@ function toggleUserDropdown(element) {
     const dropdown = element.nextElementSibling;
     dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
 }
+//TODO: dropdown does not hide when user clicks on anything else on the page
+document.addEventListener('click', function(event) {
+    const dropdowns = document.querySelectorAll('.user-dropdown');
+
+    dropdowns.forEach(function(dropdown) {
+        if (dropdown.style.display === "block" && !dropdown.contains(event.target)) {
+            dropdown.style.display = "none";
+        }
+    });
+});
 function assignUserToTask(userElement, taskId) {
     const userEmail = encodeURIComponent(userElement.textContent.trim());
-
 
     fetch(`/project/assignUserToTask?userEmail=${userEmail}&taskId=${taskId}`, {
         method: 'PATCH',
@@ -411,6 +418,9 @@ function assignUserToTask(userElement, taskId) {
         .then((response) => {
             if(!response.ok) throw new Error('Network response was not ok');
             console.log('Task assigned successfully to: ');
+
+            const dropdown = userElement.closest('.user-dropdown');
+            toggleUserDropdown(dropdown.querySelector('i'));
 
         })
         .catch((error) => {
@@ -420,7 +430,9 @@ function assignUserToTask(userElement, taskId) {
 //------------------------------------------------------DISPLAY-ASSIGN-TASKS--------------------------------------------
 function getAssignedTasks() {
     const userEmail = document.getElementById('userEmail').value;
-    fetch(`/project/ListOfTasks?userEmail=${userEmail}`)
+    const projectId = document.getElementById('projectId').value;
+
+    fetch(`/project/ListOfTasks?userEmail=${userEmail}&projectId=${projectId}`)
         .then(response => {
             if (response.ok) {
                 return response.text();
@@ -462,58 +474,6 @@ document.addEventListener("DOMContentLoaded", function () {
     membersList.classList.add("hidden");
     toggleMembers.classList.remove("closed");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //---------------------------------------------SEARCH-FOR-A-TASK--------------------------------------------------------
 function searchTask() {
     const projectId = document.getElementById("projectId").value;
@@ -548,50 +508,3 @@ function clearAndSearch() {
     document.getElementById("search-task-name").value = "";
     searchTask();
 }
-//--------------------------------------------------------WEB-SOCKET-SCRIPT---------------------------------------------
-// bar.js
-
-// Function to fetch bars from the server
-function fetchBarsFromServer() {
-    const projectId = document.getElementById('projectId').value; // Get the project ID from the hidden input field
-
-    // Make an AJAX GET request to your server's endpoint
-    fetch(`/project/getUpdatedBars/${projectId}`)
-        .then((response) => response.json())
-        .then((data) => {
-            // Process the data and update the DOM elements
-            updateDOMWithData(data);
-        })
-        .catch((error) => {
-            console.error('Error fetching bars:', error);
-        });
-}
-//---------------------------PROBLEM
-//The only thing that is updated is name
-function updateDOMWithData(data) {
-    // Assuming you have a div with the class 'swim-lane' for each bar
-    const barList = document.getElementsByClassName('swim-lane');
-
-    // Loop through each swim-lane and update its content
-    for (let i = 0; i <= barList.length; i++) {
-        const barElement = document.createElement('div');
-        barElement.textContent = data[i].name; // Assuming data structure matches the order
-
-        // Clear the existing content
-        barList[i].innerHTML = '';
-
-        // Append the bar element to the container
-        barList[i].appendChild(barElement);
-    }
-}
-
-
-
-
-//setInterval(initializeSortableSwimLanes, 60000); // Update every minute (adjust as needed)
-
-
-
-
-
-
