@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface barDAO extends JpaRepository<Bar, Long> {
+public interface BarDAO extends JpaRepository<Bar, Long> {
 
     Bar getBarById(Long Id);
 
@@ -18,4 +18,6 @@ public interface barDAO extends JpaRepository<Bar, Long> {
     Integer getMaxPositionByProject(Project project);
 
     List<Bar> findByProjectId(Long id);
+
+    List<Bar> getBarsByProjectId(Long projectId);
 }

@@ -2,9 +2,7 @@ package COMP390.PlanMe.Controllers;
 
 import COMP390.PlanMe.dao.*;
 import COMP390.PlanMe.entity.*;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpSession;
@@ -18,10 +16,10 @@ public class ProjectController {
     private final ProjectDAO projectDAO;
     private final UserDAO userDAO;
     private final TaskDAO taskDAO;
-    private final barDAO barDAO;
+    private final BarDAO barDAO;
 
     @Autowired
-    public ProjectController(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, barDAO barDAO) {
+    public ProjectController(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, BarDAO barDAO) {
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
@@ -50,7 +48,6 @@ public class ProjectController {
             model.addAttribute("project", project);
             return "new-project";
         }
-
         project.setName(name);
         Bar bar1 = new Bar();
         bar1.setName("TODO");
@@ -93,7 +90,6 @@ public class ProjectController {
         }
         return ResponseEntity.notFound().build();
     }
-
     @GetMapping("/projects")
     public String viewProjects(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -116,19 +112,17 @@ public class ProjectController {
         }
 
         // Retrieve the user details and add them to the model
-        User userDetail = userDAO.getUserByEmail(user.getEmail());
+        User userDetail = userDAO.findByEmail(user.getEmail());
         model.addAttribute("user", userDetail);
 
         model.addAttribute("project", project);
         model.addAttribute("bars", project.getBars());  // This will add the list of bars to the model
         return "project-details";
     }
-
     //Methods
     private boolean isNameEmpty(String name){
         return name == null || name.trim().isEmpty();
     }
     //-----------------------------------------------------Chat METHODS-----------------------------------------
-
 
 }

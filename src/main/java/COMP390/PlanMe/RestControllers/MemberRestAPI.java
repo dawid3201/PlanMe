@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class MemberRestAPI {
     public ResponseEntity<Void> addMember(@RequestParam("projectId") Long projectId, @RequestParam("memberEmail") String memberEmail) {
         Project project = projectDAO.getProjectById(projectId);
         if (project != null) {
-            User member = userDAO.getUserByEmail(memberEmail);
+            User member = userDAO.findByEmail(memberEmail);
             if (member != null) {
                 project.getMembers().add(member);
                 projectDAO.save(project);
@@ -45,13 +44,15 @@ public class MemberRestAPI {
         if ("Undefined".equalsIgnoreCase(userEmail)) {
             task.setAssignedUser(null); // Assigning the task to no one
         } else {
-            User user = userDAO.getUserByEmail(userEmail);
+            User user = userDAO.findByEmail(userEmail);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
             }
+            if(user.getTasksAssigned().contains(task)){//Exception 500
+                throw new IllegalStateException("User " + user.getEmail() + " is already assign to the task " + task.getName());
+            }
             task.setAssignedUser(user);
         }
-
         taskDAO.save(task);
         System.out.println("Task with ID " + taskId + " assigned to user with email " + userEmail);
         return ResponseEntity.ok().build();
@@ -71,7 +72,7 @@ public class MemberRestAPI {
     }
     @GetMapping("/getInitials/{email}") //USed in TASK.JS
     public ResponseEntity<String> getInitials(@PathVariable String email){
-        User user = userDAO.getUserByEmail(email);
+        User user = userDAO.findByEmail(email);
         if(user != null){
             String fullName = user.getFirstName() + " " + user.getLastName();
             String[] nameParts = fullName.split("\\s");

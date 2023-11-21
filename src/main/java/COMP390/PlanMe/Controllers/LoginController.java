@@ -34,10 +34,8 @@ public class LoginController {
     }
     @PostMapping("/login")
     private String processLoginForm(@RequestParam("email") String email,@RequestParam("password") String password, Model model, HttpSession session) {
-        boolean emailExists = userDAO.checkEmailExists(email);
-        if (emailExists) {
-            // Perform login logic
-            User user = userDAO.getUserByEmail(email);
+        User user = userDAO.findByEmail(email);
+        if (user!= null) {
             if(user.getPassword().equals(password)) { // check users password when logging in
                 session.setAttribute("user", user);
                 return "redirect:/homepage";

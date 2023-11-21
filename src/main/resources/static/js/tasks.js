@@ -416,7 +416,13 @@ function assignUserToTask(userElement, taskId) {
         method: 'PATCH',
     })
         .then((response) => {
-            if(!response.ok) throw new Error('Network response was not ok');
+            if(!response.ok){
+                if(response.status === 500){
+                    alert("Conflict: User " + decodeURIComponent(userEmail) + " is already assign to this task");
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            }
             console.log('Task assigned successfully to: ');
 
             const dropdown = userElement.closest('.user-dropdown');

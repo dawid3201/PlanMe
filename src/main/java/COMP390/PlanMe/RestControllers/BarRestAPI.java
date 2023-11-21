@@ -1,9 +1,8 @@
 package COMP390.PlanMe.RestControllers;
 
 import COMP390.PlanMe.Exceptions.ConflictException;
-import COMP390.PlanMe.Exceptions.ExceptionsHandler;
 import COMP390.PlanMe.Exceptions.NotFoundException;
-import COMP390.PlanMe.Exceptions.BadArgumentException;
+import COMP390.PlanMe.dao.BarDAO;
 import COMP390.PlanMe.dao.ProjectDAO;
 import COMP390.PlanMe.dao.TaskDAO;
 import COMP390.PlanMe.dao.UserDAO;
@@ -24,9 +23,9 @@ public class BarRestAPI {
     private final ProjectDAO projectDAO;
     private final UserDAO userDAO;
     private final TaskDAO taskDAO;
-    private final COMP390.PlanMe.dao.barDAO barDAO;
+    private final BarDAO barDAO;
 
-    public BarRestAPI(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, COMP390.PlanMe.dao.barDAO barDAO) {
+    public BarRestAPI(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, BarDAO barDAO) {
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
@@ -57,6 +56,19 @@ public class BarRestAPI {
     private void reorderBarPositions(List<Bar> bars) {
         for (int i = 0; i < bars.size(); i++) {
             bars.get(i).setPosition(i + 1);
+        }
+    }
+    @GetMapping("/project/getUpdatedBars/{projectId}")
+    public ResponseEntity<List<Bar>> updatedTaskList(@PathVariable("projectId") Long projectId){
+        try {
+            Project project = projectDAO.getProjectById(projectId);
+            if (project != null) {
+                return ResponseEntity.ok(project.getBars());
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.out.println("Error while fetching tasks: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
     @PostMapping("/project/addBar")

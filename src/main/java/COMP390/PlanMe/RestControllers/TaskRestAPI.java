@@ -1,11 +1,12 @@
 package COMP390.PlanMe.RestControllers;
 
 import COMP390.PlanMe.Exceptions.BadArgumentException;
+import COMP390.PlanMe.Exceptions.NotFoundException;
 import COMP390.PlanMe.Services.NotificationService;
 import COMP390.PlanMe.dao.ProjectDAO;
 import COMP390.PlanMe.dao.TaskDAO;
 import COMP390.PlanMe.dao.UserDAO;
-import COMP390.PlanMe.dao.barDAO;
+import COMP390.PlanMe.dao.BarDAO;
 import COMP390.PlanMe.entity.Bar;
 import COMP390.PlanMe.entity.Project;
 import COMP390.PlanMe.entity.Task;
@@ -24,12 +25,12 @@ public class TaskRestAPI {
     private final ProjectDAO projectDAO;
     private final UserDAO userDAO;
     private final TaskDAO taskDAO;
-    private final barDAO barDAO;
+    private final BarDAO barDAO;
     private final NotificationService notificationService;
 
 
     @Autowired
-    public TaskRestAPI(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, barDAO barDAO, NotificationService notificationService) {
+    public TaskRestAPI(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO, BarDAO barDAO, NotificationService notificationService) {
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.taskDAO = taskDAO;
@@ -64,8 +65,8 @@ public class TaskRestAPI {
             targetBar.getTasks().add(newTask);
             taskDAO.save(newTask);
             barDAO.save(targetBar);
-            notificationService.notifyUsersOfUpdate();
-            return ResponseEntity.ok().build();
+//            notificationService.notifyUsersOfUpdate();
+            return ResponseEntity.ok().body(taskName);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project does not exist");
     }
@@ -79,18 +80,20 @@ public class TaskRestAPI {
     }
     @Transactional
     @PatchMapping("/project/updateTaskPosition")
-    public ResponseEntity<Void> updateTaskPosition(@RequestParam("taskId") Long taskId,
+    public ResponseEntity<Long> updateTaskPosition(@RequestParam("taskId") Long taskId,
                                                    @RequestParam("newPosition") Long newPosition,
                                                    @RequestParam("barId") Long barId) {
         try {
             Task task = taskDAO.getTaskById(taskId);
             Bar originalBar = task.getBar();
-            if(originalBar != null) {
+            if(originalBar != null) {//check for exception
                 List<Task> originalBarTasks = originalBar.getTasks();
                 originalBarTasks.remove(task);
                 reorderTaskPositions(originalBarTasks);
                 originalBar.setTasks(originalBarTasks);
                 barDAO.save(originalBar);
+            }else{
+                throw new NotFoundException("Task does not exist");
             }
             Bar newBar = barDAO.getBarById(barId);
             List<Task> newBarTasks = newBar.getTasks();
@@ -109,9 +112,10 @@ public class TaskRestAPI {
 
             notificationService.taskUpdate();
 
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body(newPosition);
         } catch (Exception e) {
             System.out.println("Error while updating task position: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -123,7 +127,7 @@ public class TaskRestAPI {
     @PatchMapping("/project/updateTaskName")
     public ResponseEntity<Void> updateTaskName(@RequestParam("taskId") Long taskId, @RequestParam("taskName") String taskName){
         try {
-            Task task = taskDAO.getOne(taskId);
+            Task task = taskDAO.getTaskById(taskId);
             task.setName(taskName);
             taskDAO.save(task);
             return ResponseEntity.ok().build();
@@ -133,24 +137,10 @@ public class TaskRestAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    @GetMapping("/project/getUpdatedBars/{projectId}")
-    public ResponseEntity<List<Bar>> updatedTaskList(@PathVariable("projectId") Long projectId){
-        try {
-            Project project = projectDAO.getProjectById(projectId);
-            if (project != null) {
-                return ResponseEntity.ok(project.getBars());
-            }
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            System.out.println("Error while fetching tasks: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @PatchMapping("/project/updateTaskPriority")
-    public ResponseEntity<Void> updateTaskPrio(@RequestParam ("taskId") Long taskId, @RequestParam ("newTaskPriority") int newPriority) {
+    public ResponseEntity<Void> updateTaskPriority(@RequestParam ("taskId") Long taskId, @RequestParam ("newTaskPriority") int newPriority) {
         try{
-            Task task = taskDAO.getOne(taskId);
+            Task task = taskDAO.getTaskById(taskId);
             task.setPriority(newPriority);
             taskDAO.save(task);
             notificationService.notifyUsersOfUpdate();
@@ -162,7 +152,7 @@ public class TaskRestAPI {
     @DeleteMapping("/project/removeTask")
     public ResponseEntity<Void> removeTask(@RequestParam("taskId") Long taskId) {
         try {
-            Task task = taskDAO.getOne(taskId);
+            Task task = taskDAO.getTaskById(taskId);
             Bar bar = task.getBar();
             bar.getTasks().remove(task);
             barDAO.save(bar);
@@ -186,6 +176,7 @@ public class TaskRestAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    //Method for finding task by name in search bar feature
     @GetMapping("/project/findTask")
     public ResponseEntity<Map<Long, String>> searchTask(@RequestParam("projectId") Long projectId, @RequestParam("taskName") String taskName){
         Project project = projectDAO.getProjectById(projectId);
