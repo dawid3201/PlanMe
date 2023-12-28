@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Create a New Project</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <style>
+    body{
+      background-color: #483d8b;
+    }
+    .center-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 75vh;
+      text-align: center;
+    }
+    form {
+      margin-bottom: 1em;
+    }
+    .buttons{
+      appearance: none;
+      background-color: crimson;
+      border: 1px solid rgba(27, 31, 35, .15);
+      border-radius: 6px;
+      box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+      box-sizing: border-box;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      padding: 6px 16px;
+      position: relative;
+      text-align: center;
+      text-decoration: none;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .buttons:hover{
+      background-color: #2c974b;
+    }
+    .go-back {
+      display: inline-block;
+      padding: 10px 20px;
+      color: white;
+      background-color: crimson;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .go-back:hover {
+      background-color: #2c974b;
+    }
+
+  </style>
+</head>
+<body>
+<div class="center-screen">
+  <h2>Input project name and deadline</h2>
+
+  <form action="#" th:action="@{/project/new}" th:object="${project}" method="post">
+    <div>
+      <p><input type="text" th:field="*{name}"/></p>
+      <p><input type="date" th:field="*{deadline}"/></p>
+    </div>
+    <p style="color: red;" th:text="${nameError}"></p>
+
+
+    <p><input type="submit" value="Submit" class="buttons"/> <input type="reset" value="Reset" class="buttons"/></p>
+  </form>
+
+  <a th:href="@{/homepage}" class="go-back">Go back</a>
+</div>
+</body>
+</html>
