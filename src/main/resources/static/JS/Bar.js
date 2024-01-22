@@ -76,11 +76,9 @@ document.getElementById("open-bar-form-btn").addEventListener("click", function(
         });
     });
 });
-function editBarDescription(element) {
+function activateUpdatrBarName(element) {
     var text = element.firstElementChild.textContent;
     var id = element.getAttribute('data-bar-id');
-
-    element.setAttribute('data-original-text', text);
 
     // change h3 to an editable input field
     element.innerHTML = `<input type="text" id="input-${id}" value="${text}" onblur="updateBarName(this)" onkeydown="handleKeydownBar(event, this)" onclick="event.stopPropagation()">`;
@@ -109,7 +107,7 @@ function updateBarName(element) {
     }else{
         newDescription = originalText;
     }
-    parentElement.innerHTML = `<h3 onclick="editBarDescription(this)" data-bar-id="${id}">${newDescription}</h3>`;
+    parentElement.innerHTML = `<h3 onclick="activateUpdatrBarName(this)" data-bar-id="${id}">${newDescription}</h3>`;
 }
 function handleKeydownBar(event, element) {
     if (event.keyCode === 13) {

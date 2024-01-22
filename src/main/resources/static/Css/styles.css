@@ -28,7 +28,7 @@ html, body {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: #f4f4f4;
+    background-color: #b1acce;
     overflow-y: auto;
     border-radius: 0 10px 10px 0;
 }
@@ -143,7 +143,7 @@ html, body {
 }
 /****************MAIN CONTENT IS HERE*****************/
 #main-content {
-    background-color: #fffdd0;
+    background-color: #514791;
     display: flex;
     flex-direction: column;
     /*overflow: hidden;*/
@@ -735,4 +735,13 @@ input:not(:placeholder-shown) ~ .reset {
 #searchAndClearButtons{
     border: none;
     background: none;
+}
+
+
+.editable-input {
+    width: 80%; /* Adjust the width as needed */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
 }

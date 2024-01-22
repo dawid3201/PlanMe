@@ -66,7 +66,7 @@ public class PostTaskMethodRestApi {
             Task task = taskDAO.getTaskById(taskId);
             task.setDescription(description);
             taskDAO.save(task);
-            notificationService.notifyUsersOfUpdate();
+           // notificationService.notifyUsersOfUpdate();
             return ResponseEntity.ok().build();
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

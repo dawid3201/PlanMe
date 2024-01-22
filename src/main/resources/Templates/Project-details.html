@@ -15,6 +15,7 @@
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
   <link rel="stylesheet" type="text/css" href="/Css/styles.css">
+  <link rel="stylesheet" type="text/css" href="/Css/Project.css">
   <script src="/JS/Task.js" defer></script>
   <script src="/JS/Bar.js" defer></script>
   <script src="/JS/Project.js" defer></script>
@@ -24,21 +25,21 @@
 </head>
 <body>
 <div id="main-content">
-  <div id="header">
-    <h2 th:text="${project.name}"></h2>
-    <h2 th:text="${project.deadline}"></h2>
-    <a th:href="@{/homepage}" style="color: white">Go Back</a>
-  </div>
-
+  <input type="hidden" id="projectDeadline" th:value="${project.deadline}"/>
   <input type="hidden" id="projectId" th:value="${project.id}"/>
   <input type="hidden" id="userEmail" th:value="${user.email}"/>
 
+  <div id="header">
+    <h2 th:text="${project.name}" id="ProjectDetailName" data-project-id="${project.id}" onclick="activateUpdateProjectName(this)"></h2>
+    <h2 id="deadlineResult"></h2>
+    <a th:href="@{/homepage}" style="color: white">Go Back</a>
+  </div>
   <div id="left-sidebar">
     <p id="user-name"th:text="${user.firstName + ' ' + user.lastName}"></p>
     <i id="delete-project-button" th:attr="data-project-id=${project.id}" onclick="deleteProject(this)">Delete Project</i>
 
     <div id="member_list_container">
-      <p id="toggleMembers" class="closed">See all project members:</p>
+      <p id="toggleMembers" class="closed">See all members:</p>
       <div id="membersList" class="hidden">
         <p id="members_list_p"></p>
       </div>
@@ -61,7 +62,7 @@
         <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"></path>
       </svg>
     </button>
-    <input class="input" placeholder="Find task by name" required="" type="text" id="search-task-name">
+    <input class="input" placeholder="Find task by name" required="" type="text" id="search-task-name" onkeypress="return handleKeyPress(event)">
     <button class="reset" type="button" onclick="clearAndSearch()">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
@@ -75,7 +76,7 @@
         <div class="bar-container">
           <div class="swim-lane" th:id="${bar.name}" th:attr="data-bar-id=${bar.id},data-bar-position=${(iterStat.index + 1)}">
           <div class="bar-header">
-              <div class="bar-name-wrapper" th:attr="data-bar-id=${bar.id}" onclick="editBarDescription(this)">
+              <div class="bar-name-wrapper" th:attr="data-bar-id=${bar.id}" onclick="activateUpdatrBarName(this)">
                 <h3 class="heading" th:text="${#strings.toUpperCase(bar.name)}"></h3>
               </div>
               <i class="fas fa-times delete-bar" th:attr="data-bar-id=${bar.id}" onclick="deleteBar(this)"></i>
@@ -91,10 +92,9 @@
                      th:text="${task.priority == 1} ? 'LOW' : (${task.priority == 2} ? 'MEDIUM' : 'HIGH')">
               </span>
 
-              <p class="task-name" th:text="${task.name}"
+              <p id="task-name" th:text="${task.name}"
                  onclick="editTaskName(this)"
-                 th:attr="data-task-id=${task.id}">
-              </p>
+                 th:attr="data-task-id=${task.id}" >
               </p>
               <div class="additional-content" th:attr="data-task-id=${task.id}" onclick="openDescriptionBox(this)">
                 <p class="task-description-hidden" th:text="${task.description}" style="display:none;"></p>

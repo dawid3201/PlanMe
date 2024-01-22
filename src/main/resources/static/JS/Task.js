@@ -132,33 +132,31 @@ function editTaskName(element) {
 }
 
 function updateTaskName(element) {
-    var taskName = element.value;
-    var id = element.id.split('-')[1];
+    let taskName = element.value;
+    let id = element.id.split('-')[1];
 
-    // Check the length of the new description
+    // Check the length of the new name
     if (taskName.length > 50) {
         taskName = taskName.substring(0, 50);
     }
 
-    fetch('/project/updateTaskName', {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-            'taskId': id,
-            'taskName': taskName,
-        })
-    }).then((response) => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        // Successfully deleted from database, now remove from HTML
-        element.outerHTML = `<p onclick="editTaskName(this)" data-task-id="${id}">${taskName}</p>`;
-    })
-        .catch((error) => {
-            console.log('Request failed', error);
-        });
+    if (taskName.trim() !== "") {
+        fetch('/project/updateTaskName', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                'taskId': id,
+                'taskName': taskName,
+            })
+        }).then((response) => {
+            if (!response.ok) {throw new Error(response.statusText);}
 
-    // change back to a paragraph
+            // Successfully updated in the database, now update HTML content
+            element.outerHTML = `<p onclick="editTaskName(this)" data-task-id="${id}">${taskName}</p>`;
+        })
+    }
 }
 function handleKeydown(event, element) {
     // 13 is the key code for the Enter key
@@ -451,8 +449,12 @@ function getAssignedTasks() {
             }
         })
         .then(assignTasks => {
-            document.getElementById("assignedTasks").textContent = assignTasks;
-            document.getElementById("assignedTasks").style.whiteSpace = "pre-line"; // Set white-space property
+            const taskListP = document.getElementById("assignedTasks");
+            taskListP.style.whiteSpace = "pre-line"; // Set white-space property
+
+            // Separate tasks
+            const taskNames = assignTasks.split('\n').filter(name => name.trim() !== '');
+            taskListP.textContent = taskNames.map(name => `${name}\n-------------------------------`).join('\n');
         })
         .catch(error => {
             console.error('Error:', error);
@@ -495,7 +497,7 @@ function searchTask() {
         .then((response) => response.json())
         .then((data) => {
             console.log("Data received from server: ", data);
-            hideNotFoundTask(data); // Pass the entire data
+            hideNotFoundTask(data); // Hide other tasks
         })
         .catch((error) => {
             console.log('Request failed', error);
@@ -517,4 +519,10 @@ function hideNotFoundTask(taskData) {
 function clearAndSearch() {
     document.getElementById("search-task-name").value = "";
     searchTask();
+}
+function handleKeyPress(event){
+    if(event.keyCode === 13){
+        searchTask();
+        return false; //stops defaults page refreshing
+    }
 }

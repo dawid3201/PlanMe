@@ -265,21 +265,19 @@ class TaskRestAPITest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedMap, responseEntity.getBody());
     }
-//    @Test
-//    void testGetTaskName(){
-//        // Mocks
-//        TaskDAO taskDAO = mock(TaskDAO.class);
-//        TaskRestAPI taskController = new TaskRestAPI(projectDAO, userDAO, taskDAO, barDAO, notificationService);
-//
-//        Task mockTask = new Task();
-//        Long taskId = 1L;
-//        mockTask.setId(taskId);
-//
-//
-//        when(taskDAO.findById(taskId)).thenReturn(mockTask);
-//
-//        ResponseEntity<String> responseEntity = taskController.getTaskName(taskId);
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//
-//    }
+    @Test
+    void testGetTaskName(){
+        // Mocks
+        TaskDAO taskDAO = mock(TaskDAO.class);
+        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
+        Task mockTask = new Task();
+        Long taskId = 1L;
+        mockTask.setId(taskId);
+
+        when(taskDAO.findById(taskId)).thenReturn(Optional.of(mockTask));
+
+        ResponseEntity<String> responseEntity = taskController.getTaskName(taskId);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+    }
 }

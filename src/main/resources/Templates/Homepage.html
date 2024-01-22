@@ -8,27 +8,30 @@
 </head>
 <html>
 <body>
+
+
 <div id="main-content">
     <div id="header">
         <a th:href="@{/project/new}" style="color: white">Create a new project</a>
-
+        <a style="color : yellow">Plan Me! </a>
         <a th:href="@{/login}" style="color: white">Logout</a>
 
     </div>
 
 <div th:if="${user}">
-    <p th:if="${projects}" style="color: white">
+    <p th:if="${projects}">
     <ul class="container">
         <li th:each="project : ${projects}">
             <a th:href="@{/projects/{id}(id=${project.id})}" class="project-box">
-                <span th:text="${project.name}">Project Name</span>
+                <span th:text="${project.name}" id="nameSpan"></span>
+                <span th:text="${project.deadline}" id="deadlineSpan"></span>
             </a>
 
         </li>
     </ul>
     </p>
-
 </div>
+
 </body>
 </html>
 

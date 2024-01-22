@@ -47,4 +47,3 @@ public class Project {
     @OrderBy("position")
     private List<Bar> bars = new ArrayList<>();
 }
-//add atribute deadline

@@ -1,5 +1,6 @@
 package COMP390.PlanMe.RestControllers.Task;
 
+import COMP390.PlanMe.Exceptions.NotFoundException;
 import COMP390.PlanMe.Services.NotificationService;
 import COMP390.PlanMe.Dao.ProjectDAO;
 import COMP390.PlanMe.Dao.TaskDAO;
@@ -55,8 +56,11 @@ public class GetTaskMethodRestApi {
     }
     @GetMapping("/getTaskName/{taskId}")
     public final ResponseEntity<String> getTaskName(@PathVariable Long taskId) {
-        Optional<Task> task = taskDAO.findById(taskId);
-        return task.map(value -> ResponseEntity.ok(value.getName())).orElseGet(() -> ResponseEntity.notFound().build());
+        Task task = taskDAO.findById(taskId).orElseThrow(() -> new NotFoundException("Task with ID "+ taskId + " not found."));
+        return ResponseEntity.ok(task.getName());
+
+//        Optional<Task> task = taskDAO.findById(taskId);
+//        return task.map(value -> ResponseEntity.ok(value.getName())).orElseGet(() -> ResponseEntity.notFound().build());
     }
     @GetMapping("/project/ListOfTasks")
     public final ResponseEntity<String> getAssignedTasks(@RequestParam("userEmail") String userEmail, @RequestParam("projectId") Long projectId) {

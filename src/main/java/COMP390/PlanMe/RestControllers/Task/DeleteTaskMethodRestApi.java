@@ -33,7 +33,7 @@ public class DeleteTaskMethodRestApi{
             bar.getTasks().remove(task);
             barDAO.save(bar);
             taskDAO.delete(task);
-            notificationService.notifyUsersOfUpdate();
+          //  notificationService.notifyUsersOfUpdate();
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

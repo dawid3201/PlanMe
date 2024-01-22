@@ -19,17 +19,7 @@ stompClient.connect({},
         console.error('STOMP error:', error);
     }
 );
-
-
 function refreshContentOrPage() {
-    const swimLanes = document.getElementsByClassName('swim-lane');
-
-    Array.from(swimLanes).forEach(swimLane => {
-        location.reload();
-    });
+    location.reload();
 }
 //TODO: in order to update all elements, get a method that will save all elements
-
-
-
-

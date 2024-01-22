@@ -1,5 +1,6 @@
 package COMP390.PlanMe.RestControllers.Task;
 
+import COMP390.PlanMe.Exceptions.BadArgumentException;
 import COMP390.PlanMe.Exceptions.NotFoundException;
 import COMP390.PlanMe.Services.NotificationService;
 import COMP390.PlanMe.Dao.ProjectDAO;
@@ -61,7 +62,7 @@ public class PatchTaskMethodRestApi {
             taskDAO.save(task);
             barDAO.save(newBar);
             System.out.println("New position for task with ID: " + task.getId() + " is: "+ task.getPosition() + " and barName is: " + newBar.getName());
-            notificationService.taskUpdate();
+//            notificationService.taskUpdate();
 
             return ResponseEntity.ok().body(newPosition);
         } catch (Exception e) {
@@ -77,16 +78,15 @@ public class PatchTaskMethodRestApi {
     }
     @PatchMapping("/project/updateTaskName")
     public final ResponseEntity<Void> updateTaskName(@RequestParam("taskId") Long taskId, @RequestParam("taskName") String taskName){
-        try {
-            Task task = taskDAO.getTaskById(taskId);
-            task.setName(taskName);
-            taskDAO.save(task);
-            return ResponseEntity.ok().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        Task task = taskDAO.getTaskById(taskId);
+            if(!taskName.isEmpty()){
+                task.setName(taskName);
+                System.out.println("task with name " + taskName + " upadted");
+                taskDAO.save(task);
+            }else{
+                throw new BadArgumentException("Task name cannot be empty");
+            }
+        return ResponseEntity.ok().build();
     }
     @PatchMapping("/project/updateTaskPriority")
     public final ResponseEntity<Void> updateTaskPriority(@RequestParam ("taskId") Long taskId, @RequestParam ("newTaskPriority") int newPriority) {
@@ -94,7 +94,7 @@ public class PatchTaskMethodRestApi {
             Task task = taskDAO.getTaskById(taskId);
             task.setPriority(newPriority);
             taskDAO.save(task);
-            notificationService.notifyUsersOfUpdate();
+           // notificationService.notifyUsersOfUpdate();
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

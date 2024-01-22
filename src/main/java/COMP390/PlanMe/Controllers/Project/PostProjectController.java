@@ -70,6 +70,4 @@ public class PostProjectController {
     private boolean isParamEmpty(String name){
         return name == null || name.trim().isEmpty();
     }
-    //-----------------------------------------------------Chat METHODS-----------------------------------------
-
 }

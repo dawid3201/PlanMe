@@ -30,7 +30,6 @@ function moveTask() {
         }
     });
 }
-
 $(document).ready(moveTask);
 
 //solution to the bad position was to get all tasks from specific bar instead of all tasks
