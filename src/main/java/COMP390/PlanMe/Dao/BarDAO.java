@@ -18,6 +18,4 @@ public interface BarDAO extends JpaRepository<Bar, Long> {
     Integer getMaxPositionByProject(Project project);
 
     List<Bar> findByProjectId(Long id);
-
-    List<Bar> getBarsByProjectId(Long projectId);
 }

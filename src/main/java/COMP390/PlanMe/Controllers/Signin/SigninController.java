@@ -44,16 +44,16 @@ public class SigninController {
             model.addAttribute("nameError", "Name fields cannot contain any numbers and special characters.");
             return "Signin";
         }
-        //Password validation
-        if (!isValidPassword(user.getPassword())) {
-            model.addAttribute("passwordError", "Password must be between 10 and 12 characters");
-            return "Signin";
-        }
-
-        if (!isPasswordOk(user.getPassword())) {
-            model.addAttribute("passwordError", "Password must contain at least 1 capital letter and special characters.");
-            return "Signin";
-        }
+//        //Password validation
+//        if (!isValidPassword(user.getPassword())) {
+//            model.addAttribute("passwordError", "Password must be between 10 and 12 characters");
+//            return "Signin";
+//        }
+//
+//        if (!isPasswordOk(user.getPassword())) {
+//            model.addAttribute("passwordError", "Password must contain at least 1 capital letter and special characters.");
+//            return "Signin";
+//        }
         //emial validation
         if (!isValidEmail(user.getEmail())) {
             model.addAttribute("emailError", "Invalid email format");
@@ -64,9 +64,7 @@ public class SigninController {
             model.addAttribute("emailError", "Email already exists");
             return "Signin";
         }
-
         userDAO.save(user);
-
         Homepage homepage = new Homepage();
         homepage.setUser(user);
         homepageDAO.save(homepage);
@@ -77,17 +75,17 @@ public class SigninController {
         return email.matches(emailRegex);
     }
 
-    private boolean isValidPassword(String password) {
-        int passwordLength = password.length();
-        return passwordLength >= 10 && passwordLength <= 12;
-    }
-
-    private boolean isPasswordOk(String password){
-        String pattern = "^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$";
-        Pattern regex = Pattern.compile(pattern);
-        Matcher matcher = regex.matcher(password);
-        return matcher.matches();
-    }
+//    private boolean isValidPassword(String password) {
+//        int passwordLength = password.length();
+//        return passwordLength >= 10 && passwordLength <= 12;
+//    }
+//
+//    private boolean isPasswordOk(String password){//check if there are symbols in password
+//        String pattern = "^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$";
+//        Pattern regex = Pattern.compile(pattern);
+//        Matcher matcher = regex.matcher(password);
+//        return matcher.matches();
+//    }
 
     private boolean isNameOk(String name){
         String pattern = "^[a-zA-Z]+$";

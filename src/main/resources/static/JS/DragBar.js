@@ -8,24 +8,25 @@ function moveCards(){
             update: function(event, ui) {
                 let newPosition = ui.item.index() + 1;
                 let barId = ui.item.find(".swim-lane").data("bar-id");
-                $.ajax({
-                    type: "PATCH",
-                    url: "/project/updateBarPosition",
-                    cache: false,
-                    data: {
-                        barId: barId,
-                        newPosition: newPosition,
+                fetch(`/project/updateBarPosition?barId=${barId}&newPosition=${newPosition}`,{
+                    method: 'PATCH',
+                    headers:{
+                        'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    success: function() {
-                        console.log('Bar position updated.');
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.error('Error updating bar position:', textStatus, errorThrown);
-                    }
-                });
+                    body: new URLSearchParams({
+                        'barId': barId,
+                        'newPosition': newPosition,
+                    })
+                })
+                    .then(response  => {
+                        if(!response.ok){
+                            throw new Error(response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.log("Error updating bar position: ",error);
+                    })
             }
         });
 }
 $(document).ready(moveCards);
-
-//Bar positoin is updating wrong

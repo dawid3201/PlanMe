@@ -3,7 +3,7 @@ package COMP390.PlanMe.Entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "dashboards")
+@Table(name = "Homepages")
 public class Homepage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

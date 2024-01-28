@@ -1,3 +1,4 @@
+//Member form
 document.getElementById("add-member-form").addEventListener("submit", function(event) {
     event.preventDefault();
 

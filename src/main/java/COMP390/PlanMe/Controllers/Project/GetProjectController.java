@@ -28,8 +28,7 @@ public class GetProjectController {
         if (user == null) {
             return "redirect:/login";
         }
-        model.addAttribute("project", new Project());
-        return "New-project";
+        return "Homepage";
     }
     @GetMapping("/projects")
     public final String viewProjects(Model model, HttpSession session) {

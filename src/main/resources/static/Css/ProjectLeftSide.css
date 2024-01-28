@@ -1,0 +1,108 @@
+/***************************************************LEFT DIV IS HERE***************************************************/
+#left-sidebar {
+    width: 200px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #b1acce;
+    overflow-y: auto;
+    border-radius: 0 10px 10px 0;
+}
+#user-name {
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#member_list_container {
+    margin-top: 20px;
+    border: 1px black;
+}
+
+#toggleMembers {
+    cursor: pointer;
+    color: #007bff;
+    font-weight: bold;
+}
+
+#toggleMembers:hover {
+    text-decoration: underline;
+}
+
+#membersList {
+    margin-top: 10px;
+    padding: 10px;
+}
+#members_list_p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#add-member-form {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#add-member-form input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+#add-member-form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    justify-content: center;
+}
+
+#add-member-form button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+.hidden {
+    display: none;
+}
+#delete-project-button {
+    font-size: 20px;
+    padding: 17px 25px; /* Increase padding for a bigger button */
+    background-color: #ff0000; /* Change the background color */
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    gap: 100px;
+    box-sizing: border-box;
+    margin-top: auto;
+}
+#delete-project-button:hover {
+    background-color: #cc0000; /* Hover color */
+}
+
+#myTasksContainer{
+    margin-top: 10px;
+    padding: 10px;
+}
+#seeAssignTasks{
+    cursor: pointer;
+    color: #007bff;
+    font-weight: bold;
+}
+#seeAssignTasks:hover{
+    text-decoration: underline;
+}
+#new-member-email {
+    /* Remove default border */
+    border: none;
+    /* Remove background and outline */
+    background: none;
+    outline: none;
+}
+
+#new-member-email:focus {
+    /* Change the border color when input is focused */
+    border-bottom: 2px solid #2f2ee9; /* You can change the color to your preferred focus color */
+}

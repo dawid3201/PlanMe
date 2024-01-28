@@ -1,39 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Homepage</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="/Css/homepage.css">
+    <link rel="stylesheet" type="text/css" href="/Css/Homepage.css">
+    <style>
+        /* Add your styles here */
+    </style>
 </head>
-<html>
+
 <body>
-
-
 <div id="main-content">
     <div id="header">
-        <a th:href="@{/project/new}" style="color: white">Create a new project</a>
+        <a class="newProjectButton" onclick="openBox()" style="color: white">Create a new project</a>
         <a style="color : yellow">Plan Me! </a>
         <a th:href="@{/login}" style="color: white">Logout</a>
-
     </div>
 
-<div th:if="${user}">
-    <p th:if="${projects}">
-    <ul class="container">
-        <li th:each="project : ${projects}">
-            <a th:href="@{/projects/{id}(id=${project.id})}" class="project-box">
-                <span th:text="${project.name}" id="nameSpan"></span>
-                <span th:text="${project.deadline}" id="deadlineSpan"></span>
-            </a>
-
-        </li>
-    </ul>
-    </p>
+    <div th:if="${user}">
+        <p th:if="${projects}">
+        <ul class="container">
+            <li th:each="project : ${projects}">
+                <a th:href="@{/projects/{id}(id=${project.id})}" class="project-box">
+                    <span th:text="${project.name}" id="nameSpan"></span>
+                    <span th:text="${project.deadline}" id="deadlineSpan"></span>
+                </a>
+            </li>
+        </ul>
+        </p>
+    </div>
 </div>
 
+<div id="overlay" class="overlay">
+    <div class="box">
+        <h2>Input name and deadline</h2>
+        <form th:action="@{/project/new}" method="post">
+            <div>
+                <p><input type="text" name="name" placeholder="Project name"/></p>
+                <p><input type="date"  name="deadline" /></p>
+            </div>
+            <p style="color: red;" th:text="${nameError}"></p>
+
+            <p><input type="submit" value="Submit" class="submit_button"/> </p>
+            <p><input type="button" value="Close" class="go-back" onclick="closeBox()"/> </p>
+        </form>
+    </div>
+</div>
+
+<script>
+    // JavaScript functions to open and close the box
+    function openBox() {
+        document.getElementById('overlay').style.display = 'flex';
+    }
+
+    function closeBox() {
+        document.getElementById('overlay').style.display = 'none';
+    }
+</script>
 </body>
+
 </html>
+
 
 
 

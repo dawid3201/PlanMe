@@ -61,9 +61,9 @@ public class PatchTaskMethodRestApi {
             task.setState(newBar.getName());
             taskDAO.save(task);
             barDAO.save(newBar);
-            System.out.println("New position for task with ID: " + task.getId() + " is: "+ task.getPosition() + " and barName is: " + newBar.getName());
-//            notificationService.taskUpdate();
-
+            if(newBar.getTasks().size() == 1){
+                notificationService.taskUpdate();
+            }
             return ResponseEntity.ok().body(newPosition);
         } catch (Exception e) {
             System.out.println("Error while updating task position: " + e.getMessage());

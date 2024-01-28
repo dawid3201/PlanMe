@@ -1,238 +1,3 @@
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: sans-serif;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-}
-::-webkit-scrollbar {
-    width: 12px;
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    background-color: rgba(0, 0, 0, 0.5);
-    box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
-}
-
-
-html, body {
-    font-family: 'Poppins', sans-serif;
-    height: 100%;
-}
-/***************************************************LEFT DIV IS HERE***************************************************/
-#left-sidebar {
-    width: 200px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #b1acce;
-    overflow-y: auto;
-    border-radius: 0 10px 10px 0;
-}
-#user-name {
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-#member_list_container {
-    margin-top: 20px;
-    border: 1px black;
-}
-
-#toggleMembers {
-    cursor: pointer;
-    color: #007bff;
-    font-weight: bold;
-}
-
-#toggleMembers:hover {
-    text-decoration: underline;
-}
-
-#membersList {
-    margin-top: 10px;
-    padding: 10px;
-}
-#members_list_p {
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-#add-member-form {
-    margin-top: 20px;
-    text-align: center;
-}
-
-#add-member-form input[type="text"] {
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 10px;
-}
-
-#add-member-form button[type="submit"] {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    justify-content: center;
-}
-
-#add-member-form button[type="submit"]:hover {
-    background-color: #0056b3;
-}
-.hidden {
-    display: none;
-}
-#delete-project-button {
-    font-size: 20px;
-    padding: 17px 25px; /* Increase padding for a bigger button */
-    background-color: #ff0000; /* Change the background color */
-    color: white;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    display: flex;
-    gap: 100px;
-    box-sizing: border-box;
-    margin-top: auto;
-}
-#delete-project-button:hover {
-    background-color: #cc0000; /* Hover color */
-}
-
-#myTasksContainer{
-    margin-top: 10px;
-    padding: 10px;
-}
-#seeAssignTasks{
-    cursor: pointer;
-    color: #007bff;
-    font-weight: bold;
-}
-#seeAssignTasks:hover{
-    text-decoration: underline;
-}
-#new-member-email {
-    /* Remove default border */
-    border: none;
-    /* Remove background and outline */
-    background: none;
-    outline: none;
-}
-
-#new-member-email:focus {
-    /* Change the border color when input is focused */
-    border-bottom: 2px solid #2f2ee9; /* You can change the color to your preferred focus color */
-}
-
-/**********************************PROJECT HEADER AND BOARD************************************************************/
-#header,
-.board {
-    margin-left: 210px;  /* Moves Header and board to the right so left bar is separated */
-}
-#search-form-container{
-    margin-left: 210px;
-}
-#user-name{
-    font-size: 29px;
-}
-/****************MAIN CONTENT IS HERE*****************/
-#main-content {
-    background-color: #514791;
-    display: flex;
-    flex-direction: column;
-    /*overflow: hidden;*/
-    margin-left: 0;
-    height: 100%;
-}
-.board {
-    flex-grow: 1;
-    overflow: auto;  /* To allow scrolling if content inside gets too big */
-}
-/* ---- HEADER ---- */
-#header {
-    background-color: black; /* color i used before #35339a*/
-    flex-shrink: 0; /* Prevents shrinking */
-    border-radius: 10px 0 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 32px;
-    height: 50px;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-}
-.delete-project{
-    cursor: pointer;
-}
-.delete-project:hover{
-    color: red;
-}
-
-/* ---- FORM ---- */
-#todo-form {
-    padding: 32px 32px 0;
-}
-#todo-form input {
-    padding: 12px;
-    margin-right: 12px;
-    width: 225px;
-    border-radius: 4px;
-    border: none;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-    background: white;
-    font-size: 14px;
-    outline: none;
-}
-#todo-form button {
-    padding: 12px 32px;
-    border-radius: 4px;
-    border: none;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-    background: white;
-    color: black;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-}
-/***************** BOARD *****************/
-.lanes {
-    display: flex;
-    align-items: flex-start;
-    justify-content: start;
-    gap: 16px;
-    padding: 24px 32px;
-    overflow: scroll;
-    height: 100%;
-}
-.heading {
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.swim-lane {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 12px 12px 60px 12px;
-    background: #f4f4f4;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-    border-radius: 4px;
-    width: 250px;
-    min-height: 150px;
-    flex-shrink: 0;
-}
 /*********************** TASK CONTENT ***********************/
 .task {
     background: white;
@@ -278,11 +43,13 @@ input[id^="input-"] {
     word-wrap: break-word; /* Wrap the words as they reach the edge of the container */
     margin-right: 10px; /* Add a margin to the right of the text */
 }
+.form-Div{
+    bottom: 0;
+}
 
 #add-task-form {
     width: 95%;
     display: block;
-
     align-items: start;
     gap: 10px;
     box-sizing: border-box;
@@ -382,7 +149,6 @@ input[id^="input-"] {
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
 }
-
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
@@ -398,6 +164,7 @@ input[id^="input-"] {
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
+    bottom: 0;
     min-height: 100px;
     z-index: 10;
     word-wrap: break-word;
@@ -554,99 +321,6 @@ input[id^="input-"] {
     flex-direction: column;
     align-items: flex-end; /* Align items to the right */
 }
-/******************************************* TOOLTIP CSS **************************************************************/
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-}
-
-/* Tooltip text */
-.tooltip .tooltip-text {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-    top: 100%;
-    left: 50%;
-    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
-
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltip-text {
-    visibility: visible;
-}
-/*********************** BAR CONTENT ***********************/
-
-#new-bar-name {
-    padding: 12px;
-    margin-right: 12px;
-    width: 225px;
-    border-radius: 4px;
-    border: none;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-    background: white;
-    font-size: 14px;
-    outline: none;
-}
-.bar-placeholder {
-    border: 2px dashed red;
-    height: 500px;  /* or adjust based on your task height */
-    margin: 2px;
-}
-#add-bar-form {
-    position: absolute;
-    width: 225px;
-    box-sizing: border-box;
-}
-.open-form-btn {
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 10px;
-    color: black;
-    text-decoration: none;
-    font-weight: bold;
-}
-#add-bar-form-container{
-    position: relative;
-}
-
-.tick-button {
-    position: absolute;
-    left: 0;
-    bottom: -35px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.5em;
-    color: #4CAF50;
-}
-.bar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: grab;
-    position: relative;
-}
-
-.bar-header:active {
-     cursor: grabbing !important;
- }
-
-.delete-bar {
-    cursor: pointer;
-    color: #333;
-}
-.bar-container {
-    margin: 0;
-}
 /*********************** SEARCH TASK FEATURE ***********************/
 /* Copied from uiverse.io, made by @satyamchaudharydev */
 /* removing default style of button */
@@ -736,12 +410,10 @@ input:not(:placeholder-shown) ~ .reset {
     border: none;
     background: none;
 }
-
-
-.editable-input {
-    width: 80%; /* Adjust the width as needed */
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    box-sizing: border-box;
-}
+/*.editable-input {*/
+/*    width: 80%; !* Adjust the width as needed *!*/
+/*    padding: 5px;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 3px;*/
+/*    box-sizing: border-box;*/
+/*}*/

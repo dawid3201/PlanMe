@@ -1,14 +1,12 @@
 package COMP390.PlanMe.Entity;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
-
-
 @Getter
 @Setter
 @Table(name="users")
@@ -27,8 +25,9 @@ public class User {
     @Column(name="email_address")
     private String email;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    @JsonManagedReference//I added this recently, delete if there will be errors
     private List<Project> projects;
 
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
@@ -44,13 +43,11 @@ public class User {
         this.email = email;
     }
 
-    public String getLetters(){
-        String fullName = firstName + " " + lastName;
-        String[] nameParts = fullName.split("\\s");
-        StringBuilder initials  = new StringBuilder();
-        for(String namePart : nameParts){
-            initials.append(namePart.charAt(0));
-        }
-        return initials.toString().toUpperCase();
+    //Use BCrypt to encode user password
+    public void setPassword(String password){
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        this.password = passwordEncoder.encode(password);
     }
+
+
 }

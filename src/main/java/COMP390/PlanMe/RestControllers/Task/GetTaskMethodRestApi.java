@@ -39,7 +39,8 @@ public class GetTaskMethodRestApi {
 
     //Method for finding task by name in search bar feature
     @GetMapping("/project/findTask")
-    public final ResponseEntity<Map<Long, String>> searchTask(@RequestParam("projectId") Long projectId, @RequestParam("taskName") String taskName){
+    public final ResponseEntity<Map<Long, String>> searchTask(@RequestParam("projectId") Long projectId,
+                                                              @RequestParam("taskName") String taskName){
         Project project = projectDAO.getProjectById(projectId);
         HashMap<Long, String> map = new HashMap<>();
         if(project != null){

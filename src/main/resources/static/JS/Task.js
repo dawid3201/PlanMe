@@ -1,4 +1,4 @@
-// CHECK how to update FROM with AJAX call <----------------------------------------------------------------------------
+//Task form
 var formHTML = `
     <form id="add-task-form">
     <input type="text" id="new-task-name" placeholder="Issue name" />
@@ -29,7 +29,6 @@ function closeForm() {
         currentFormContainer = null;
     }
 }
-
 function handleClickOutsideForm(event) {
     if (currentFormContainer) {
         // const isClickInsideForm = currentFormContainer.contains(event.target);
@@ -37,10 +36,6 @@ function handleClickOutsideForm(event) {
             closeForm();
         }
     }
-}
-function adjustInputWidth(inputElement) {
-    // Adjust the input size based on its content length
-    inputElement.style.width = `${inputElement.scrollWidth}px`;
 }
 document.querySelectorAll(".open-form-btn").forEach(btn => {
     btn.addEventListener("click", function(event) {
@@ -114,7 +109,10 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
         });
     });
 });
-
+function adjustInputWidth(inputElement) {
+    // Adjust the input size based on its content length
+    inputElement.style.width = `${inputElement.scrollWidth}px`;
+}
 function editTaskName(element) {
     var text = element.textContent;
     var id = element.getAttribute('data-task-id');

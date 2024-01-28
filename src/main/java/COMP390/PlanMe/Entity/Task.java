@@ -46,5 +46,4 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "assigned_user_email")
     private User assignedUser;
-
 }

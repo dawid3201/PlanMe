@@ -9,24 +9,28 @@ function moveTask() {
             let taskId = ui.item.data("task-id");
             let barId = ui.item.closest('.swim-lane').data("bar-id");
             let newPosition = ui.item.index(".swim-lane[data-bar-id='" + barId + "'] .task") + 1;
-            console.log("Calculated new position:", newPosition);
-            $.ajax({
-                type: "PATCH",
-                url: "/project/updateTaskPosition",
-                cache: false,
-                data: {
-                    taskId: taskId,
-                    newPosition: newPosition,
-                    barId: barId
+            fetch(`/project/updateTaskPosition?taskId=${taskId}&newPosition=${newPosition}&barId=${barId}`,{
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                success: function() {
-                    console.log('Task position updated successfully.');
+                body: new URLSearchParams({
+                    'taskId': taskId,
+                    'newPosition': newPosition,
+                    'barId': barId,
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(response.statusText);
+                    }
+                })
+                .then(() => {
                     ui.item.attr("data-bar-id", barId);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error updating task position:', textStatus, errorThrown);
-                }
-            });
+                })
+                .catch(error => {
+                    console.error("Error updating task position: ", error);
+                })
         }
     });
 }

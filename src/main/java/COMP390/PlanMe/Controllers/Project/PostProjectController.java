@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
@@ -19,6 +20,7 @@ public class PostProjectController {
         this.projectDAO = projectDAO;
         this.barDAO = barDAO;
     }
+
     //-----------------------------------------------------PROJECT METHODS-----------------------------------------
     @PostMapping("/project/new")
     public final String createProject(@RequestParam("name") String name, @RequestParam("deadline") String deadline, HttpSession session, Model model) {
@@ -46,7 +48,6 @@ public class PostProjectController {
         bar3.setName("DONE");
         bar3.setPosition(3);
 
-        // Set the project for each bar
         bar1.setProject(project);
         bar2.setProject(project);
         bar3.setProject(project);
@@ -61,8 +62,8 @@ public class PostProjectController {
         project.getBars().add(bar2);
         project.getBars().add(bar3);
         projectDAO.save(project);
-
         session.setAttribute("newProject", project);
+        model.addAttribute("project", new Project());
 
         return "redirect:/homepage";
     }

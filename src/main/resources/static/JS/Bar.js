@@ -1,3 +1,4 @@
+//Bar form
 var barFormHTML = `
     <form id="add-bar-form">
       <input type="text" id="new-bar-name" placeholder="Add Card" /><br>
