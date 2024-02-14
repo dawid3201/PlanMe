@@ -1,0 +1,419 @@
+/*********************** TASK CONTENT ***********************/
+.task {
+    background: white;
+    color: black;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    position: relative;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: grab;
+    min-height: 100px;
+    word-wrap: break-word;
+    justify-content: space-between;
+    align-items: start;
+}
+.task-placeholder {
+    border: 2px dashed #ccc;
+    height: 50px;  /* or adjust based on your task height */
+    margin: 5px;
+}
+/* Styles for the input when editing task description */
+input[id^="input-"] {
+    background-color: #f6f6f6;
+    border: 1px solid #dcdcdc;
+    border-radius: 3px;
+    padding: 5px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    /* By setting a max-width, you prevent it from growing too large. Adjust as needed. */
+    max-width: 90%;
+    /* This makes it grow with content */
+    width: auto !important;
+    /* Minimum width */
+    min-width: 50px;
+}
+.task:active {
+    cursor: grabbing;
+}
+
+.task p {
+    flex-shrink: 1; /* Allow the element to shrink if necessary */
+    word-wrap: break-word; /* Wrap the words as they reach the edge of the container */
+    margin-right: 10px; /* Add a margin to the right of the text */
+}
+.form-Div{
+    bottom: 0;
+}
+
+#add-task-form {
+    width: 95%;
+    display: block;
+    align-items: start;
+    gap: 10px;
+    box-sizing: border-box;
+    margin: 10px;
+}
+.submit-task-btn{
+    width: 5px; /* adjust as needed */
+    height: 20px; /* adjust as needed */
+    padding: 10px;
+    margin: 0;
+    border: none;
+    cursor: pointer;
+    background-color: #4CAF50; /* change as per your needs */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.submit-task-btn i {
+    font-size: 10px; /* adjust as needed */
+}
+
+#add-task-form input, #add-task-form select, #add-task-form button {
+    width: 95%; /* to take full width of the form */
+    box-sizing: border-box; /* to include padding and border in element's total width and height */
+}
+
+#new-task-name {
+    padding: 5px;
+    font-size: 14px; /* adjust this as needed */
+}
+
+.tick-button {
+    align-self: end;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+/*#task-priority {*/
+/*    -webkit-appearance: none;*/
+/*    -moz-appearance: none;*/
+/*    appearance: none;*/
+/*    padding: 0;*/
+/*    margin: 0;*/
+/*    border: none;*/
+/*    background: transparent;*/
+/*    width: 1.5em;*/
+/*    font-size: 0.8em;*/
+/*    outline: none;*/
+/*    cursor: pointer;*/
+/*}*/
+/*For <p> with ID task-priority*/
+.task-priority {
+    position: absolute;
+    top: 33px;
+    right: 1px;
+    cursor: pointer;
+    color: #333; /* Change color according to your design */
+}
+
+#task-priority::-ms-expand {
+    display: none;
+}
+/* Add custom arrow */
+#task-priority::after {
+    content: "▼";
+    position: absolute;
+    top: 0;
+    right: 0;
+    pointer-events: none;
+}
+.priority-label {
+    border: none;
+    border-radius: 5px;
+    padding: 2px 5px;
+    display: inline-block;
+}
+.priority-label.priority-one {
+    color: snow;
+    background-color: green;
+}
+.priority-label.priority-two {
+    color: snow;
+    background-color: darkorange;
+}
+.priority-label.priority-three {
+    color: snow;
+    background-color: red;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%; /* Could be more or less, depending on screen size */
+}
+.form-container {
+    background: white;
+    color: black;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    bottom: 0;
+    min-height: 100px;
+    z-index: 10;
+    word-wrap: break-word;
+    justify-content: space-between;
+    align-items: start;
+    width: 90%;
+    margin: 10px auto;
+}
+.priority-selection{
+    margin: 100px;
+}
+
+.fas.fa-plus {
+    pointer-events: none;
+}
+
+.delete-task {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #333;
+}
+
+.dropdown {
+    background-color: white;
+    border: 1px solid #333;
+    border-radius: 4px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+}
+
+.dropdown p {
+    margin: 0;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.dropdown p:hover {
+    background-color: #f0f0f0;
+}
+/*----Tasks description window-----*/
+#taskDescriptionOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    z-index: 999;
+}
+
+#taskDescriptionBox {
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    width: 70%;
+    max-height: 70%;  /* Set a maximum height */
+    background-color: #FFF;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;  /* Hide any content that exceeds the boundaries */
+    margin: 20px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+#taskDescriptionBox textarea {
+    width: 100%;
+    max-height: 80%;  /* Set a maximum height */
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+    overflow: auto;
+}
+
+.additional-content {
+    min-height: 50px;  /* or whatever height you deem appropriate */
+    cursor: pointer;  /* Indicates clickable area */
+}
+.saveDescBtn {
+    background: #339DFF;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    width: 100px;
+    text-align: center;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: none;
+    transition: all 0.3s;
+}
+.saveDescBtn:hover{
+    cursor: pointer;
+    color: black;
+}
+.closeDescBtn{
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    width: 100px;
+    font-size: 12px;
+    background: white;
+    transition: all 0.3s;
+    border: none;
+}
+.closeDescBtn:hover{
+    background: lightgrey;
+    cursor: pointer;
+}
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.user-dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f9f9f9;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    border: 1px solid #ccc;
+    z-index: 2 !important;
+}
+.user-dropdown-content a {
+    color: black;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+}
+
+.user-dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+.fa-user{
+    cursor: pointer;
+}
+.task-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the right */
+    justify-content: flex-start;
+    z-index: 4;
+}
+
+.right-side-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the right */
+}
+/*********************** SEARCH TASK FEATURE ***********************/
+/* Copied from uiverse.io, made by @satyamchaudharydev */
+/* removing default style of button */
+
+.form button {
+    border: none;
+    background: none;
+    color: #8b8ba7;
+}
+/* styling of whole input container */
+.form {
+    margin-top: 10px;
+    margin-left: 240px;
+    --timing: 0.3s;
+    --width-of-input: 200px;
+    --height-of-input: 40px;
+    --border-height: 2px;
+    --input-bg: #fff;
+    --border-color: #2f2ee9;
+    --border-radius: 30px;
+    --after-border-radius: 1px;
+    position: relative;
+    width: var(--width-of-input);
+    height: var(--height-of-input);
+    display: flex;
+    align-items: center;
+    padding-inline: 0.8em;
+    border-radius: var(--border-radius);
+    transition: border-radius 0.5s ease;
+    background: var(--input-bg,#fff);
+}
+/* styling of Input */
+.input {
+    font-size: 0.9rem;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    padding-inline: 0.5em;
+    padding-block: 0.7em;
+    border: none;
+}
+/* styling of animated border */
+.form:before {
+    content: "";
+    position: absolute;
+    background: var(--border-color);
+    transform: scaleX(0);
+    transform-origin: center;
+    width: 100%;
+    height: var(--border-height);
+    left: 0;
+    bottom: 0;
+    border-radius: 1px;
+    transition: transform var(--timing) ease;
+}
+/* Hover on Input */
+.form:focus-within {
+    border-radius: var(--after-border-radius);
+}
+
+input:focus {
+    outline: none;
+}
+/* here is code of animated border */
+.form:focus-within:before {
+    transform: scale(1);
+}
+/* styling of close button */
+/* == you can click the close button to remove text == */
+.reset {
+    border: none;
+    background: none;
+    opacity: 0;
+    visibility: hidden;
+}
+/* close button shown when typing */
+input:not(:placeholder-shown) ~ .reset {
+    opacity: 1;
+    visibility: visible;
+}
+/* sizing svg icons */
+.form svg {
+    width: 17px;
+    margin-top: 3px;
+}
+#searchAndClearButtons{
+    border: none;
+    background: none;
+}
+/*.editable-input {*/
+/*    width: 80%; !* Adjust the width as needed *!*/
+/*    padding: 5px;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 3px;*/
+/*    box-sizing: border-box;*/
+/*}*/
