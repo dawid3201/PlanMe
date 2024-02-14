@@ -1,19 +1,3 @@
-//Task form
-var formHTML = `
-    <form id="add-task-form">
-    <input type="text" id="new-task-name" placeholder="Issue name" />
-    <div id="priority-section">
-        <label for="task-priority"></label>
-        <select id="task-priority" name="priority">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-        </select>
-        <button type="submit" class="submit-task-btn"><i class="fas fa-check"></i></button>
-    </div>
-
-</form>
-  `;
 var formOpen = false; //check if form is open
 let currentFormContainer = null;
 
@@ -43,7 +27,6 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
         var targetFormContainer = this.previousElementSibling;
         var barId = this.closest('.swim-lane').getAttribute("data-bar-id");
 
-        targetFormContainer.innerHTML = formHTML;
         targetFormContainer.style.display = "block";
         this.style.display = "none";
 
@@ -57,13 +40,15 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
         document.addEventListener("click", handleClickOutsideForm);
 
         // Add event listener to form after it is added to the page
-        targetFormContainer.querySelector("#add-task-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            // Prevent the default form submission behavior
+        targetFormContainer.querySelector("#add-task-form").addEventListener("submit",
+            function(event) {
+            event.preventDefault();// Prevent the default form submission behavior
 
+            const form = event.currentTarget; //used to take inputs from the form where users clicks
+            // instead of first position
             const projectId = document.getElementById('projectId').value;
-            const newTaskName = document.querySelector("#new-task-name").value;
-            const newPriority = document.querySelector('#task-priority').value;
+            const newTaskName = form.querySelector("#new-task-name").value;
+            const newPriority = form.querySelector('#task-priority').value;
             const barElement = event.target.closest('.swim-lane');
             const barPosition = barElement.getAttribute('data-bar-position');
 
@@ -99,10 +84,12 @@ document.querySelectorAll(".open-form-btn").forEach(btn => {
                     }
                 })
                 .catch(function(xhr, status, error) {
-                    if (xhr.status === 500) { // HTTP status code for Conflict
+                    if (xhr.status === 400 && xhr.responseText.includes("Task name cannot be empty")) {
                         alert("Task name cannot be empty.");
+                        console.log("task name is: " + newTaskName)
+                    } else if (xhr.status === 404) {
+                        alert("Bar or project does not exist");
                     } else {
-                        // Handle other error cases
                         console.error("An error occurred:", status, error);
                     }
                 });

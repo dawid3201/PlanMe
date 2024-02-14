@@ -85,7 +85,7 @@
             <div class="swim-lane" th:id="${bar.name}"
                  th:attr="data-bar-id=${bar.id},data-bar-position=${(iterStat.index + 1)}">
               <div class="bar-header">
-                  <div class="bar-name-wrapper" th:attr="data-bar-id=${bar.id}" onclick="activateUpdatrBarName(this)">
+                  <div class="bar-name-wrapper" th:attr="data-bar-id=${bar.id}" onclick="activateUpdateBarName(this)">
                     <h3 class="heading" th:text="${#strings.toUpperCase(bar.name)}"></h3>
                   </div>
                   <i class="fas fa-times delete-bar" th:attr="data-bar-id=${bar.id}" onclick="deleteBar(this)"></i>
@@ -124,7 +124,20 @@
                   </div>
                 </div>
             </div>
-              <div class ="form-container" style="display:none;"></div>
+              <div class ="form-container" style="display:none;">
+                <form id="add-task-form">
+                  <input type="text" id="new-task-name" placeholder="Issue name" />
+                  <div id="priority-section">
+                    <label for="task-priority"></label>
+                    <select id="task-priority" name="priority">
+                      <option th:value="1">1</option>
+                      <option th:value="2">2</option>
+                      <option th:value="3">3</option>
+                    </select>
+                    <button type="submit" class="submit-task-btn"><i class="fas fa-check"></i></button>
+                  </div>
+                </form>
+              </div>
               <a class ="open-form-btn" href="#" role="button">
                 <i class="fas fa-plus"></i> Add Issue
               </a>

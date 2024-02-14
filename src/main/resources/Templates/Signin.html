@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -8,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/Css/Login&Signin.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,600,0,0" />
-    <title>Signin Page</title>
+    <title>Register</title>
 </head>
 
 <body>
@@ -20,7 +19,7 @@
         </div>
         <div class="login-card-header">
             <h1>Sign in</h1>
-            <div>Please make an account to use a platfrom</div>
+            <div>Please make an account to use this website</div>
         </div>
         <form class="login-card-form" method="post" action="/signin">
             <div class="form-item">
@@ -47,7 +46,7 @@
                 <span class="form-item-icon material-symbols-rounded">lock</span>
                 <input type="password" name="password" placeholder="Enter Password" id="passwordForm"
                        required>
-                <p style="color: black; font-size: 0.8em; margin: 0;"></p>
+                <p style="color: black; font-size: 0.8em; margin: 0;" th:text="${passwordError}"></p>
             </div>
 
             <button class="login-button" type="submit">Join!</button>

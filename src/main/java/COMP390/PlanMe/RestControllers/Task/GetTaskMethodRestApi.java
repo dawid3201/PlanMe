@@ -18,15 +18,11 @@ import java.util.*;
 public class GetTaskMethodRestApi {
     private final ProjectDAO projectDAO;
     private final TaskDAO taskDAO;
-    private final BarDAO barDAO;
-    private final NotificationService notificationService;
 
     @Autowired
-    public GetTaskMethodRestApi(ProjectDAO projectDAO, TaskDAO taskDAO, BarDAO barDAO, NotificationService notificationService) {
+    public GetTaskMethodRestApi(ProjectDAO projectDAO, TaskDAO taskDAO) {
         this.projectDAO = projectDAO;
         this.taskDAO = taskDAO;
-        this.barDAO = barDAO;
-        this.notificationService = notificationService; // Initialize notificationService here
     }
     @GetMapping("/project/newName/{taskId}")
     public final ResponseEntity<String> newName(@PathVariable("taskId") Long taskId){

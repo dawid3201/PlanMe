@@ -1,4 +1,5 @@
 package COMP390.PlanMe.Entity;
+import COMP390.PlanMe.Annotation.StrongPassword;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -18,6 +19,7 @@ public class User {
     @Column(name="last_name")
     private String lastName;
 
+    @StrongPassword //Private annotation
     @Column(name="password")
     private String password;
 
@@ -42,12 +44,4 @@ public class User {
         this.password = password;
         this.email = email;
     }
-
-    //Use BCrypt to encode user password
-    public void setPassword(String password){
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        this.password = passwordEncoder.encode(password);
-    }
-
-
 }

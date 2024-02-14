@@ -55,7 +55,7 @@ class TaskRestAPITest {
         BarDAO barDAO = mock(BarDAO.class);
         TaskDAO taskDAO = mock(TaskDAO.class);
 
-        PostTaskMethodRestApi taskController = new PostTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
+        PostTaskMethodRestApi taskController = new PostTaskMethodRestApi(projectDAO, taskDAO, barDAO);
 
         // Test data
         Long projectId = 1L;
@@ -102,7 +102,7 @@ class TaskRestAPITest {
     void testNewName() {
         // Mocks
         TaskDAO taskDAO = mock(TaskDAO.class);
-        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
+        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO);
 
         // Test data
         Long taskId = 1L;
@@ -226,7 +226,7 @@ class TaskRestAPITest {
     void testAddDescription(){
         // Mocks
         TaskDAO taskDAO = mock(TaskDAO.class);
-        PostTaskMethodRestApi taskController = new PostTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
+        PostTaskMethodRestApi taskController = new PostTaskMethodRestApi(projectDAO, taskDAO, barDAO);
         //Mock data
         Task mockTask = new Task();
         Long taskId = 1L;
@@ -241,7 +241,7 @@ class TaskRestAPITest {
     void testSearchTask(){
         // Mocks
         ProjectDAO projectDAO = mock(ProjectDAO.class);
-        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
+        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO);
         //Mock data
         Project mockProject = new Project();
         Task mockTask = new Task();
@@ -269,7 +269,7 @@ class TaskRestAPITest {
     void testGetTaskName(){
         // Mocks
         TaskDAO taskDAO = mock(TaskDAO.class);
-        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
+        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO);
         Task mockTask = new Task();
         Long taskId = 1L;
         mockTask.setId(taskId);

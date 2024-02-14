@@ -65,7 +65,7 @@ function updateProjectName(element){
                 if (!response.ok) {throw new Error(response.statusText);}
 
                 // Update HTML content only on successful response
-                parentElement.innerHTML = `<h3 onclick="activateUpdatrBarName(this)" data-project-id="${projectId}">${newProjectName}</h3>`;
+                parentElement.innerHTML = `<h3 onclick="activateUpdateBarName(this)" data-project-id="${projectId}">${newProjectName}</h3>`;
                 parentElement.setAttribute('data-original-text', newProjectName);
             })
             .catch(function(error) {
@@ -78,7 +78,7 @@ function updateProjectName(element){
             });
     } else {
         // Prevent updating HTML when newProjectName is empty or unchanged
-        parentElement.innerHTML = `<h3 onclick="activateUpdatrBarName(this)" data-project-id="${projectId}">${originalText}</h3>`;
+        parentElement.innerHTML = `<h3 onclick="activateUpdateBarName(this)" data-project-id="${projectId}">${originalText}</h3>`;
     }
 
 // Additional step: Update data-original-text attribute even if there is no change in the name

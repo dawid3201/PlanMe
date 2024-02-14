@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
+
 
 @Controller
 public class PostProjectController {
@@ -29,11 +31,6 @@ public class PostProjectController {
             return "redirect:/login";
         }
         Project project = new Project();
-        if (isParamEmpty(name) || isParamEmpty(deadline)) {
-            model.addAttribute("nameError", "Input name and deadline");
-            model.addAttribute("project", project);
-            return "New-project";
-        }
         project.setName(name);
         project.setDeadline(deadline);
         Bar bar1 = new Bar();

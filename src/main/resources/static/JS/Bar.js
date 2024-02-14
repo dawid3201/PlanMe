@@ -1,11 +1,10 @@
 //Bar form
-var barFormHTML = `
-    <form id="add-bar-form">
-      <input type="text" id="new-bar-name" placeholder="Add Card" /><br>
-      <button type="submit" class="tick-button"><i class="fas fa-check"></i></button>
-    </form>
-  `;
-
+// var barFormHTML = `
+//     <form id="add-bar-form">
+//       <input type="text" id="new-bar-name" placeholder="Add Card" /><br>
+//       <button type="submit" class="tick-button"><i class="fas fa-check"></i></button>
+//     </form>
+//   `;
 var barFormOpen = false;
 
 function closeBarForm() {
@@ -41,7 +40,7 @@ function deleteBar(element) {
 document.getElementById("open-bar-form-btn").addEventListener("click", function(event) {
     event.preventDefault();
 
-    document.getElementById("add-bar-form-container").innerHTML = barFormHTML;
+    // document.getElementById("add-bar-form-container").innerHTML = barFormHTML;
     document.getElementById("add-bar-form-container").style.display = "block";
     document.getElementById("open-bar-form-btn").style.display = "none";
 
@@ -77,7 +76,7 @@ document.getElementById("open-bar-form-btn").addEventListener("click", function(
         });
     });
 });
-function activateUpdatrBarName(element) {
+function activateUpdateBarName(element) {
     var text = element.firstElementChild.textContent;
     var id = element.getAttribute('data-bar-id');
 
@@ -89,10 +88,9 @@ function activateUpdatrBarName(element) {
 }
 function updateBarName(element) {
     var newDescription = element.value;
-    var id = element.id.split('-')[1];
+    var barId = element.id.split('-')[1];
     var parentElement = element.parentElement;
     var originalText = parentElement.getAttribute('data-original-text');
-
 
     if (newDescription !== originalText) {
         fetch('/project/updateBarName', {
@@ -101,14 +99,14 @@ function updateBarName(element) {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
-                'barId': id,
+                'barId': barId,
                 'barName': newDescription,
             })
         })
     }else{
         newDescription = originalText;
     }
-    parentElement.innerHTML = `<h3 onclick="activateUpdatrBarName(this)" data-bar-id="${id}">${newDescription}</h3>`;
+    parentElement.innerHTML = `<h3 onclick="activateUpdateBarName(this)" data-bar-id="${barId}">${newDescription}</h3>`;
 }
 function handleKeydownBar(event, element) {
     if (event.keyCode === 13) {

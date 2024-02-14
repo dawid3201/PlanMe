@@ -9,23 +9,24 @@ import COMP390.PlanMe.Entity.Bar;
 import COMP390.PlanMe.Entity.Project;
 import COMP390.PlanMe.Entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class PostTaskMethodRestApi {
     private final ProjectDAO projectDAO;
     private final TaskDAO taskDAO;
     private final BarDAO barDAO;
-    private final NotificationService notificationService;
 
     @Autowired
-    public PostTaskMethodRestApi(ProjectDAO projectDAO, TaskDAO taskDAO, BarDAO barDAO, NotificationService notificationService) {
+    public PostTaskMethodRestApi(ProjectDAO projectDAO, TaskDAO taskDAO, BarDAO barDAO) {
         this.projectDAO = projectDAO;
         this.taskDAO = taskDAO;
         this.barDAO = barDAO;
-        this.notificationService = notificationService; // Initialize notificationService here
     }
     @PostMapping("/project/addTask")
     public final ResponseEntity<String> addTask(
@@ -35,6 +36,7 @@ public class PostTaskMethodRestApi {
             @RequestParam("barId") Long barId) {
         //Adding task to the bar with specific position
         Project project = projectDAO.getProjectById(projectId);
+        System.out.println("Received taskName: " + taskName);
         if (project != null) {
             Bar targetBar = project.getBars().stream()
                     .filter(bar -> bar.getId().equals(barId)).findFirst().orElse(null);
@@ -54,7 +56,6 @@ public class PostTaskMethodRestApi {
             targetBar.getTasks().add(newTask);
             taskDAO.save(newTask);
             barDAO.save(targetBar);
-//            notificationService.notifyUsersOfUpdate();
             return ResponseEntity.ok().body(taskName);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project does not exist");
@@ -72,5 +73,4 @@ public class PostTaskMethodRestApi {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 }

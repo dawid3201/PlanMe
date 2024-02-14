@@ -1,10 +1,12 @@
 package COMP390.PlanMe.Controllers.Signin;
 
+import COMP390.PlanMe.Annotation.PasswordValidator;
 import COMP390.PlanMe.Dao.HomepageDAO;
 import COMP390.PlanMe.Dao.UserDAO;
 import COMP390.PlanMe.Entity.Homepage;
 import COMP390.PlanMe.Entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +20,7 @@ import java.util.regex.Pattern;
 @Controller
 public class SigninController {
     private UserDAO userDAO;
+    private PasswordValidator passwordValidator = new PasswordValidator();
 
     private HomepageDAO homepageDAO;
     @Autowired
@@ -44,16 +47,11 @@ public class SigninController {
             model.addAttribute("nameError", "Name fields cannot contain any numbers and special characters.");
             return "Signin";
         }
-//        //Password validation
-//        if (!isValidPassword(user.getPassword())) {
-//            model.addAttribute("passwordError", "Password must be between 10 and 12 characters");
-//            return "Signin";
-//        }
-//
-//        if (!isPasswordOk(user.getPassword())) {
-//            model.addAttribute("passwordError", "Password must contain at least 1 capital letter and special characters.");
-//            return "Signin";
-//        }
+        if(!passwordValidator.isValid(user.getPassword(), null)){
+            model.addAttribute("passwordError", "Password must be between 10-12 characters and must contain 1 capital letter and 1 symbol.");
+            return "Signin";
+        }
+
         //emial validation
         if (!isValidEmail(user.getEmail())) {
             model.addAttribute("emailError", "Invalid email format");
@@ -64,7 +62,10 @@ public class SigninController {
             model.addAttribute("emailError", "Email already exists");
             return "Signin";
         }
+        String encryptedPassword = BCEncryption(user.getPassword());
+        user.setPassword(encryptedPassword);
         userDAO.save(user);
+        System.out.println(user.getPassword());
         Homepage homepage = new Homepage();
         homepage.setUser(user);
         homepageDAO.save(homepage);
@@ -74,21 +75,12 @@ public class SigninController {
         String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
         return email.matches(emailRegex);
     }
-
-//    private boolean isValidPassword(String password) {
-//        int passwordLength = password.length();
-//        return passwordLength >= 10 && passwordLength <= 12;
-//    }
-//
-//    private boolean isPasswordOk(String password){//check if there are symbols in password
-//        String pattern = "^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$";
-//        Pattern regex = Pattern.compile(pattern);
-//        Matcher matcher = regex.matcher(password);
-//        return matcher.matches();
-//    }
-
     private boolean isNameOk(String name){
         String pattern = "^[a-zA-Z]+$";
         return name.matches(pattern);
+    }
+    private String BCEncryption(String password){
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.encode(password);
     }
 }
