@@ -13,7 +13,7 @@
 body {
     font-family: 'Poppins', sans-serif;
     min-height: 100vh;
-    background: linear-gradient(to right, #333399, #ff00cc);
+    background: #ACE1AF;
 }
 .container {
     display: flex;

@@ -24,11 +24,12 @@ public class PatchProjectController {
     public final ResponseEntity<Void> updateProjectName(@RequestParam("projectId") Long projectId, @RequestParam("newName") String name){
         Project project = projectDAO.getProjectById(projectId);
         if(project != null){
-            if(!name.isEmpty()){
+            if(!name.isEmpty() && name.length() <= 25){
                 project.setName(name);
                 projectDAO.save(project);
-            }else{
-                throw new BadArgumentException("Project name cannot be empty");
+            }
+            else{
+                throw new BadArgumentException("Project name cannot be empty and not longer than 25 characters.");
             }
         }
         return ResponseEntity.ok().build();

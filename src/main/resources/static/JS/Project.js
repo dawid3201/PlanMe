@@ -70,8 +70,8 @@ function updateProjectName(element){
             })
             .catch(function(error) {
                 if (error instanceof Error) {
-                    console.error("An error occurred:", "Project name cannot be empty");
-                     alert("Project name cannot be empty");
+                    console.error("An error occurred:", "Project name cannot be empty and not longer than 25 characters.");
+                     alert("Project name cannot be empty and not longer than 25 characters.");
                 } else {
                     console.error("An error occurred:", error);
                 }

@@ -65,8 +65,15 @@
             document.getElementById("error_message").innerText = "Please input both name and deadline.";
             return false; // Prevent form submission
         }
+        if (nameInput.length > 25) {
+            document.getElementById("error_message").innerHTML = "Project name is too long (max 25 characters).";
+            return false; // Prevent form submission
+        }
+
         return true;
     }
+
+
 </script>
 </body>
 
