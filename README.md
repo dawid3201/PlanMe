@@ -1,4 +1,4 @@
-![image](https://github.com/dawid3201/PlanMe/assets/42513264/1f0a667e-4599-4677-bcb8-89d22b89ee81)# PlanMe
+# PlanMe
 This is a final university project. It is still under development. 
 ## Description
 
