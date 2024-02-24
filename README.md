@@ -29,5 +29,6 @@ Users can:
 10) MySQL - Workbench 8.0
 11) WebSocket
 
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/80bd78bf-5b45-4ffa-9325-ed27b6bb2506)
 
 
