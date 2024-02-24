@@ -1,4 +1,4 @@
-# PlanMe
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/998b3a0e-28f2-496f-b616-346ee44f882e)# PlanMe
 This is a final university project. It is still under development. 
 ## Description
 
@@ -34,7 +34,7 @@ Users can:
 
 8) Search tasks by name
 
-![image](https://github.com/dawid3201/PlanMe/assets/42513264/4d44a6e0-dbd2-4fc9-b718-1c563137b6f4)
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/18926c13-cb71-4b7c-ab5d-70ff2383679f)
 
 9) See changes other users made
 
