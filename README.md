@@ -18,11 +18,11 @@ Users can:
 4) Assign users to tasks
 
 ![image](https://github.com/dawid3201/PlanMe/assets/42513264/52403b4f-dee4-4f13-b899-60a9ce40d271)
-![image](https://github.com/dawid3201/PlanMe/assets/42513264/f44ced80-1e41-428c-aed0-b9d466a55e46)
 
 5) Move tasks and bars
 
 ![image](https://github.com/dawid3201/PlanMe/assets/42513264/9cf97e13-71bf-40d1-8679-11caf8f63fc9)
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/f44ced80-1e41-428c-aed0-b9d466a55e46)
 
 6) Prioritise tasks based on the number assign
 
