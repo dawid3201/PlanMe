@@ -32,9 +32,13 @@ Users passwords are protected with BCrypt algorithm.
 
 **Running the Application**
 
-1. Open a terminal in the project directory.
-2. Build and run: `mvn spring-boot:run`
-3. Access the application in your web browser at: http://localhost:8080
+1) Open a terminal in the project directory.
+2) Build and run: `mvn spring-boot:run`
+
+Method 2: IDE
+
+1) Import the project into your preferred IDE (IntelliJ, Eclipse, etc.)
+2) Locate and run the main application class.
 
 
 ## Funcionality
