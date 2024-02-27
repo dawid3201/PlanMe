@@ -29,7 +29,6 @@ Users passwords are protected with BCrypt algorithm.
 **Installation**
 
 1. Clone the repository: `git clone https://github.com/dawid3201/PlanMe`
-2. No additional dependencies are needed.
 
 **Running the Application**
 
