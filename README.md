@@ -9,7 +9,7 @@ Users passwords are protected with BCrypt algorithm.
 
 ![image](https://github.com/dawid3201/PlanMe/assets/42513264/5282f80a-2dcd-4149-8a52-514c1b7549a4)
 
-##How to Use
+## How to Use
 
 **Prerequisites**
 
