@@ -13,7 +13,7 @@ Users passwords are protected with BCrypt algorithm.
 
 **Prerequisites**
 
-* Java 20 installed on your device
+* Java 20 installed on your device or at least Java 11
 * A modern web browser
 
 **Dependencies used**
