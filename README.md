@@ -5,6 +5,39 @@ This is a final university project. It is still under development.
 Greetings and welcome to my project! I am pleased to introduce a Todo List Application developed using Java and the Spring Boot 3 framework. This application is designed to provide users with a seamless experience in efficiently managing tasks. Users can effortlessly add, delete, and update tasks, fostering a convenient and streamlined task management process. The application is versatile, accommodating both individual users and collaborative team environments. 
 
 
+Users passwords are protected with BCrypt algorithm.
+
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/5282f80a-2dcd-4149-8a52-514c1b7549a4)
+
+**How to Use My Awesome App**
+
+**Prerequisites**
+
+* Java 20 installed on your device
+* A modern web browser
+
+**Dependencies used**
+
+Spring Framework: Provides the core foundation for Spring Boot applications and features like JPA, web development, security, and more.
+Spring Boot DevTools: Enhances development workflow with features like automatic restarts.
+MySQL Connector/J: Enables communication with a MySQL database.
+Thymeleaf: Server-side template engine for building Java web applications.
+Spring Security: Provides security features for authentication and authorization.
+Spring Websockets and related dependencies: Enable real-time features and messaging within the application.
+Lombok: Simplifies Java code reducing boilerplate.
+
+**Installation**
+
+1. Clone the repository: `git clone https://github.com/dawid3201/PlanMe`
+2. No additional dependencies are needed.
+
+**Running the Application**
+
+1. Open a terminal in the project directory.
+2. Build and run: `mvn spring-boot:run`
+3. Access the application in your web browser at: http://localhost:8080
+
+
 ## Funcionality
 Users can:
 1) Register and Login
