@@ -1,12 +1,9 @@
 package COMP390.PlanMe.Controllers.Project;
 
-import COMP390.PlanMe.Dao.BarDAO;
 import COMP390.PlanMe.Dao.ProjectDAO;
 import COMP390.PlanMe.Entity.Project;
-
 import COMP390.PlanMe.Exceptions.BadArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PatchMapping;

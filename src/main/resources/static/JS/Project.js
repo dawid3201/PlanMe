@@ -44,6 +44,7 @@ function activateUpdateProjectName(element) {
     // Immediately focus the input field to prevent needing another click
     document.getElementById(`input-${id}`).focus();
 }
+
 function updateProjectName(element){
     let newProjectName = element.value;
     let projectId = document.getElementById('projectId').value;

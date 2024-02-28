@@ -437,9 +437,13 @@ function getAssignedTasks() {
             const taskListP = document.getElementById("assignedTasks");
             taskListP.style.whiteSpace = "pre-line"; // Set white-space property
 
-            // Separate tasks
-            const taskNames = assignTasks.split('\n').filter(name => name.trim() !== '');
-            taskListP.textContent = taskNames.map(name => `${name}\n-------------------------------`).join('\n');
+            if(assignTasks.trim() === ''){
+                taskListP.textContent = "No tasks assigned to you.";
+            }else{
+                // Separate tasks
+                const taskNames = assignTasks.split('\n').filter(name => name.trim() !== '');
+                taskListP.textContent = taskNames.map(name => `${name}\n-------------------------------`).join('\n');
+            }
         })
         .catch(error => {
             console.error('Error:', error);

@@ -28,8 +28,8 @@ public class GetMemberMethodRestApi {
         Project project = projectDAO.getProjectById(projectId);
         if(project != null){
             List<String> userNames = new ArrayList<>();
-            for(User u : project.getMembers()){
-                userNames.add(u.getFirstName() + " " + u.getLastName() + " | " + u.getEmail());
+            for(User user : project.getMembers()){
+                userNames.add(user.getFirstName() + " " + user.getLastName() + " | " + user.getEmail());
             }
             String joinNames = String.join("\n", userNames);
             return ResponseEntity.ok(joinNames);
