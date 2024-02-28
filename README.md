@@ -85,59 +85,65 @@ Users can:
 10) MySQL - Workbench 8.0
 11) WebSocket
 
-## Datbase
+## Database
 
+-- Table: Users
 CREATE TABLE Users (
-    first_name varchar(45) DEFAULT NULL,
-    last_name varchar(45) DEFAULT NULL,
-    email_address varchar(100) PRIMARY KEY,
-    password varchar(68) default NULL
+  first_name varchar(45) DEFAULT NULL,
+  last_name varchar(45) DEFAULT NULL,
+  email_address varchar(100) PRIMARY KEY,
+  password varchar(68) DEFAULT NULL
 );
 
+-- Table: Homepages
 CREATE TABLE Homepages (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id VARCHAR(100),
-    data TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(email_address)
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(100),
+  data TEXT,
+  FOREIGN KEY (user_id) REFERENCES Users(email_address)
 );
 
-create table Projects(
-	id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name varchar(25) NOT NULL,
-    deadline DATE,
-    creator_id VARCHAR(100),
-    FOREIGN KEY (creator_id) REFERENCES users(email_address)
+-- Table: Projects
+CREATE TABLE Projects (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name varchar(25) NOT NULL,
+  deadline DATE,
+  creator_id VARCHAR(100),
+  FOREIGN KEY (creator_id) REFERENCES Users(email_address)
 );
 
+-- Table: Project_members
 CREATE TABLE Project_members (
-    project_id BIGINT,
-    user_id VARCHAR(100),
-    PRIMARY KEY (project_id, user_id),
-    FOREIGN KEY (project_id) REFERENCES projects(id),
-    FOREIGN KEY (user_id) REFERENCES users(email_address)
+  project_id BIGINT,
+  user_id VARCHAR(100),
+  PRIMARY KEY (project_id, user_id),
+  FOREIGN KEY (project_id) REFERENCES Projects(id),
+  FOREIGN KEY (user_id) REFERENCES Users(email_address)
 );
 
+-- Table: Bars 
 CREATE TABLE Bars (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(70) NOT NULL,
-    position BIGINT,
-    project_id BIGINT,
-    FOREIGN KEY (project_id) REFERENCES Projects(id)
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(70) NOT NULL,
+  position BIGINT,
+  project_id BIGINT,
+  FOREIGN KEY (project_id) REFERENCES Projects(id)
 );
 
-CREATE TABLE Tasks(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    state VARCHAR(255),
-    project_id BIGINT,
-    bar_id BIGINT,
-    FOREIGN KEY (bar_id) REFERENCES Bars(id),
-    FOREIGN KEY (project_id) REFERENCES projects(id),
-    priority INT,
-    position BIGINT,
-    description varchar(10000),
-    assigned_user_email VARCHAR(100),
-    FOREIGN KEY (assigned_user_email) REFERENCES users(email_address)
+-- Table: Tasks
+CREATE TABLE Tasks (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  state VARCHAR(255),
+  project_id BIGINT,
+  bar_id BIGINT,
+  FOREIGN KEY (bar_id) REFERENCES Bars(id),
+  FOREIGN KEY (project_id) REFERENCES Projects(id),
+  priority INT,
+  position BIGINT,
+  description varchar(10000), 
+  assigned_user_email VARCHAR(100),
+  FOREIGN KEY (assigned_user_email) REFERENCES Users(email_address)
 );
 
 
