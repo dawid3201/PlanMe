@@ -33,7 +33,7 @@ Users passwords are protected with BCrypt algorithm.
 **Running the Application**
 
 1) Import the project into your preferred IDE (IntelliJ, Eclipse, etc.)
-2) My program uses MySQL database to store info, the exact copy of my database is in files. It will be neccessary to run the app.
+2) My program uses MySQL database to store info, the exact copy of my database is included below. It will be neccessary to run the app.
 3) Locate and run the main application class.
 4) Access website through: http://localhost:8080/login
 
@@ -84,6 +84,62 @@ Users can:
 9) Thymeleaf
 10) MySQL - Workbench 8.0
 11) WebSocket
+
+## Datbase
+
+CREATE TABLE Users (
+    first_name varchar(45) DEFAULT NULL,
+    last_name varchar(45) DEFAULT NULL,
+    email_address varchar(100) PRIMARY KEY,
+    password varchar(68) default NULL
+);
+
+CREATE TABLE Homepages (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(100),
+    data TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(email_address)
+);
+
+create table Projects(
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name varchar(25) NOT NULL,
+    deadline DATE,
+    creator_id VARCHAR(100),
+    FOREIGN KEY (creator_id) REFERENCES users(email_address)
+);
+
+CREATE TABLE Project_members (
+    project_id BIGINT,
+    user_id VARCHAR(100),
+    PRIMARY KEY (project_id, user_id),
+    FOREIGN KEY (project_id) REFERENCES projects(id),
+    FOREIGN KEY (user_id) REFERENCES users(email_address)
+);
+
+CREATE TABLE Bars (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(70) NOT NULL,
+    position BIGINT,
+    project_id BIGINT,
+    FOREIGN KEY (project_id) REFERENCES Projects(id)
+);
+
+CREATE TABLE Tasks(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    state VARCHAR(255),
+    project_id BIGINT,
+    bar_id BIGINT,
+    FOREIGN KEY (bar_id) REFERENCES Bars(id),
+    FOREIGN KEY (project_id) REFERENCES projects(id),
+    priority INT,
+    position BIGINT,
+    description varchar(10000),
+    assigned_user_email VARCHAR(100),
+    FOREIGN KEY (assigned_user_email) REFERENCES users(email_address)
+);
+
 
 
 
