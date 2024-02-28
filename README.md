@@ -34,7 +34,7 @@ Users passwords are protected with BCrypt algorithm.
 
 1) Import the project into your preferred IDE (IntelliJ, Eclipse, etc.)
 2) Locate and run the main application class.
-3) Access website through: http://localhost:8080
+3) Access website through: http://localhost:8080/login
 
 
 ## Funcionality
