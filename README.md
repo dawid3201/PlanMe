@@ -28,17 +28,9 @@ Users passwords are protected with BCrypt algorithm.
 
 **Installation**
 
-1. Clone the repository: `git clone https://github.com/dawid3201/PlanMe`
+1. Download zip file of the master branch
 
 **Running the Application**
-
-Method 1: If you have MVN installed
-
-1) Open a terminal in the project directory.
-2) Build and run: `mvn spring-boot:run`
-3) Access website through: http://localhost:8080
-
-Method 2: IDE
 
 1) Import the project into your preferred IDE (IntelliJ, Eclipse, etc.)
 2) Locate and run the main application class.
