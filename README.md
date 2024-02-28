@@ -14,6 +14,7 @@ Users passwords are protected with BCrypt algorithm.
 **Prerequisites**
 
 * Java 20 or at least Java 11 installed on your device
+* MySQL installed on your device 
 * A modern web browser
 
 **Dependencies used**
