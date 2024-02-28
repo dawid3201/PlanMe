@@ -33,8 +33,9 @@ Users passwords are protected with BCrypt algorithm.
 **Running the Application**
 
 1) Import the project into your preferred IDE (IntelliJ, Eclipse, etc.)
-2) Locate and run the main application class.
-3) Access website through: http://localhost:8080/login
+2) My program uses MySQL database to store info, the exact copy of my database is in files. It will be neccessary to run the app.
+3) Locate and run the main application class.
+4) Access website through: http://localhost:8080/login
 
 
 ## Funcionality
