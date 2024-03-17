@@ -19,13 +19,13 @@ Users passwords are protected with BCrypt algorithm.
 
 **Dependencies used**
 
-- Spring Framework: Provides the core foundation for Spring Boot applications and features like JPA, web development, security, and more.
-- Spring Boot DevTools: Enhances development workflow with features like automatic restarts.
-- MySQL Connector/J: Enables communication with a MySQL database.
-- Thymeleaf: Server-side template engine for building Java web applications.
-- Spring Security: Provides security features for authentication and authorization.
-- Spring Websockets and related dependencies: Enable real-time features and messaging within the application.
-- Lombok: Simplifies Java code reducing boilerplate.
+- Spring Framework
+- Spring Boot DevTools
+- MySQL Connector/J
+- Thymeleaf
+- Spring Security
+- Spring Websockets and related dependencies
+- Lombok
 
 **Installation**
 
