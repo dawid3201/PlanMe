@@ -41,3 +41,7 @@ public class PostLoginController {
         return "redirect:/login";
     }
 }
+
+//Model is used for displaying error message on login html page
+
+//Session is used for storing logged-in user's information

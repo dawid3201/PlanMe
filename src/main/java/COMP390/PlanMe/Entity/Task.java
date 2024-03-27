@@ -22,7 +22,6 @@ public class Task {
     @Column(name = "name")
     private String name;
 
-//    @JsonBackReference //serialization and deserialization
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})//save and modify handlers
     @JoinColumn(name = "bar_id")
     private Bar bar;

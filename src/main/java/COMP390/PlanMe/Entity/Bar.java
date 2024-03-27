@@ -30,12 +30,10 @@ public class Bar {
     @Column(name = "position")
     private int position;
 
-    @JsonBackReference
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
     @OrderBy("position ASC")
     private List<Task> tasks = new ArrayList<>();

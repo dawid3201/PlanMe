@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
 public class PasswordValidator implements ConstraintValidator<StrongPassword, String> {
     private static final String PASSWORD_PATTERN = "^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>]).{10,12}$";
     @Override
-    public void initialize(StrongPassword constraintAnnotation) {
+    public final void initialize(StrongPassword constraintAnnotation) {
     }
 
     @Override//validation is done here
-    public boolean isValid(String password, ConstraintValidatorContext context) {
+    public final boolean isValid(String password, ConstraintValidatorContext context) {
         if(password == null){
             return false;
         }

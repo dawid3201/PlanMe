@@ -59,8 +59,7 @@ public class PostProjectController {
         project.getBars().add(bar2);
         project.getBars().add(bar3);
         projectDAO.save(project);
-        session.setAttribute("newProject", project);
-        model.addAttribute("project", new Project());
+      //  session.setAttribute("newProject", project);
 
         return "redirect:/homepage";
     }

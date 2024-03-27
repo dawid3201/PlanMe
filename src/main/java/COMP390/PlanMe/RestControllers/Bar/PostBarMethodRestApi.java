@@ -6,6 +6,7 @@ import COMP390.PlanMe.Dao.ProjectDAO;
 import COMP390.PlanMe.Entity.Bar;
 import COMP390.PlanMe.Entity.Project;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

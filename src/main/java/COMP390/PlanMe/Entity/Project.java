@@ -25,7 +25,6 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "creator_id")
-    @JsonManagedReference
     private User creator;
 
     @ManyToMany
@@ -38,11 +37,9 @@ public class Project {
     //List of tasks related to project
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "project")
     @OrderBy("position ASC")
-    @JsonManagedReference
     private List<Task> tasks;
 
     //list of bars related to project
-    @JsonManagedReference
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     @OrderBy("position")
     private List<Bar> bars = new ArrayList<>();

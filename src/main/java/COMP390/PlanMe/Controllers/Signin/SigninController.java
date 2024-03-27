@@ -49,7 +49,6 @@ public class SigninController {
             model.addAttribute("passwordError", "Password must be between 10-12 characters and must contain 1 capital letter and 1 symbol.");
             return "Signin";
         }
-
         //emial validation
         if (!isValidEmail(user.getEmail())) {
             model.addAttribute("emailError", "Invalid email format");

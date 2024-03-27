@@ -1,6 +1,5 @@
 package COMP390.PlanMe.RestControllers;
 
-import COMP390.PlanMe.RestControllers.Task.DeleteTaskMethodRestApi;
 import COMP390.PlanMe.RestControllers.Task.GetTaskMethodRestApi;
 import COMP390.PlanMe.RestControllers.Task.PatchTaskMethodRestApi;
 import COMP390.PlanMe.RestControllers.Task.PostTaskMethodRestApi;
@@ -207,7 +206,7 @@ class TaskRestAPITest {
     void testRemoveTask(){
         // Mocks
         TaskDAO taskDAO = mock(TaskDAO.class);
-        DeleteTaskMethodRestApi taskController = new DeleteTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
+        TaskService taskController = new TaskService(projectDAO, taskDAO, barDAO);
         //Mock data
         Task mockTask = new Task();
         Bar bar1 = new Bar();
@@ -218,7 +217,7 @@ class TaskRestAPITest {
         //Mock behaviour
         when(taskDAO.getTaskById(taskId)).thenReturn(mockTask);
         //Execute method
-        ResponseEntity<Void> responseEntity = taskController.removeTask(taskId);
+        ResponseEntity<Void> responseEntity = taskController.deleteTask(taskId);
         //Check status
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }

@@ -27,13 +27,10 @@ public class User {
     @Column(name="email_address")
     private String email;
 
-//    @JsonIgnore
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
-    @JsonManagedReference//I added this recently, delete if there will be errors
     private List<Project> projects;
 
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Task> tasksAssigned;
 
     public User() {}

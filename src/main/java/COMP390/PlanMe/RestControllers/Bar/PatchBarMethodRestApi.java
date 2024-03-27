@@ -9,6 +9,7 @@ import COMP390.PlanMe.Entity.Project;
 import COMP390.PlanMe.Entity.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
