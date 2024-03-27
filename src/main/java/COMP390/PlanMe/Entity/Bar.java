@@ -1,9 +1,6 @@
 package COMP390.PlanMe.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,12 +27,13 @@ public class Bar {
     @Column(name = "position")
     private int position;
 
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
     @OrderBy("position ASC")
     private List<Task> tasks = new ArrayList<>();
-
 }

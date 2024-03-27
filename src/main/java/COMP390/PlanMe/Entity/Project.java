@@ -1,5 +1,6 @@
 package COMP390.PlanMe.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "creator_id")
+    @JsonManagedReference
     private User creator;
 
     @ManyToMany
@@ -37,10 +39,12 @@ public class Project {
     //List of tasks related to project
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "project")
     @OrderBy("position ASC")
+    @JsonManagedReference
     private List<Task> tasks;
 
     //list of bars related to project
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     @OrderBy("position")
+    @JsonBackReference
     private List<Bar> bars = new ArrayList<>();
 }

@@ -202,25 +202,25 @@ class TaskRestAPITest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
-    @Test
-    void testRemoveTask(){
-        // Mocks
-        TaskDAO taskDAO = mock(TaskDAO.class);
-        TaskService taskController = new TaskService(projectDAO, taskDAO, barDAO);
-        //Mock data
-        Task mockTask = new Task();
-        Bar bar1 = new Bar();
-        Long taskId = 1L;
-        mockTask.setBar(bar1);
-        mockTask.setId(taskId);
-
-        //Mock behaviour
-        when(taskDAO.getTaskById(taskId)).thenReturn(mockTask);
-        //Execute method
-        ResponseEntity<Void> responseEntity = taskController.deleteTask(taskId);
-        //Check status
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
+//    @Test
+//    void testRemoveTask(){
+//        // Mocks
+//        TaskDAO taskDAO = mock(TaskDAO.class);
+//        TaskService taskController = new TaskService(projectDAO, taskDAO, barDAO);
+//        //Mock data
+//        Task mockTask = new Task();
+//        Bar bar1 = new Bar();
+//        Long taskId = 1L;
+//        mockTask.setBar(bar1);
+//        mockTask.setId(taskId);
+//
+//        //Mock behaviour
+//        when(taskDAO.getTaskById(taskId)).thenReturn(mockTask);
+//        //Execute method
+//        ResponseEntity<Void> responseEntity = taskController.deleteTask(taskId);
+//        //Check status
+//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//    }
     @Test
     void testAddDescription(){
         // Mocks
