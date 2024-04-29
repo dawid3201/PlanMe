@@ -5,7 +5,6 @@ import COMP390.PlanMe.Entity.Bar;
 import COMP390.PlanMe.Entity.Project;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +16,7 @@ public class GetBarMethodRestApi {
     public GetBarMethodRestApi(ProjectDAO projectDAO) {
         this.projectDAO = projectDAO;
     }
+
     @GetMapping("/project/getUpdatedBars/{projectId}")
     public final ResponseEntity<List<Bar>> updatedTaskList(@PathVariable("projectId") Long projectId){
         try {
@@ -26,7 +26,7 @@ public class GetBarMethodRestApi {
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            System.out.println("Error while fetching tasks: " + e.getMessage());
+            System.out.println("Error while fetching bars: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

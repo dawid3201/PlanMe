@@ -1,9 +1,9 @@
 package COMP390.PlanMe.RestControllers;
 
+import COMP390.PlanMe.RestControllers.Task.DeleteTaskMethodRestApi;
 import COMP390.PlanMe.RestControllers.Task.GetTaskMethodRestApi;
 import COMP390.PlanMe.RestControllers.Task.PatchTaskMethodRestApi;
 import COMP390.PlanMe.RestControllers.Task.PostTaskMethodRestApi;
-import COMP390.PlanMe.Services.NotificationService;
 import COMP390.PlanMe.Dao.ProjectDAO;
 import COMP390.PlanMe.Dao.TaskDAO;
 import COMP390.PlanMe.Dao.BarDAO;
@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -28,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 class TaskRestAPITest {
     @Mock
     private ProjectDAO projectDAO;
@@ -37,25 +35,23 @@ class TaskRestAPITest {
     private BarDAO barDAO;
     @Mock
     private TaskDAO taskDAO;
-
-
-    @Mock
-    private NotificationService notificationService;
-
+    //Controllers
+    private DeleteTaskMethodRestApi deleteTaskMethodRestApi;
+    private GetTaskMethodRestApi getTaskMethodRestApi;
+    private PatchTaskMethodRestApi patchTaskMethodRestApi;
+    private PostTaskMethodRestApi postTaskMethodRestApi;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        postTaskMethodRestApi = new PostTaskMethodRestApi(projectDAO, taskDAO, barDAO);
+        getTaskMethodRestApi = new GetTaskMethodRestApi(projectDAO, taskDAO);
+        patchTaskMethodRestApi = new PatchTaskMethodRestApi(taskDAO, barDAO);
+        deleteTaskMethodRestApi = new DeleteTaskMethodRestApi(taskDAO, barDAO);
+
     }
     @Test
-     void testAddTask() {
-        // Mock dependencies
-        ProjectDAO projectDAO = mock(ProjectDAO.class);
-        BarDAO barDAO = mock(BarDAO.class);
-        TaskDAO taskDAO = mock(TaskDAO.class);
-
-        PostTaskMethodRestApi taskController = new PostTaskMethodRestApi(projectDAO, taskDAO, barDAO);
-
+    void testAddTask() {
         // Test data
         Long projectId = 1L;
         String taskName = "Test Task";
@@ -75,7 +71,7 @@ class TaskRestAPITest {
         when(taskDAO.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Execute the method
-        ResponseEntity<String> responseEntity = taskController.addTask(projectId, taskName, priority, barId);
+        ResponseEntity<String> responseEntity = postTaskMethodRestApi.addTask(projectId, taskName, priority, barId);
 
         // Verify the result
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -99,10 +95,6 @@ class TaskRestAPITest {
     //Here there was 1 arugmnet neccessary taskId and task must have assigned a name to it
     @Test
     void testNewName() {
-        // Mocks
-        TaskDAO taskDAO = mock(TaskDAO.class);
-        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO);
-
         // Test data
         Long taskId = 1L;
         String expectedTaskName = "ExpectedTaskName";
@@ -115,7 +107,7 @@ class TaskRestAPITest {
         when(taskDAO.getTaskById(taskId)).thenReturn(mockTask);
 
         // Method under test
-        ResponseEntity<String> responseEntity = taskController.newName(taskId);
+        ResponseEntity<String> responseEntity = getTaskMethodRestApi.newName(taskId);
 
         // Assertions
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -124,11 +116,6 @@ class TaskRestAPITest {
     }
     @Test
     void testUpdateTaskPosition() {
-        // Mocks
-        TaskDAO taskDAO = mock(TaskDAO.class);
-        BarDAO barDAO = mock(BarDAO.class);
-        PatchTaskMethodRestApi taskController = new PatchTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
-
         // Test data
         Long taskId = 1L;
         Long newPosition = 2L;
@@ -150,7 +137,7 @@ class TaskRestAPITest {
         when(barDAO.getBarById(newBarId)).thenReturn(newBar);
 
         // Execute the method
-        ResponseEntity<Long> responseEntity = taskController.updateTaskPosition(taskId, newPosition, newBarId);
+        ResponseEntity<Long> responseEntity = patchTaskMethodRestApi.updateTaskPosition(taskId, newPosition, newBarId);
 
         // Verify the result
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -163,10 +150,6 @@ class TaskRestAPITest {
     }
     @Test
     void testUpdateTaskName(){
-        // Mocks
-        TaskDAO taskDAO = mock(TaskDAO.class);
-        PatchTaskMethodRestApi taskController = new PatchTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
-
         //Test data
         Task mockTask = new Task();
         Long taskId = 1L;
@@ -176,17 +159,13 @@ class TaskRestAPITest {
         //Mock behaviour
         when(taskDAO.getTaskById(taskId)).thenReturn(mockTask);
         //Execute method
-        ResponseEntity<Void> responseEntity = taskController.updateTaskName(taskId, taskName);
+        ResponseEntity<Void> responseEntity = patchTaskMethodRestApi.updateTaskName(taskId, taskName);
         //Check status
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
     //Task Priority can only be positive int between 1 and 3
     @Test
     void testUpdateTaskPriority(){
-        // Mocks
-        TaskDAO taskDAO = mock(TaskDAO.class);
-        PatchTaskMethodRestApi taskController = new PatchTaskMethodRestApi(projectDAO, taskDAO, barDAO, notificationService);
-
         //Test data
         Task mockTask = new Task();
         Long taskId = 1L;
@@ -197,35 +176,29 @@ class TaskRestAPITest {
         //Mock behaviour
         when(taskDAO.getTaskById(taskId)).thenReturn(mockTask);
         //Execute method
-        ResponseEntity<Void> responseEntity = taskController.updateTaskPriority(taskId, taskPriority);
+        ResponseEntity<Void> responseEntity = patchTaskMethodRestApi.updateTaskPriority(taskId, taskPriority);
         //Check status
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
-//    @Test
-//    void testRemoveTask(){
-//        // Mocks
-//        TaskDAO taskDAO = mock(TaskDAO.class);
-//        TaskService taskController = new TaskService(projectDAO, taskDAO, barDAO);
-//        //Mock data
-//        Task mockTask = new Task();
-//        Bar bar1 = new Bar();
-//        Long taskId = 1L;
-//        mockTask.setBar(bar1);
-//        mockTask.setId(taskId);
-//
-//        //Mock behaviour
-//        when(taskDAO.getTaskById(taskId)).thenReturn(mockTask);
-//        //Execute method
-//        ResponseEntity<Void> responseEntity = taskController.deleteTask(taskId);
-//        //Check status
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//    }
+        @Test
+    void testRemoveTask(){
+        //Mock data
+        Task mockTask = new Task();
+        Bar bar1 = new Bar();
+        Long taskId = 1L;
+        mockTask.setBar(bar1);
+        mockTask.setId(taskId);
+
+        //Mock behaviour
+        when(taskDAO.getTaskById(taskId)).thenReturn(mockTask);
+        //Execute method
+        ResponseEntity<Void> responseEntity = deleteTaskMethodRestApi.removeTask(taskId);
+        //Check status
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
     @Test
     void testAddDescription(){
-        // Mocks
-        TaskDAO taskDAO = mock(TaskDAO.class);
-        PostTaskMethodRestApi taskController = new PostTaskMethodRestApi(projectDAO, taskDAO, barDAO);
         //Mock data
         Task mockTask = new Task();
         Long taskId = 1L;
@@ -233,14 +206,11 @@ class TaskRestAPITest {
         mockTask.setId(taskId);
         //Mock behaviour
         when(taskDAO.getTaskById(taskId)).thenReturn(mockTask);
-        ResponseEntity<Void> responseEntity = taskController.addDescription(taskId, taskDescription);
+        ResponseEntity<Void> responseEntity = postTaskMethodRestApi.addDescription(taskId, taskDescription);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
     @Test
     void testSearchTask(){
-        // Mocks
-        ProjectDAO projectDAO = mock(ProjectDAO.class);
-        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO);
         //Mock data
         Project mockProject = new Project();
         Task mockTask = new Task();
@@ -259,23 +229,20 @@ class TaskRestAPITest {
 
         //Mock behaviour
         when(projectDAO.getProjectById(projectId)).thenReturn(mockProject);
-        ResponseEntity<Map<Long, String>> responseEntity = taskController.searchTask(projectId, searchTaskName);
+        ResponseEntity<Map<Long, String>> responseEntity = getTaskMethodRestApi.searchTask(projectId, searchTaskName);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedMap, responseEntity.getBody());
     }
     @Test
     void testGetTaskName(){
-        // Mocks
-        TaskDAO taskDAO = mock(TaskDAO.class);
-        GetTaskMethodRestApi taskController = new GetTaskMethodRestApi(projectDAO, taskDAO);
         Task mockTask = new Task();
         Long taskId = 1L;
         mockTask.setId(taskId);
 
         when(taskDAO.findById(taskId)).thenReturn(Optional.of(mockTask));
 
-        ResponseEntity<String> responseEntity = taskController.getTaskName(taskId);
+        ResponseEntity<String> responseEntity = getTaskMethodRestApi.getTaskName(taskId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
     }

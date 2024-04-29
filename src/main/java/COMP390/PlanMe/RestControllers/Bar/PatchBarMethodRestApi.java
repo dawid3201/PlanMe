@@ -9,7 +9,6 @@ import COMP390.PlanMe.Entity.Project;
 import COMP390.PlanMe.Entity.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
@@ -36,7 +35,12 @@ public class PatchBarMethodRestApi {
             List<Bar> bars = barDAO.findByProjectId(project.getId());
             bars.sort(Comparator.comparing(Bar::getPosition));
             bars.remove(bar);
-            bars.add(newPosition.intValue() - 1, bar);
+            //Code updated after Unit tests
+            if(!bars.isEmpty()){
+                bars.add(newPosition.intValue() - 1, bar);
+            }else{
+                bars.add(bar);
+            }
             reorderBarPositions(bars);
 
             barDAO.saveAll(bars);

@@ -1,16 +1,13 @@
 package COMP390.PlanMe.RestControllers.Task;
 
 import COMP390.PlanMe.Exceptions.NotFoundException;
-import COMP390.PlanMe.Services.NotificationService;
 import COMP390.PlanMe.Dao.ProjectDAO;
 import COMP390.PlanMe.Dao.TaskDAO;
-import COMP390.PlanMe.Dao.BarDAO;
 import COMP390.PlanMe.Entity.Project;
 import COMP390.PlanMe.Entity.Task;
 import COMP390.PlanMe.Entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -71,7 +68,7 @@ public class GetTaskMethodRestApi {
             for (Task task : tasksForProject) {
                 User assignedUser = task.getAssignedUser();
                 if (assignedUser != null && task.getAssignedUser().getEmail().contains(userEmail)) {
-                    assignedTasksNames.add(i + " : " + task.getName() + "\n");
+                    assignedTasksNames.add(i + " : " + task.getName() + " | P:"+ task.getPriority() + "\n");
                     i++;
                 }
             }

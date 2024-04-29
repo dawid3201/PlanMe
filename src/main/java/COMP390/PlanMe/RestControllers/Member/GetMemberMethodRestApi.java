@@ -2,12 +2,10 @@ package COMP390.PlanMe.RestControllers.Member;
 
 import COMP390.PlanMe.Exceptions.NotFoundException;
 import COMP390.PlanMe.Dao.ProjectDAO;
-import COMP390.PlanMe.Dao.TaskDAO;
 import COMP390.PlanMe.Dao.UserDAO;
 import COMP390.PlanMe.Entity.Project;
 import COMP390.PlanMe.Entity.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,12 +15,10 @@ import java.util.List;
 public class GetMemberMethodRestApi {
     private final ProjectDAO projectDAO;
     private final UserDAO userDAO;
-    private final TaskDAO taskDAO;
 
-    public GetMemberMethodRestApi(ProjectDAO projectDAO, UserDAO userDAO, TaskDAO taskDAO) {
+    public GetMemberMethodRestApi(ProjectDAO projectDAO, UserDAO userDAO) {
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
-        this.taskDAO = taskDAO;
     }
     @GetMapping("/getMembers/{projectId}") //Used in PROJECT.JS
     public ResponseEntity<String> getTaskName(@PathVariable Long projectId) {

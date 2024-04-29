@@ -2,34 +2,26 @@ package COMP390.PlanMe.RestControllers.Task;
 
 import COMP390.PlanMe.Exceptions.BadArgumentException;
 import COMP390.PlanMe.Exceptions.NotFoundException;
-import COMP390.PlanMe.Services.NotificationService;
-import COMP390.PlanMe.Dao.ProjectDAO;
 import COMP390.PlanMe.Dao.TaskDAO;
 import COMP390.PlanMe.Dao.BarDAO;
 import COMP390.PlanMe.Entity.Bar;
 import COMP390.PlanMe.Entity.Task;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
 public class PatchTaskMethodRestApi {
-    private final ProjectDAO projectDAO;
     private final TaskDAO taskDAO;
     private final BarDAO barDAO;
-    private final NotificationService notificationService;
 
     @Autowired
-    public PatchTaskMethodRestApi(ProjectDAO projectDAO, TaskDAO taskDAO, BarDAO barDAO, NotificationService notificationService) {
-        this.projectDAO = projectDAO;
+    public PatchTaskMethodRestApi(TaskDAO taskDAO, BarDAO barDAO) {
         this.taskDAO = taskDAO;
         this.barDAO = barDAO;
-        this.notificationService = notificationService; // Initialize notificationService here
     }
 //    @Transactional
     @PatchMapping("/project/updateTaskPosition")
@@ -62,9 +54,6 @@ public class PatchTaskMethodRestApi {
             task.setState(newBar.getName());
             taskDAO.save(task);
             barDAO.save(newBar);
-            if(newBar.getTasks().size() == 1){
-                notificationService.taskUpdate();
-            }
             return ResponseEntity.ok().body(newPosition);
         } catch (Exception e) {
             System.out.println("Error while updating task position: " + e.getMessage());
