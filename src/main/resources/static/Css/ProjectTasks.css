@@ -2,7 +2,7 @@
 .task {
     background: white;
     color: black;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
     position: relative;
     padding: 12px;
     border-radius: 4px;
@@ -87,20 +87,7 @@ input[id^="input-"] {
     padding: 5px 10px;
     font-size: 14px;
 }
-/*#task-priority {*/
-/*    -webkit-appearance: none;*/
-/*    -moz-appearance: none;*/
-/*    appearance: none;*/
-/*    padding: 0;*/
-/*    margin: 0;*/
-/*    border: none;*/
-/*    background: transparent;*/
-/*    width: 1.5em;*/
-/*    font-size: 0.8em;*/
-/*    outline: none;*/
-/*    cursor: pointer;*/
-/*}*/
-/*For <p> with ID task-priority*/
+
 .task-priority {
     position: absolute;
     top: 33px;
@@ -159,7 +146,7 @@ input[id^="input-"] {
 .form-container {
     background: white;
     color: black;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
     padding: 12px;
     border-radius: 4px;
     font-size: 16px;
@@ -193,7 +180,7 @@ input[id^="input-"] {
     background-color: white;
     border: 1px solid #333;
     border-radius: 4px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 8px;
 }
 
@@ -223,11 +210,11 @@ input[id^="input-"] {
     top: 15%;
     left: 15%;
     width: 70%;
-    max-height: 70%;  /* Set a maximum height */
+    max-height: 700px;  /* Set a maximum height */
     background-color: #FFF;
     padding: 30px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;  /* Hide any content that exceeds the boundaries */
+    overflow: auto;  /* Hide any content that exceeds the boundaries */
     margin: 20px;
     box-sizing: border-box;
     border-radius: 5px;
@@ -280,6 +267,11 @@ input[id^="input-"] {
     background: lightgrey;
     cursor: pointer;
 }
+#taskNameShow{
+    text-align: center;
+    font-size: 30px;
+}
+/****************USER DROPDOWN CONTENT****************/
 .user-dropdown {
     position: relative;
     display: inline-block;
@@ -291,7 +283,7 @@ input[id^="input-"] {
     left: 0;
     background-color: #f9f9f9;
     min-width: 150px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
     border: 1px solid #ccc;
     z-index: 2 !important;
 }
@@ -351,6 +343,7 @@ input[id^="input-"] {
     border-radius: var(--border-radius);
     transition: border-radius 0.5s ease;
     background: var(--input-bg,#fff);
+    border: var(--border-height) solid #d3d3d3;
 }
 /* styling of Input */
 .input {
@@ -410,10 +403,3 @@ input:not(:placeholder-shown) ~ .reset {
     border: none;
     background: none;
 }
-/*.editable-input {*/
-/*    width: 80%; !* Adjust the width as needed *!*/
-/*    padding: 5px;*/
-/*    border: 1px solid #ccc;*/
-/*    border-radius: 3px;*/
-/*    box-sizing: border-box;*/
-/*}*/

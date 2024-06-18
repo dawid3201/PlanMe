@@ -36,4 +36,6 @@ public class AllExceptions {
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+
 }

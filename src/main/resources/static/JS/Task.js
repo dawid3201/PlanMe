@@ -1,4 +1,5 @@
-var formOpen = false; //check if form is open
+//************************************************HANDLE ADD TASK FORMS AND ADD TASKS TO THE PROJECT************
+var formOpen = false; // Check if form is open
 let currentFormContainer = null;
 
 function closeForm() {
@@ -13,93 +14,88 @@ function closeForm() {
         currentFormContainer = null;
     }
 }
+
 function handleClickOutsideForm(event) {
-    if (currentFormContainer) {
-        // const isClickInsideForm = currentFormContainer.contains(event.target);
-        if (currentFormContainer && formOpen && !currentFormContainer.contains(event.target) && event.target.className !== "open-form-btn") {
-            closeForm();
-        }
+    if (currentFormContainer && formOpen && !currentFormContainer.contains(event.target) && event.target.className !== "open-form-btn") {
+        closeForm();
     }
 }
+
 document.querySelectorAll(".open-form-btn").forEach(btn => {
     btn.addEventListener("click", function(event) {
         event.preventDefault();
-        var targetFormContainer = this.previousElementSibling;
-        var barId = this.closest('.swim-lane').getAttribute("data-bar-id");
+        if(formOpen){
+            closeForm();
+        }
+
+        const targetFormContainer = this.previousElementSibling;
+       // const barId = this.closest('.swim-lane').getAttribute("data-bar-id");
 
         targetFormContainer.style.display = "block";
         this.style.display = "none";
 
-        if (formOpen) {
-            closeForm();
+        currentFormContainer = targetFormContainer;
+
+        if (!formOpen) {
+            formOpen = true;
+            document.addEventListener("click", handleClickOutsideForm);
+
+            // Remove previous event listener from submit button
+            const submitButton = targetFormContainer.querySelector(".submit-task-btn");
+            submitButton.removeEventListener('click', handleSubmit);
+
+            // Add event listener to submit button instead of form submission
+            submitButton.addEventListener("click", handleSubmit);
         }
-
-        currentFormContainer = this.previousElementSibling;
-
-        formOpen = true;
-        document.addEventListener("click", handleClickOutsideForm);
-
-        // Add event listener to form after it is added to the page
-        targetFormContainer.querySelector("#add-task-form").addEventListener("submit",
-            function(event) {
-            event.preventDefault();// Prevent the default form submission behavior
-
-            const form = event.currentTarget; //used to take inputs from the form where users clicks
-            // instead of first position
-            const projectId = document.getElementById('projectId').value;
-            const newTaskName = form.querySelector("#new-task-name").value;
-            const newPriority = form.querySelector('#task-priority').value;
-            const barElement = event.target.closest('.swim-lane');
-            const barPosition = barElement.getAttribute('data-bar-position');
-
-            fetch('/project/addTask', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    'projectId': projectId,
-                    'taskName': newTaskName,
-                    'taskPriority': newPriority,
-                    'barId': barId
-                })
-            })
-                .then(function(response) {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(function(text) {
-                    if (text === "Bar does not exist") {
-                        // Display a message on the user's screen for bar not existing
-                        alert("Bar does not exist");
-                    } else if (text === "Project does not exist") {
-                        // Display a message on the user's screen for project not existing
-                        alert("Project does not exist");
-                    } else {
-                        console.log('Request successful', text);
-                        console.log('Bar Position:', barPosition);
-                        location.reload();
-                    }
-                })
-                .catch(function(xhr, status, error) {
-                    if (xhr.status === 400 && xhr.responseText.includes("Task name cannot be empty")) {
-                        alert("Task name cannot be empty.");
-                        console.log("task name is: " + newTaskName)
-                    } else if (xhr.status === 404) {
-                        alert("Bar or project does not exist");
-                    } else {
-                        console.error("An error occurred:", status, error);
-                    }
-                });
-        });
     });
 });
+function handleSubmit(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    const form = currentFormContainer.querySelector("#add-task-form"); // Access the form from the container
+    const projectId = document.getElementById('projectId').value;
+    const newTaskName = form.querySelector("#new-task-name").value;
+    const newPriority = form.querySelector('#task-priority').value;
+    const barId = currentFormContainer.closest('.swim-lane').getAttribute("data-bar-id");
+
+    fetch('/project/addTask', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            'projectId': projectId,
+            'taskName': newTaskName,
+            'taskPriority': newPriority,
+            'barId': barId
+        })
+    })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(function(text) {
+            if (text === "Bar does not exist") {
+                alert("Bar does not exist");
+            } else if (text === "Project does not exist") {
+                alert("Project does not exist");
+            } else {
+                console.log('Request successful', text);
+                location.reload();
+            }
+        })
+        .catch(function(error) {
+            console.error("An error occurred:", error);
+        });
+}
+
 function adjustInputWidth(inputElement) {
     // Adjust the input size based on its content length
     inputElement.style.width = `${inputElement.scrollWidth}px`;
 }
+//***************************EDIT TASK NAME*******************************
 function editTaskName(element) {
     var text = element.textContent;
     var id = element.getAttribute('data-task-id');
@@ -115,7 +111,7 @@ function editTaskName(element) {
     // Adjust input width
     adjustInputWidth(inputElem);
 }
-
+//******************************UPDATE TASK NAME************************
 function updateTaskName(element) {
     let taskName = element.value;
     let id = element.id.split('-')[1];
@@ -195,8 +191,8 @@ function updatePriorityVisuals(element, newPriority) {
 function updateTaskPriority(dropdown) {
     var taskId = dropdown.getAttribute('data-task-id');
     var newPriority = dropdown.value;
-    var taskElement = document.querySelector(`div[data-task-id="${taskId}"]`);
-    var taskPosition = taskElement ? taskElement.getAttribute('data-task-position') : null;
+   //var taskElement = document.querySelector(`div[data-task-id="${taskId}"]`);
+   // var taskPosition = taskElement ? taskElement.getAttribute('data-task-position') : null;
 
     fetch(`/project/updateTaskPriority?taskId=${taskId}&newTaskPriority=${newPriority}`, {
         method: 'PATCH',
@@ -318,7 +314,7 @@ function displayTaskName(taskId) {
 }
 
 let quill;
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => { //event was in the brackets
     const toolbarOptions = [
         ['bold', 'italic', 'underline'],
         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
