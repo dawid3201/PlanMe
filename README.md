@@ -56,12 +56,14 @@ Users can:
 
 3) Assign users to tasks
 
-![image](https://github.com/dawid3201/PlanMe/assets/42513264/52403b4f-dee4-4f13-b899-60a9ce40d271)
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/104f3746-6dd5-4cd7-9665-0d52f1e88bb8)
+
 
 4) Move tasks and bars
 
-![image](https://github.com/dawid3201/PlanMe/assets/42513264/9cf97e13-71bf-40d1-8679-11caf8f63fc9)
-![image](https://github.com/dawid3201/PlanMe/assets/42513264/f44ced80-1e41-428c-aed0-b9d466a55e46)
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/7d45b2ed-f0e1-4458-bfe3-29edfd64e267)
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/73df1d63-7f57-4ea0-ae78-6b3c86867df8)
+
 
 5) Prioritise tasks based on the number assign
 
@@ -73,9 +75,12 @@ Users can:
 
 7) Search tasks by name
 
-![image](https://github.com/dawid3201/PlanMe/assets/42513264/18926c13-cb71-4b7c-ab5d-70ff2383679f)
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/effabe19-e609-4793-b49e-6df5b52a9a0d)
 
-8) See changes other users made
+8) See all tasks assigned to me
+
+![image](https://github.com/dawid3201/PlanMe/assets/42513264/e25f25f7-20ab-4f48-9c92-65e293df5824)
+
 
 ## Tools and languages used 
 1) Java 20
