@@ -472,6 +472,7 @@ document.addEventListener("DOMContentLoaded", function () {
     toggleMembers.classList.remove("closed");
 });
 //---------------------------------------------SEARCH-FOR-A-TASK--------------------------------------------------------
+let isSliderOn = false;
 function searchTask() {
     const projectId = document.getElementById("projectId").value;
     const taskName = document.getElementById("search-task-name").value.toLowerCase(); // Convert to lowercase
@@ -482,13 +483,40 @@ function searchTask() {
         .then((response) => response.json())
         .then((data) => {
             console.log("Data received from server: ", data);
-            hideNotFoundTask(data); // Hide other tasks
+            if(isSliderOn){
+                showAllTasksForUserEmail();
+            }else{
+                hideNotFoundTasks(data);
+            }
         })
         .catch((error) => {
             console.log('Request failed', error);
         });
 }
-function hideNotFoundTask(taskData) {
+function getTasksByUserEmail() {
+    const projectId = document.getElementById("projectId").value;
+    const userEmail = document.getElementById("userEmail").value;
+    const showMyTasksSwitch = document.getElementById("showMyTasksSwitch");
+    isSliderOn = true;
+    if (showMyTasksSwitch.checked) {
+        fetch(`/project/getTaskByUser?projectId=${projectId}&userEmail=${userEmail}`, {
+            method: 'GET',
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Data received from server: ", data);
+                hideNotFoundTasks(data); // Hide other tasks
+            })
+            .catch((error) => {
+                console.log('Request failed', error);
+            });
+    } else {
+        isSliderOn = false;
+        showAllTasks();
+    }
+}
+
+function hideNotFoundTasks(taskData) {
     const tasks = $('.task');
     tasks.each(function() {
         const currentTaskId = $(this).data('task-id');
@@ -501,6 +529,33 @@ function hideNotFoundTask(taskData) {
         }
     });
 }
+function showAllTasks() {
+    const tasks = $('.task');
+    tasks.each(function() {
+        $(this).show();
+    });
+}
+function showAllTasksForUserEmail() {
+    const projectId = document.getElementById("projectId").value;
+    const userEmail = document.getElementById("userEmail").value;
+
+    fetch(`/project/getTaskByUser?projectId=${projectId}&userEmail=${userEmail}`, {
+        method: 'GET',
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Data received from server: ", data);
+        })
+        .catch((error) => {
+            console.log('Request failed', error);
+        });
+}
+//TODO: wirte method to show all tasks that are assigned to a user
+//When serach box will clear the tasks, return only thoese assigned to user
+//if slider is off then return all hidden tasks
+//Add bolean to check if slider is on or off
+
+
 function clearAndSearch() {
     document.getElementById("search-task-name").value = "";
     searchTask();

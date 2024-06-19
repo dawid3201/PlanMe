@@ -40,10 +40,23 @@ public class GetTaskMethodRestApi {
         if(project != null){
             List<Task> tasks = project.getTasks();
             for(Task task : tasks){
-                System.out.println("Retrieved task with name: " + task.getName());
                 if(task.getName().toLowerCase().contains(taskName.toLowerCase())){
-//                    System.out.println("Looking for tasks containing: " + taskName);
-                    map.put(task.getId(), "Task found");
+                    map.put(task.getId(), task.getName());
+                }
+            }
+        }
+        return ResponseEntity.ok(map);
+    }
+    @GetMapping("/project/getTaskByUser")
+    public final ResponseEntity<Map<Long, String>> getTaskByUserEmail(@RequestParam("projectId") Long projectId,
+                                                           @RequestParam("userEmail") String userEmail){
+        Project project = projectDAO.getProjectById(projectId);
+        HashMap<Long, String> map = new HashMap<>();
+        if(project != null){
+            List<Task> tasks = project.getTasks();
+            for(Task task : tasks){
+                 if(task.getAssignedUser() != null && task.getAssignedUser().getEmail().equals(userEmail)){
+                    map.put(task.getId(), task.getAssignedUser().getEmail());
                 }
             }
         }
@@ -78,4 +91,7 @@ public class GetTaskMethodRestApi {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+
 }
