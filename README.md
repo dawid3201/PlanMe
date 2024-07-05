@@ -1,6 +1,6 @@
 # PlanMe
 This is a final year university project. Some features are still worked on. <br/> 
-Link to the video on YouTube: https://youtu.be/kugDbRqt2J4
+Link to the video on YouTube: [https://youtu.be/kugDbRqt2J4](https://youtu.be/iE0x5uiUKiI)
 ## Description
 
 Greetings and welcome to my project! I am pleased to introduce a Todo List Application developed using Java and the Spring Boot 3 framework. This application is designed to provide users with a seamless experience in efficiently managing tasks. Users can work in coperation on a different projects. Features include: add, delete, update tasks and new cards. Users can be assigned to tasks and each user can see to how many tasks they are assigned to.<br>
