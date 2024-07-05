@@ -1,24 +1,21 @@
-package COMP390.PlanMe.RestControllers.Bar;
+package COMP390.PlanMe.Services.Bar;
 
-import COMP390.PlanMe.Exceptions.ConflictException;
 import COMP390.PlanMe.Dao.BarDAO;
 import COMP390.PlanMe.Dao.ProjectDAO;
 import COMP390.PlanMe.Entity.Bar;
 import COMP390.PlanMe.Entity.Project;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import COMP390.PlanMe.Exceptions.ConflictException;
+import COMP390.PlanMe.Exceptions.NotFoundException;
+import lombok.AllArgsConstructor;
 
-@RestController
-public class PostBarMethodRestApi {
+import org.springframework.stereotype.Service;
+@Service
+@AllArgsConstructor
+public class PostBarService {
     private final ProjectDAO projectDAO;
     private final BarDAO barDAO;
 
-    public PostBarMethodRestApi(ProjectDAO projectDAO, BarDAO barDAO) {
-        this.projectDAO = projectDAO;
-        this.barDAO = barDAO;
-    }
-    @PostMapping("/project/addBar")
-    public final ResponseEntity<Bar> addBar(@RequestParam("projectId") Long projectId, @RequestParam("barName") String barName){
+    public final Bar addBar(Long projectId, String barName){
         if(barName.isEmpty()){
             throw new IllegalArgumentException("Bar name cannot be empty.");
         }
@@ -39,8 +36,8 @@ public class PostBarMethodRestApi {
             project.getBars().add(newBar);
             projectDAO.save(project);
 
-            return ResponseEntity.ok(newBar);
+            return newBar;
         }
-        return ResponseEntity.notFound().build();
+        throw new NotFoundException("The Project was not found");
     }
 }

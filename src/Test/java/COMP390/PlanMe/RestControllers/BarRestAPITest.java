@@ -2,14 +2,14 @@ package COMP390.PlanMe.RestControllers;
 
 import COMP390.PlanMe.Dao.BarDAO;
 import COMP390.PlanMe.Dao.ProjectDAO;
-import COMP390.PlanMe.Dao.TaskDAO;
 import COMP390.PlanMe.Entity.Bar;
 import COMP390.PlanMe.Entity.Project;
 import COMP390.PlanMe.Entity.Task;
-import COMP390.PlanMe.RestControllers.Bar.DeleteBarMethodRestApi;
-import COMP390.PlanMe.RestControllers.Bar.GetBarMethodRestApi;
-import COMP390.PlanMe.RestControllers.Bar.PatchBarMethodRestApi;
-import COMP390.PlanMe.RestControllers.Bar.PostBarMethodRestApi;
+import COMP390.PlanMe.RestControllers.Bar.*;
+import COMP390.PlanMe.Services.Bar.DeleteBarService;
+import COMP390.PlanMe.Services.Bar.GetBarService;
+import COMP390.PlanMe.Services.Bar.PatchBarService;
+import COMP390.PlanMe.Services.Bar.PostBarService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,19 +33,20 @@ public class BarRestAPITest {
     @Mock
     private ProjectDAO projectDAO;
     @Mock
-    private TaskDAO taskDAO;
+    private DeleteBarService deleteBarService;
+    @Mock
+    private GetBarService getBarService;
+    @Mock
+    private PatchBarService patchBarService;
+    @Mock
+    private PostBarService postBarService;
 
-    private DeleteBarMethodRestApi deleteBarMethodRestApi;
-    private PatchBarMethodRestApi patchBarMethodRestApi;
-    private GetBarMethodRestApi getBarMethodRestApi;
-    private PostBarMethodRestApi postBarMethodRestApi;
+    private BarRestController barRestController;
+
     @BeforeEach
     public void setUp(){
         MockitoAnnotations.openMocks(this);
-        deleteBarMethodRestApi = new DeleteBarMethodRestApi(barDAO);
-        patchBarMethodRestApi = new PatchBarMethodRestApi(projectDAO, taskDAO, barDAO);
-        getBarMethodRestApi = new GetBarMethodRestApi(projectDAO);
-        postBarMethodRestApi = new PostBarMethodRestApi(projectDAO, barDAO);
+        barRestController = new BarRestController(deleteBarService, getBarService, patchBarService, postBarService);
     }
     @Test
     public void DeleteBarTestOk(){
@@ -54,7 +55,7 @@ public class BarRestAPITest {
         bar.setId(1L);
 
         when(barDAO.getBarById(1L)).thenReturn(bar);
-        ResponseEntity<Void> responseEntity = deleteBarMethodRestApi.deleteBar(1L);
+        ResponseEntity<Void> responseEntity = barRestController.deleteBar(1L);
         assertEquals(HttpStatus.OK.value(), responseEntity.getStatusCode().value());
     }
     @Test
@@ -64,7 +65,7 @@ public class BarRestAPITest {
         bar.setId(1L);
 
         when(barDAO.getBarById(2L)).thenReturn(null);
-        ResponseEntity<Void> responseEntity = deleteBarMethodRestApi.deleteBar(2L);
+        ResponseEntity<Void> responseEntity = barRestController.deleteBar(2L);
         assertEquals(HttpStatus.NOT_FOUND.value(), responseEntity.getStatusCode().value());
     }
     @Test
@@ -79,7 +80,7 @@ public class BarRestAPITest {
         when(projectDAO.getProjectById(1L)).thenReturn(project);
 
         //Execute method
-        ResponseEntity<Bar> responseEntity = postBarMethodRestApi.addBar(1L, "TODO");
+        ResponseEntity<Bar> responseEntity = barRestController.addBar(1L, "TODO");
         //Verify
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
@@ -92,7 +93,7 @@ public class BarRestAPITest {
         bar.setName("TODO");
 
         //Execute method
-        ResponseEntity<Bar> responseEntity = postBarMethodRestApi.addBar(2L, "TODO");
+        ResponseEntity<Bar> responseEntity = barRestController.addBar(2L, "TODO");
         //Verify
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
@@ -111,7 +112,7 @@ public class BarRestAPITest {
         // Mock behavior
         when(barDAO.getBarById(1L)).thenReturn(bar);
         // Execute method
-        ResponseEntity<Map<String, Long>> responseEntity = patchBarMethodRestApi.updateBarPosition(barId, newPosition);
+        ResponseEntity<Map<String, Long>> responseEntity = barRestController.updateBarPosition(barId, newPosition);
         //Verify
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
@@ -129,7 +130,7 @@ public class BarRestAPITest {
         // Mock behavior
         when(barDAO.getBarById(2L)).thenReturn(null);
         // Execute method
-        ResponseEntity<Map<String, Long>> responseEntity = patchBarMethodRestApi.updateBarPosition(2L, newPosition);
+        ResponseEntity<Map<String, Long>> responseEntity = barRestController.updateBarPosition(2L, newPosition);
         //Verify
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
@@ -146,7 +147,7 @@ public class BarRestAPITest {
         //Mock behaviour
         when(barDAO.getBarById(1L)).thenReturn(bar);
         //Execute method
-        ResponseEntity<Bar> responseEntity = patchBarMethodRestApi.updateBarName(1L, newName);
+        ResponseEntity<Bar> responseEntity = barRestController.updateBarName(1L, newName);
         //Verify
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
@@ -162,7 +163,7 @@ public class BarRestAPITest {
         //Mock behaviour
         when(projectDAO.getProjectById(1L)).thenReturn(project);
         //Execute method
-        ResponseEntity<List<Bar>> responseEntity = getBarMethodRestApi.updatedTaskList(1L);
+        ResponseEntity<List<Bar>> responseEntity = barRestController.updateTaskList(1L);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
     @Test
@@ -176,7 +177,7 @@ public class BarRestAPITest {
         //Mock behaviour
         when(projectDAO.getProjectById(2L)).thenReturn(null);
         //Execute method
-        ResponseEntity<List<Bar>> responseEntity = getBarMethodRestApi.updatedTaskList(2L);
+        ResponseEntity<List<Bar>> responseEntity = barRestController.updateTaskList(2L);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 

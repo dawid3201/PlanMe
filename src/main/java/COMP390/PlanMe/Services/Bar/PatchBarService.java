@@ -1,34 +1,29 @@
-package COMP390.PlanMe.RestControllers.Bar;
+package COMP390.PlanMe.Services.Bar;
 
-import COMP390.PlanMe.Exceptions.NotFoundException;
 import COMP390.PlanMe.Dao.BarDAO;
 import COMP390.PlanMe.Dao.ProjectDAO;
 import COMP390.PlanMe.Dao.TaskDAO;
 import COMP390.PlanMe.Entity.Bar;
 import COMP390.PlanMe.Entity.Project;
 import COMP390.PlanMe.Entity.Task;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import COMP390.PlanMe.Exceptions.NotFoundException;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
+import javax.ws.rs.InternalServerErrorException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-public class PatchBarMethodRestApi {
+@Service
+@AllArgsConstructor
+public class PatchBarService {
     private final ProjectDAO projectDAO;
     private final TaskDAO taskDAO;
     private final BarDAO barDAO;
 
-    public PatchBarMethodRestApi(ProjectDAO projectDAO, TaskDAO taskDAO, BarDAO barDAO) {
-        this.projectDAO = projectDAO;
-        this.taskDAO = taskDAO;
-        this.barDAO = barDAO;
-    }
-    @PatchMapping("/project/updateBarPosition")
-    public final ResponseEntity<Map<String, Long>> updateBarPosition(@RequestParam("barId") Long barId,
-                                                               @RequestParam("newPosition") Long newPosition) {
+
+    public final Map<String, Long> updateBarPosition(Long barId,Long newPosition) {
         try {
             Bar bar = barDAO.getBarById(barId);
             Project project = bar.getProject();
@@ -45,11 +40,11 @@ public class PatchBarMethodRestApi {
 
             barDAO.saveAll(bars);
             projectDAO.save(project);
-            return ResponseEntity.ok(Map.of("barId", barId, "newPosition", newPosition));
+            return Map.of("barId", barId, "newPosition", newPosition);
 
         } catch (Exception e) {
             System.out.println("Error while updating bar position: " + e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            throw new InternalServerErrorException();
         }
     }
     private void reorderBarPositions(List<Bar> bars) {
@@ -57,8 +52,7 @@ public class PatchBarMethodRestApi {
             bars.get(i).setPosition(i + 1);
         }
     }
-    @PatchMapping("/project/updateBarName")
-    public final ResponseEntity<Bar> updateBarName(@RequestParam("barId") Long barId, @RequestParam("barName") String barName) {
+    public final Bar updateBarName(Long barId, String barName) {
         Bar bar = barDAO.getBarById(barId);
         if (bar != null) {
             String oldBarName = bar.getName();
@@ -69,8 +63,9 @@ public class PatchBarMethodRestApi {
                 taskDAO.save(task);
             }
             barDAO.save(bar);
-            return ResponseEntity.ok(bar);
+            return bar;
         }
         throw new NotFoundException("Bar with name: " + barName + " does not exist.");
     }
+
 }

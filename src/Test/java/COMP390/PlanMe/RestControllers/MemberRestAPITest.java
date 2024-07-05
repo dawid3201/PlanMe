@@ -6,9 +6,10 @@ import COMP390.PlanMe.Dao.UserDAO;
 import COMP390.PlanMe.Entity.Project;
 import COMP390.PlanMe.Entity.Task;
 import COMP390.PlanMe.Entity.User;
-import COMP390.PlanMe.RestControllers.Member.GetMemberMethodRestApi;
-import COMP390.PlanMe.RestControllers.Member.PatchMemberMethodRestApi;
-import COMP390.PlanMe.RestControllers.Member.PostMemberMethodRestApi;
+import COMP390.PlanMe.RestControllers.Member.MemberRestController;
+import COMP390.PlanMe.Services.Member.GetMemberService;
+import COMP390.PlanMe.Services.Member.PatchMemberService;
+import COMP390.PlanMe.Services.Member.PostMemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,16 +35,20 @@ public class MemberRestAPITest {
     @Mock
     private TaskDAO taskDAO;
 
-    private PostMemberMethodRestApi postMemberMethodRestApi;
-    private PatchMemberMethodRestApi patchMemberMethodRestApi;
-    private GetMemberMethodRestApi getMemberMethodRestApi;
+
+    private MemberRestController memberRestController;
+    @Mock
+    private GetMemberService getMemberService;
+    @Mock
+    private PostMemberService postMemberService;
+    @Mock
+    private PatchMemberService patchMemberService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        postMemberMethodRestApi = new PostMemberMethodRestApi(projectDAO, userDAO);
-        patchMemberMethodRestApi = new PatchMemberMethodRestApi(userDAO, taskDAO);
-        getMemberMethodRestApi = new GetMemberMethodRestApi(projectDAO, userDAO);
+        memberRestController = new MemberRestController(getMemberService, postMemberService, patchMemberService);
+
     }
     @Test
     public void assignUser_Success(){
@@ -64,7 +69,7 @@ public class MemberRestAPITest {
         when(taskDAO.getTaskById(1L)).thenReturn(task);
         when(userDAO.findByEmail("member@email.com")).thenReturn(user);
         //Method
-        ResponseEntity<String> response = patchMemberMethodRestApi.assignUser(userEmail, taskId);
+        ResponseEntity<Boolean> response = memberRestController.assignUser(userEmail, taskId);
         //Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -92,7 +97,7 @@ public class MemberRestAPITest {
         when(userDAO.findByEmail("member@email.com")).thenReturn(user);
 
         //Verify
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> patchMemberMethodRestApi.assignUser(userEmail, taskId));
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> memberRestController.assignUser(userEmail, taskId));
         assertEquals("User " + userEmail + " is already assign to the task null", exception.getMessage());
     }
     @Test
@@ -110,7 +115,7 @@ public class MemberRestAPITest {
         when(userDAO.findByEmail(memberEmail)).thenReturn(member);
 
         // Invoke method
-        ResponseEntity<Void> response = postMemberMethodRestApi.addMember(projectId, memberEmail);
+        ResponseEntity<Void> response = memberRestController.addMember(projectId, memberEmail);
 
         // Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -127,7 +132,7 @@ public class MemberRestAPITest {
         when(projectDAO.getProjectById(projectId)).thenReturn(null);
 
         // Invoke method
-        ResponseEntity<Void> response = postMemberMethodRestApi.addMember(projectId, memberEmail);
+        ResponseEntity<Void> response = memberRestController.addMember(projectId, memberEmail);
 
         // Verify
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -146,7 +151,7 @@ public class MemberRestAPITest {
         when(userDAO.findByEmail(memberEmail)).thenReturn(null);
 
         // Invoke method
-        ResponseEntity<Void> response = postMemberMethodRestApi.addMember(projectId, memberEmail);
+        ResponseEntity<Void> response = memberRestController.addMember(projectId, memberEmail);
 
         // Verify
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

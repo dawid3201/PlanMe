@@ -6,7 +6,7 @@ document.getElementById("add-member-form").addEventListener("submit", function(e
     var newMemberEmail = document.getElementById('new-member-email').value;
 
     $.ajax({
-        url: "/project/addMember",
+        url: "/member/addMember",
         type: "POST",
         data: { projectId: projectId, memberEmail: newMemberEmail },
         success: function(response) {
@@ -94,7 +94,7 @@ function handleKeydownBar(event, element) {
 }
 function getMemberList() {
     const projectId = document.getElementById('projectId').value;
-    fetch(`/getMembers/${projectId}`)
+    fetch(`/member/getMembers/${projectId}`)
         .then(response => {
             if (response.ok) {
                 return response.text();

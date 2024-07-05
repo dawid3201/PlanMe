@@ -1,21 +1,15 @@
 package COMP390.PlanMe.Services;
 
-import COMP390.PlanMe.Dao.TaskDAO;
-import COMP390.PlanMe.Entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class NotificationService {
+public class TaskChangeNotification {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
-    public void taskUpdate() { //methopd for udpating any Task changes
+    public void taskUpdate() { //Method used for notifying about changes, not yet used
         messagingTemplate.convertAndSend("/topic/updates",
                 "THERE WAS AN UPDATE FOR A TASK ELEMENT");
     }

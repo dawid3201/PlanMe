@@ -58,7 +58,7 @@ function handleSubmit(event) {
     const newPriority = form.querySelector('#task-priority').value;
     const barId = currentFormContainer.closest('.swim-lane').getAttribute("data-bar-id");
 
-    fetch('/project/addTask', {
+    fetch('/task/addTask', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -122,7 +122,7 @@ function updateTaskName(element) {
     }
 
     if (taskName.trim() !== "") {
-        fetch('/project/updateTaskName', {
+        fetch('/task/updateTaskName', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -150,7 +150,7 @@ function handleKeydown(event, element) {
 }
 function deleteTask(element) {
     var taskId = element.getAttribute('data-task-id');
-    fetch("/project/removeTask?taskId=" + taskId, {
+    fetch("/task/removeTask?taskId=" + taskId, {
         method: 'DELETE',
     })
         .then((response) => {
@@ -191,10 +191,8 @@ function updatePriorityVisuals(element, newPriority) {
 function updateTaskPriority(dropdown) {
     var taskId = dropdown.getAttribute('data-task-id');
     var newPriority = dropdown.value;
-   //var taskElement = document.querySelector(`div[data-task-id="${taskId}"]`);
-   // var taskPosition = taskElement ? taskElement.getAttribute('data-task-position') : null;
 
-    fetch(`/project/updateTaskPriority?taskId=${taskId}&newTaskPriority=${newPriority}`, {
+    fetch(`/task/updateTaskPriority?taskId=${taskId}&newTaskPriority=${newPriority}`, {
         method: 'PATCH',
     })
         .then((response) => {
@@ -297,7 +295,7 @@ function openDescriptionBox(element) {
 }
 function displayTaskName(taskId) {
     console.log("Task ID:", taskId);
-    fetch(`/getTaskName/${taskId}`)
+    fetch(`/task/getTaskName/${taskId}`)
         .then(response => {
             if (response.ok) {
                 return response.text();
@@ -341,7 +339,7 @@ function saveDescription() {
 }
 //save text on database
 function saveTaskDescription(taskId, description) {
-    const endpoint = '/project/addDescription';
+    const endpoint = '/task/addDescription';
     const data = {
         taskId: taskId,
         description: description
@@ -395,7 +393,7 @@ document.addEventListener('click', function(event) {
 function assignUserToTask(userElement, taskId) {
     const userEmail = encodeURIComponent(userElement.textContent.trim());
 
-    fetch(`/project/assignUserToTask?userEmail=${userEmail}&taskId=${taskId}`, {
+    fetch(`/member/assignUserToTask?userEmail=${userEmail}&taskId=${taskId}`, {
         method: 'PATCH',
     })
         .then((response) => {
@@ -421,7 +419,7 @@ function getAssignedTasks() {
     const userEmail = document.getElementById('userEmail').value;
     const projectId = document.getElementById('projectId').value;
 
-    fetch(`/project/ListOfTasks?userEmail=${userEmail}&projectId=${projectId}`)
+    fetch(`/task/ListOfTasks?userEmail=${userEmail}&projectId=${projectId}`)
         .then(response => {
             if (response.ok) {
                 return response.text();
@@ -477,7 +475,7 @@ function searchTask() {
     const projectId = document.getElementById("projectId").value;
     const taskName = document.getElementById("search-task-name").value.toLowerCase(); // Convert to lowercase
 
-    fetch(`/project/findTask?projectId=${projectId}&taskName=${taskName}`, {
+    fetch(`/task/findTask?projectId=${projectId}&taskName=${taskName}`, {
         method: 'GET',
     })
         .then((response) => response.json())
@@ -499,7 +497,7 @@ function getTasksByUserEmail() {
     const showMyTasksSwitch = document.getElementById("showMyTasksSwitch");
     isSliderOn = true;
     if (showMyTasksSwitch.checked) {
-        fetch(`/project/getTaskByUser?projectId=${projectId}&userEmail=${userEmail}`, {
+        fetch(`/task/getTaskByUser?projectId=${projectId}&userEmail=${userEmail}`, {
             method: 'GET',
         })
             .then((response) => response.json())
@@ -539,7 +537,7 @@ function showAllTasksForUserEmail() {
     const projectId = document.getElementById("projectId").value;
     const userEmail = document.getElementById("userEmail").value;
 
-    fetch(`/project/getTaskByUser?projectId=${projectId}&userEmail=${userEmail}`, {
+    fetch(`/task/getTaskByUser?projectId=${projectId}&userEmail=${userEmail}`, {
         method: 'GET',
     })
         .then((response) => response.json())
@@ -550,10 +548,6 @@ function showAllTasksForUserEmail() {
             console.log('Request failed', error);
         });
 }
-//TODO: wirte method to show all tasks that are assigned to a user
-//When serach box will clear the tasks, return only thoese assigned to user
-//if slider is off then return all hidden tasks
-//Add bolean to check if slider is on or off
 
 
 function clearAndSearch() {

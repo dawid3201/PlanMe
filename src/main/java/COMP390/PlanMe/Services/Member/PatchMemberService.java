@@ -1,32 +1,28 @@
-package COMP390.PlanMe.RestControllers.Member;
+package COMP390.PlanMe.Services.Member;
 
 import COMP390.PlanMe.Dao.TaskDAO;
 import COMP390.PlanMe.Dao.UserDAO;
 import COMP390.PlanMe.Entity.Task;
 import COMP390.PlanMe.Entity.User;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
-@RestController
-public class PatchMemberMethodRestApi {
+import javax.ws.rs.BadRequestException;
+
+@Service
+@AllArgsConstructor
+public class PatchMemberService {
     private final UserDAO userDAO;
     private final TaskDAO taskDAO;
 
-    public PatchMemberMethodRestApi(UserDAO userDAO, TaskDAO taskDAO) {
-        this.userDAO = userDAO;
-        this.taskDAO = taskDAO;
-    }
-
-    @PatchMapping("/project/assignUserToTask")
-    public final ResponseEntity<String> assignUser(@RequestParam("userEmail") String userEmail, @RequestParam("taskId") Long taskId) {
+    public final Boolean assignUser(String userEmail, Long taskId) {
         Task task = taskDAO.getTaskById(taskId);
         if ("Undefined".equalsIgnoreCase(userEmail)) {
             task.setAssignedUser(null); // Assigning the task to no one
         } else {
             User user = userDAO.findByEmail(userEmail);
             if (user == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+                throw new BadRequestException("User was found.");
             }
             if(user.getTasksAssigned().contains(task)){//Exception 500
                 throw new IllegalStateException("User " + user.getEmail() + " is already assign to the task " + task.getName());
@@ -35,6 +31,6 @@ public class PatchMemberMethodRestApi {
         }
         taskDAO.save(task);
         System.out.println("Task with ID " + taskId + " assigned to user with email " + userEmail);
-        return ResponseEntity.ok().build();
+        return true;
     }
 }

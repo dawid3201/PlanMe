@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var newBarName = document.querySelector("#new-bar-name").value;
 
         $.ajax({
-            url: "/project/addBar",
+            url: "/bar/addBar",
             type: "POST",
             data: { projectId: projectId, barName: newBarName },
             success: function(response) {
@@ -54,10 +54,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
 function deleteBar(element) {
     const barId = element.getAttribute('data-bar-id');
-    fetch("/project/deleteBar?barId=" + barId, {
+    fetch("/bar/deleteBar?barId=" + barId, {
         method: 'DELETE',
     })
         .then((response) => {
@@ -88,7 +87,7 @@ function updateBarName(element) {
     var originalText = parentElement.getAttribute('data-original-text');
 
     if (newDescription !== originalText) {
-        fetch('/project/updateBarName', {
+        fetch('/bar/updateBarName', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'

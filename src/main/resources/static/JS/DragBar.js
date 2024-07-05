@@ -8,7 +8,7 @@ function moveCards(){
             update: function(event, ui) {
                 let newPosition = ui.item.index() + 1;
                 let barId = ui.item.find(".swim-lane").data("bar-id");
-                fetch(`/project/updateBarPosition?barId=${barId}&newPosition=${newPosition}`,{
+                fetch(`/bar/updateBarPosition?barId=${barId}&newPosition=${newPosition}`,{
                     method: 'PATCH',
                     headers:{
                         'Content-Type': 'application/x-www-form-urlencoded',
