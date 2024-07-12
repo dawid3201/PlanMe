@@ -53,10 +53,11 @@ function handleSubmit(event) {
     event.preventDefault(); // Prevent the default form submission behavior
 
     const form = currentFormContainer.querySelector("#add-task-form"); // Access the form from the container
-    const projectId = document.getElementById('projectId').value;
-    const newTaskName = form.querySelector("#new-task-name").value;
-    const newPriority = form.querySelector('#task-priority').value;
+    const taskName = form.querySelector("#new-task-name").value;
+    const priority = form.querySelector('#task-priority').value;
     const barId = currentFormContainer.closest('.swim-lane').getAttribute("data-bar-id");
+
+
 
     fetch('/task/addTask', {
         method: 'POST',
@@ -64,9 +65,8 @@ function handleSubmit(event) {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: new URLSearchParams({
-            'projectId': projectId,
-            'taskName': newTaskName,
-            'taskPriority': newPriority,
+            'taskName': taskName,
+            'priority': priority,
             'barId': barId
         })
     })

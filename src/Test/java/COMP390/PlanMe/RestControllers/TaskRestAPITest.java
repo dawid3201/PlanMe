@@ -1,19 +1,20 @@
 package COMP390.PlanMe.RestControllers;
 
-import COMP390.PlanMe.RestControllers.Task.*;
-import COMP390.PlanMe.Dao.ProjectDAO;
-import COMP390.PlanMe.Dao.TaskDAO;
-import COMP390.PlanMe.Dao.BarDAO;
-import COMP390.PlanMe.Entity.Bar;
-import COMP390.PlanMe.Entity.Project;
-import COMP390.PlanMe.Entity.Task;
-import COMP390.PlanMe.Services.Task.DeleteTaskService;
-import COMP390.PlanMe.Services.Task.GetTaskService;
-import COMP390.PlanMe.Services.Task.PatchTaskService;
-import COMP390.PlanMe.Services.Task.PostTaskService;
+import COMP390.PlanMe.Project.ProjectDAO;
+import COMP390.PlanMe.Task.TaskDAO;
+import COMP390.PlanMe.Bar.BarDAO;
+import COMP390.PlanMe.Bar.Bar;
+import COMP390.PlanMe.Project.Project;
+import COMP390.PlanMe.Task.Task;
+import COMP390.PlanMe.Task.Service.DeleteTaskService;
+import COMP390.PlanMe.Task.Service.GetTaskService;
+import COMP390.PlanMe.Task.Service.PatchTaskService;
+import COMP390.PlanMe.Task.Service.PostTaskService;
+import COMP390.PlanMe.Task.TaskRestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,26 +38,31 @@ class TaskRestAPITest {
     @Mock
     private TaskDAO taskDAO;
     //Controllers
+    @InjectMocks
     private TaskRestController taskRestController;
-    @Mock
+    @InjectMocks
     private DeleteTaskService deleteTaskService;
-    @Mock
+    @InjectMocks
     private GetTaskService getTaskService;
-    @Mock
+    @InjectMocks
     private PatchTaskService patchTaskService;
-    @Mock
+    @InjectMocks
     private PostTaskService postTaskService;
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+      //  deleteTaskService = new DeleteTaskService(barDAO);
         taskRestController = new TaskRestController(deleteTaskService, getTaskService, patchTaskService, postTaskService);
     }
     @Test
     void testAddTask() {
         // Test data
-        Long projectId = 1L;
+        Task task = new Task();
+        task.setName("Test Task");
         String taskName = "Test Task";
-        int priority = 1;
+        int priority= 1;
+        task.setPriority(1);
+        Long projectId = 1L;
         Long barId = 1L;
 
         // Mock the project and bar
@@ -72,18 +78,18 @@ class TaskRestAPITest {
         when(taskDAO.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Execute the method
-        ResponseEntity<String> responseEntity = taskRestController.addTask(projectId, taskName, priority, barId);
+        ResponseEntity<String> responseEntity = taskRestController.addTask(taskName,priority, barId);
 
         // Verify the result
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(taskName, responseEntity.getBody());
+        assertEquals(task.getName(), responseEntity.getBody());
 
         // Verify that the task was added to the bar
         assertEquals(1, mockBar.getTasks().size());
         Task addedTask = mockBar.getTasks().get(0);
-        assertEquals(taskName, addedTask.getName());
+        assertEquals(task.getName(), addedTask.getName());
         assertEquals(mockBar, addedTask.getBar());
-        assertEquals(priority, addedTask.getPriority());
+        assertEquals(task.getPriority(), addedTask.getPriority());
         assertEquals(mockBar.getName(), addedTask.getState());
         assertEquals(mockProject, addedTask.getProject());
         assertEquals(1, addedTask.getPosition());

@@ -1,25 +1,27 @@
 package COMP390.PlanMe.RestControllers;
 
-import COMP390.PlanMe.Dao.ProjectDAO;
-import COMP390.PlanMe.Dao.TaskDAO;
-import COMP390.PlanMe.Dao.UserDAO;
-import COMP390.PlanMe.Entity.Project;
-import COMP390.PlanMe.Entity.Task;
-import COMP390.PlanMe.Entity.User;
-import COMP390.PlanMe.RestControllers.Member.MemberRestController;
-import COMP390.PlanMe.Services.Member.GetMemberService;
-import COMP390.PlanMe.Services.Member.PatchMemberService;
-import COMP390.PlanMe.Services.Member.PostMemberService;
+import COMP390.PlanMe.Bar.Bar;
+import COMP390.PlanMe.Exceptions.TaskNotFoundException;
+import COMP390.PlanMe.Exceptions.UserAlreadyAssignedException;
+import COMP390.PlanMe.Exceptions.UserNotFoundException;
+import COMP390.PlanMe.Project.ProjectDAO;
+import COMP390.PlanMe.Task.TaskDAO;
+import COMP390.PlanMe.User.UserDAO;
+import COMP390.PlanMe.Project.Project;
+import COMP390.PlanMe.Task.Task;
+import COMP390.PlanMe.User.User;
+import COMP390.PlanMe.User.ProjectMember.MemberRestController;
+import COMP390.PlanMe.User.ProjectMember.Service.GetMemberService;
+import COMP390.PlanMe.User.ProjectMember.Service.PatchMemberService;
+import COMP390.PlanMe.User.ProjectMember.Service.PostMemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,70 +37,59 @@ public class MemberRestAPITest {
     @Mock
     private TaskDAO taskDAO;
 
-
+    @InjectMocks
     private MemberRestController memberRestController;
-    @Mock
+    @InjectMocks
     private GetMemberService getMemberService;
-    @Mock
+    @InjectMocks
     private PostMemberService postMemberService;
-    @Mock
+    @InjectMocks
     private PatchMemberService patchMemberService;
+    private Task task;
+    private Project project;
+    private Bar bar;
+    private User user;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         memberRestController = new MemberRestController(getMemberService, postMemberService, patchMemberService);
 
+        task = new Task();
+        task.setId(1L);
+        task.setName("taskName");
+
+        project = new Project();
+        project.setId(1L);
+
+        bar = new Bar();
+
+        user = new User();
+        user.setEmail("member@email.com");
+        user.getTasksAssigned().add(task); // add task to user list of assigned tasks
+
     }
     @Test
-    public void assignUser_Success(){
-        //Mock Data
-        String userEmail = "member@email.com";
-        Long taskId = 1L;
-        Task task = new Task();
-        task.setId(taskId);
-        User user = new User();
-        user.setEmail(userEmail);
-        Project project = new Project();
-        Task task2 = new Task();
-        List<Task> taskList = new ArrayList<>(List.of(task2));
-        project.setTasks(taskList);
-
-        user.setTasksAssigned(taskList);
+    public void assignUser_Success() throws UserNotFoundException, UserAlreadyAssignedException, TaskNotFoundException {
         //Mock Behaviour
         when(taskDAO.getTaskById(1L)).thenReturn(task);
         when(userDAO.findByEmail("member@email.com")).thenReturn(user);
         //Method
-        ResponseEntity<Boolean> response = memberRestController.assignUser(userEmail, taskId);
+        ResponseEntity<String> response = memberRestController.assignUser("member@email.com", 1L);
         //Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        System.out.println("user.getTasksAssigned(): " + user.getTasksAssigned());
+        System.out.println("task: " + task);
     }
     @Test
     public void assignUser_Invalid(){ //Task already assigned
-        //Mock Data
-        String userEmail = "member@email.com";
-        Long taskId = 1L;
-
-        Task task = new Task();
-        task.setId(taskId);
-
-        User user = new User();
-        user.setEmail(userEmail);
-
-        Project project = new Project();
-        List<Task> taskList = new ArrayList<>(List.of(task));
-        project.setTasks(taskList);
-
-        user.setTasksAssigned(taskList);
-
 
         //Mock Behaviour
-        when(taskDAO.getTaskById(1L)).thenReturn(task);
-        when(userDAO.findByEmail("member@email.com")).thenReturn(user);
-
-        //Verify
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> memberRestController.assignUser(userEmail, taskId));
-        assertEquals("User " + userEmail + " is already assign to the task null", exception.getMessage());
+        when(taskDAO.getTaskById(1L)).thenReturn(task);//find task by ID
+        when(userDAO.findByEmail("member@email.com")).thenReturn(user);//find user by emial
+        //Expect excpetion as we trying to assign task that is already assgined to this user
+        assertThrows(UserAlreadyAssignedException.class, () -> memberRestController.assignUser(user.getEmail(), 1L));
     }
     @Test
     public void testAddMember_Success() {
