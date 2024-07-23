@@ -20,15 +20,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFoundException(NotFoundException ex) {
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
     @ExceptionHandler(TaskNotFoundException.class)
-    public ResponseEntity<String> handleTaskNotFoundException(NotFoundException ex) {
+    public ResponseEntity<String> handleTaskNotFoundException(TaskNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
     @ExceptionHandler(UserAlreadyAssignedException.class)
-    public ResponseEntity<String> handleUserAlreadyAssignedException (ConflictException ex) {
+    public ResponseEntity<String> handleUserAlreadyAssignedException (UserAlreadyAssignedException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+    @ExceptionHandler(ProjectNotFoundException.class)
+    public ResponseEntity<String> handleProjectNotFoundException (ProjectNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }

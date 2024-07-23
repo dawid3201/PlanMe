@@ -2,10 +2,10 @@ package COMP390.PlanMe.Bar.Service;
 
 import COMP390.PlanMe.Bar.Bar;
 import COMP390.PlanMe.Bar.BarDAO;
+import COMP390.PlanMe.Exceptions.ProjectNotFoundException;
 import COMP390.PlanMe.Project.ProjectDAO;
 import COMP390.PlanMe.Project.Project;
 import COMP390.PlanMe.Exceptions.ConflictException;
-import COMP390.PlanMe.Exceptions.NotFoundException;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ public class PostBarService {
     private final ProjectDAO projectDAO;
     private final BarDAO barDAO;
 
-    public final Bar addBar(Long projectId, String barName) throws IllegalArgumentException, NotFoundException{
+    public final Bar addBar(Long projectId, String barName) throws IllegalArgumentException, ProjectNotFoundException {
         if(barName.isEmpty()){
             throw new IllegalArgumentException("Bar name cannot be empty.");
         }
@@ -38,6 +38,6 @@ public class PostBarService {
 
             return newBar;
         }
-        throw new NotFoundException("The Project was not found");
+        throw new ProjectNotFoundException("The Project was not found");
     }
 }

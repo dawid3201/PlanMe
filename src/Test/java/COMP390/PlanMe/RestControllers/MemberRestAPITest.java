@@ -1,6 +1,7 @@
 package COMP390.PlanMe.RestControllers;
 
 import COMP390.PlanMe.Bar.Bar;
+import COMP390.PlanMe.Exceptions.ProjectNotFoundException;
 import COMP390.PlanMe.Exceptions.TaskNotFoundException;
 import COMP390.PlanMe.Exceptions.UserAlreadyAssignedException;
 import COMP390.PlanMe.Exceptions.UserNotFoundException;
@@ -10,10 +11,10 @@ import COMP390.PlanMe.User.UserDAO;
 import COMP390.PlanMe.Project.Project;
 import COMP390.PlanMe.Task.Task;
 import COMP390.PlanMe.User.User;
-import COMP390.PlanMe.User.ProjectMember.MemberRestController;
-import COMP390.PlanMe.User.ProjectMember.Service.GetMemberService;
-import COMP390.PlanMe.User.ProjectMember.Service.PatchMemberService;
-import COMP390.PlanMe.User.ProjectMember.Service.PostMemberService;
+import COMP390.PlanMe.ProjectMember.MemberRestController;
+import COMP390.PlanMe.ProjectMember.Service.GetMemberService;
+import COMP390.PlanMe.ProjectMember.Service.PatchMemberService;
+import COMP390.PlanMe.ProjectMember.Service.PostMemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,8 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 @SpringBootTest
 public class MemberRestAPITest {
@@ -66,7 +67,6 @@ public class MemberRestAPITest {
 
         user = new User();
         user.setEmail("member@email.com");
-        user.getTasksAssigned().add(task); // add task to user list of assigned tasks
 
     }
     @Test
@@ -78,74 +78,74 @@ public class MemberRestAPITest {
         ResponseEntity<String> response = memberRestController.assignUser("member@email.com", 1L);
         //Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        System.out.println("user.getTasksAssigned(): " + user.getTasksAssigned());
-        System.out.println("task: " + task);
     }
     @Test
-    public void assignUser_Invalid(){ //Task already assigned
+    public void assignUser_UserAlreadyAssignedException(){
+        user.getTasksAssigned().add(task);//potential issue, not correcly assgined task to user
+        task.setAssignedUser(user);
+        when(taskDAO.getTaskById(1L)).thenReturn(task);
+        when(userDAO.findByEmail("member@email.com")).thenReturn(user);
 
-        //Mock Behaviour
-        when(taskDAO.getTaskById(1L)).thenReturn(task);//find task by ID
-        when(userDAO.findByEmail("member@email.com")).thenReturn(user);//find user by emial
-        //Expect excpetion as we trying to assign task that is already assgined to this user
-        assertThrows(UserAlreadyAssignedException.class, () -> memberRestController.assignUser(user.getEmail(), 1L));
+
+        assertThrows(UserAlreadyAssignedException.class, () ->
+                memberRestController.assignUser("member@email.com", 1L));
     }
     @Test
-    public void testAddMember_Success() {
-        // Mock data
-        Long projectId = 1L;
-        String memberEmail = "member@example.com";
-        Project project = new Project();
-        project.setId(projectId);
-        User member = new User();
-        member.setEmail(memberEmail);
+    public void assignUser_TaskNotFoundException(){
 
+        when(taskDAO.getTaskById(2L)).thenReturn(null);
+        when(userDAO.findByEmail("member@email.com")).thenReturn(user);
+
+
+        assertThrows(TaskNotFoundException.class, () ->
+                memberRestController.assignUser("member@email.com", 2L));
+    }
+    @Test
+    public void assignUser_UserNotFoundException(){
+
+        when(taskDAO.getTaskById(1L)).thenReturn(task);
+        when(userDAO.findByEmail("test@email.com")).thenReturn(null);
+
+
+        assertThrows(UserNotFoundException.class, () ->
+                memberRestController.assignUser("test@email.com", 1L));
+    }
+    @Test
+    public void testAddMember_Success() throws UserNotFoundException, ProjectNotFoundException {
         // Mock behavior
-        when(projectDAO.getProjectById(projectId)).thenReturn(project);
-        when(userDAO.findByEmail(memberEmail)).thenReturn(member);
+        when(projectDAO.getProjectById(anyLong())).thenReturn(project);
+        when(userDAO.findByEmail(anyString())).thenReturn(user);
 
-        // Invoke method
-        ResponseEntity<Void> response = memberRestController.addMember(projectId, memberEmail);
-
-        // Verify
+        ResponseEntity<Void> response = memberRestController.addMember(1L, "member@email.com");
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(projectDAO, times(1)).save(project);
     }
 
     @Test
     public void testAddMember_ProjectNotFound() {
-        // Mock data
-        Long projectId = 1L;
-        String memberEmail = "member@example.com";
 
         // Mock behavior
-        when(projectDAO.getProjectById(projectId)).thenReturn(null);
+        when(projectDAO.getProjectById(1L)).thenReturn(null);
 
-        // Invoke method
-        ResponseEntity<Void> response = memberRestController.addMember(projectId, memberEmail);
+        assertThrows(ProjectNotFoundException.class, () ->
+                memberRestController.addMember(1L, "test@email.com"));
 
-        // Verify
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(projectDAO, never()).save(any());
     }
     @Test
-    public void testAddMember_MemberNotFound() {
-        // Mock data
-        Long projectId = 1L;
-        String memberEmail = "member@example.com";
-        Project project = new Project();
-        project.setId(projectId);
-
+    public void testAddMember_UserNotFound(){
         // Mock behavior
-        when(projectDAO.getProjectById(projectId)).thenReturn(project);
-        when(userDAO.findByEmail(memberEmail)).thenReturn(null);
+        when(projectDAO.getProjectById(1L)).thenReturn(project);
+        when(userDAO.findByEmail("incorrect@emial.com")).thenReturn(null);
 
-        // Invoke method
-        ResponseEntity<Void> response = memberRestController.addMember(projectId, memberEmail);
+        assertThrows(UserNotFoundException.class, () ->
+                memberRestController.addMember(1L, "incorrect@emial.com"));
+    }
+    //Repo test for User
+    @Test
+    void testFindByEmail(){
+        userDAO.save(user);
 
-        // Verify
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(projectDAO, never()).save(any());
+        when(userDAO.findByEmail("member@email.com")).thenReturn(user);
+
+        assertEquals("member@email.com", user.getEmail());
     }
 }

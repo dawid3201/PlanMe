@@ -1,4 +1,4 @@
-package COMP390.PlanMe.User.ProjectMember.Service;
+package COMP390.PlanMe.ProjectMember.Service;
 
 import COMP390.PlanMe.Project.ProjectDAO;
 import COMP390.PlanMe.User.UserDAO;

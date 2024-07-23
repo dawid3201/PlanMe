@@ -2,7 +2,9 @@ package COMP390.PlanMe.RestControllers;
 
 import COMP390.PlanMe.Bar.BarDAO;
 import COMP390.PlanMe.Bar.BarRestController;
+import COMP390.PlanMe.Exceptions.ConflictException;
 import COMP390.PlanMe.Exceptions.NotFoundException;
+import COMP390.PlanMe.Exceptions.ProjectNotFoundException;
 import COMP390.PlanMe.Project.ProjectDAO;
 import COMP390.PlanMe.Bar.Bar;
 import COMP390.PlanMe.Project.Project;
@@ -46,9 +48,10 @@ public class BarRestAPITest {
     private PostBarService postBarService;
     @InjectMocks
     private BarRestController barRestController;
+    @Mock
     private Bar bar;
+    @Mock
     private Project project;
-    private Task task;
 
     @BeforeEach
     public void setUp(){
@@ -63,7 +66,7 @@ public class BarRestAPITest {
         bar.setName("TODO");
         bar.setPosition(1);
 
-        task = new Task();
+        project.getBars().add(bar);
     }
     @Test
     public void DeleteBarTestOk(){
@@ -78,7 +81,7 @@ public class BarRestAPITest {
         assertThrows(NotFoundException.class, () -> barRestController.deleteBar(2L));
     }
     @Test
-    public void testAddBar_Success(){
+    public void testAddBar_Success() throws ProjectNotFoundException {
         //Mock behaviour
         when(projectDAO.getProjectById(1L)).thenReturn(project);
 
@@ -88,18 +91,17 @@ public class BarRestAPITest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
     @Test
-    public void testAddBar_NotFound(){
+    public void testAddBar_ProjectNotFound(){
         when(projectDAO.getProjectById(anyLong())).thenReturn(null);
 
-        assertThrows(NotFoundException.class, () -> barRestController.addBar(1L, "validBarName"));
+        assertThrows(ProjectNotFoundException.class, () -> barRestController.addBar(1L, "validBarName"));
     }
     @Test
-    public void testAddBar_IllegalArgument(){
+    public void testAddBar_BarNameEmpty(){
         when(projectDAO.getProjectById(anyLong())).thenReturn(project);
 
         assertThrows(IllegalArgumentException.class, () -> barRestController.addBar(1L, ""));
     }
-
     //Patch
     @Test
     public void testUpdateBarPosition_Success() {

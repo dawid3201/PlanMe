@@ -6,6 +6,7 @@ import COMP390.PlanMe.Bar.Service.GetBarService;
 import COMP390.PlanMe.Bar.Service.PatchBarService;
 import COMP390.PlanMe.Bar.Service.PostBarService;
 import COMP390.PlanMe.Exceptions.NotFoundException;
+import COMP390.PlanMe.Exceptions.ProjectNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,7 @@ public class BarRestController {
     }
     //-------------------------------------POST-METHODS-----------------------------------
     @PostMapping("/addBar")
-    public ResponseEntity<Bar> addBar(@RequestParam("projectId") Long projectId, @RequestParam("barName") String barName){
+    public ResponseEntity<Bar> addBar(@RequestParam("projectId") Long projectId, @RequestParam("barName") String barName) throws ProjectNotFoundException {
         return ResponseEntity.ok(postBarService.addBar(projectId, barName));
     }
 }

@@ -1,11 +1,12 @@
-package COMP390.PlanMe.User.ProjectMember;
+package COMP390.PlanMe.ProjectMember;
 
+import COMP390.PlanMe.Exceptions.ProjectNotFoundException;
 import COMP390.PlanMe.Exceptions.TaskNotFoundException;
 import COMP390.PlanMe.Exceptions.UserAlreadyAssignedException;
 import COMP390.PlanMe.Exceptions.UserNotFoundException;
-import COMP390.PlanMe.User.ProjectMember.Service.GetMemberService;
-import COMP390.PlanMe.User.ProjectMember.Service.PatchMemberService;
-import COMP390.PlanMe.User.ProjectMember.Service.PostMemberService;
+import COMP390.PlanMe.ProjectMember.Service.GetMemberService;
+import COMP390.PlanMe.ProjectMember.Service.PatchMemberService;
+import COMP390.PlanMe.ProjectMember.Service.PostMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class MemberRestController {
     }
     //-----------------------------------------POST-METHODS--------------------------------
     @PostMapping("/addMember") //Used in PROJECT.JS
-    public ResponseEntity<Void> addMember(@RequestParam("projectId") Long projectId, @RequestParam("memberEmail") String memberEmail) {
+    public ResponseEntity<Void> addMember(@RequestParam("projectId") Long projectId, @RequestParam("memberEmail") String memberEmail) throws UserNotFoundException, ProjectNotFoundException {
         return ResponseEntity.ok(postMemberService.addMember(projectId, memberEmail));
     }
     //-----------------------------------------PATCH-METHODS--------------------------------

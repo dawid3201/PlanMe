@@ -32,13 +32,4 @@ public class User {
 
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
     private List<Task> tasksAssigned = new ArrayList<>();
-
-    public User() {}
-
-    public User(String firstName, String lastName, String password, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.email = email;
-    }
 }
